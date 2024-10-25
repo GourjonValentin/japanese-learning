@@ -3,8 +3,8 @@
     <nav>
         <router-link to="/quiz">Quiz</router-link>
         <router-link to="/jisho">Jisho</router-link>
-        <router-link to="/auth">Login</router-link>
-        <router-link to="/auth">Sign-In</router-link>
+        <router-link :to="{path :'/auth', query : { form : 'login'}}">Login</router-link>
+        <router-link :to="{ path: '/auth', query: { form: 'signin' } }">Sign-In</router-link>
     </nav>
 </template>
 
@@ -25,7 +25,6 @@
     }
     nav a {
         padding: 20px;
-        color: blue;
         text-decoration: none;
     }
 </style>

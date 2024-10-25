@@ -41,6 +41,42 @@ app.get('/', (req, res) => {
     res.status(200).send({ status: "ok" });
 });
 
+const util = require('util');
+
+// Promisify db.query
+const query = util.promisify(db.query).bind(db);
+
+app.post('/login', async (req, res) => {
+    const { password, username } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: "Invalid format" });
+    }
+
+    try {
+        const results = await query('SELECT * FROM users WHERE username=?', [username]);
+
+        if (results.length === 0) {
+            return res.status(203).json({ message: "This username is not registered" });
+        }
+
+        // Assuming results[0] holds the user information
+        const user = results[0];
+
+        // Validate password
+        const isValid = await bcrypt.compare(password, user.password);
+
+        if (isValid) {
+            res.status(200).json({ message: "Connected successfully" });
+        } else {
+            res.status(403).json({ message: "Invalid credentials" });
+        }
+    } catch (err) {
+        console.error("Error: ", err.message);
+        return res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
