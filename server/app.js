@@ -23,9 +23,9 @@ app.use(cors())
 
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
+    user: 'root2',
     password: '',
-    database: 'addressbook'
+    database: 'japanese_learning_db'
 })
 
 db.connect((err) => {

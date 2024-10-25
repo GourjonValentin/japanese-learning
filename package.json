@@ -15,5 +15,7 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^9.0.1"
+  },
+  "dependencies": {
   }
 }
