@@ -4,7 +4,7 @@
 </template>
 
 <script>
-    import { globalTitle } from '../utils/GlobalVariable';
+    import { globalTitle } from '@/utils/GlobalVariable';
 
     export default {
         data() {

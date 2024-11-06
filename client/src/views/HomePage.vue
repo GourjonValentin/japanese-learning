@@ -1,10 +1,10 @@
 <template>
     <h1>Welcome to {{ title }}</h1>
-    <p> home page</p>
+    <p> home page </p>
 </template>
   
 <script>
-    import { globalTitle } from '../utils/GlobalVariable';
+    import { globalTitle } from '@/utils/GlobalVariable';
 
     export default {
         data() {

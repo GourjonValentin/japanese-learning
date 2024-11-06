@@ -5,6 +5,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 // Load environment variables from .env file
 require('dotenv').config();
 
@@ -39,6 +40,16 @@ db.connect((err) => {
 
 app.get('/', (req, res) => {
     res.status(200).send({ status: "ok" });
+});
+
+app.get('/api/jisho', async (req, res) => {
+    try {
+        const response = await fetch(`https://jisho.org/api/v1/search/words?keyword=${req.query.keyword}`);
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching data' });
+    }
 });
 
 

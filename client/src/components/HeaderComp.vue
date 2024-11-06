@@ -9,7 +9,7 @@
 </template>
 
 <script>
-    import { globalColors } from '../utils/GlobalVariable';
+    import { globalColors } from '@/utils/GlobalVariable';
 
     console.log(globalColors);
     export default {
