@@ -37,6 +37,24 @@ db.connect((err) => {
     }
 });
 
+function parseTranslation(jishoResponse) {
+    const data = jishoResponse.data;
+    let idGen = 0;
+    return data.map(word => {
+        const id = idGen++;
+        const japanese = word.japanese.map(jp => {return { id: idGen++ , word: jp.word, reading: jp.reading } })
+        const english = word.senses.map(sense => {return { id: idGen++ , english_definitions: sense.english_definitions } });
+        return { id, japanese, english };
+    });
+}
+
+async function testParse(keyword) {
+    const resp = await fetch(`http://localhost:3000/api/jisho?keyword=${keyword}`);
+    const data = await resp.json();
+    console.log(parseTranslation(data));
+}
+
+testParse('dog');
 
 app.get('/', (req, res) => {
     res.status(200).send({ status: "ok" });
@@ -48,7 +66,12 @@ app.get('/api/jisho', async (req, res) => {
         const data = await response.json();
         res.json(data);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching data' });
+        console.error('Error fetching data:', error);
+        if (error.response) {
+            res.status(error.response.status).json({ error: error.response.statusText });
+        } else {
+            res.status(500).json({ error: 'Error fetching data' });
+        }
     }
 });
 

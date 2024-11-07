@@ -10,8 +10,6 @@
 
 <script>
     import { globalColors } from '@/utils/GlobalVariable';
-
-    console.log(globalColors);
     export default {
         data(){
             return {globalColors : globalColors}
