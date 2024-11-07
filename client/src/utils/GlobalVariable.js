@@ -2,8 +2,9 @@
 export const globalTitle = "Japanese Learning";
 
 export const globalColors = {
-    white: '#f2d1b5',
-    red: '#9f3434',
-    brown: '#e1b486',
-    black: '#331d1d'
+    backgroundColor: '#f4d4b4',
+    lightColor: '#e4b484',
+    redColor: '#9f3434',
+    brownColor: '#8c7454',
+    darkColor: '#341c1c'
 }

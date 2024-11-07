@@ -1,17 +1,21 @@
 
 <template>
-    <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/quiz">Quiz</router-link>
-        <router-link to="/jisho">Jisho</router-link>
-        <div v-if="this.sessionToken">
-            <router-link :to="{path :'/auth', query : { form : 'signout'}}">Sign out</router-link>
-        </div>
-        <div v-else>
-            <router-link :to="{path :'/auth', query : { form : 'login'}}">Login</router-link>
-            <router-link :to="{ path: '/auth', query: { form: 'signup' } }">Sign up</router-link>
-        </div>
-    </nav>
+    <div id="header">
+        <nav>
+            <div class="pages-links">
+                <router-link to="/">Home</router-link>
+                <router-link to="/quiz">Quiz</router-link>
+                <router-link to="/jisho">Jisho</router-link>
+            </div>
+            <div v-if="this.sessionToken" class="auth-links">
+                <router-link :to="{path :'/auth', query : { form : 'signout'}}">Sign out</router-link>
+            </div>
+            <div v-else class="auth-links">
+                <router-link :to="{path :'/auth', query : { form : 'login'}}">Login</router-link>
+                <router-link :to="{ path: '/auth', query: { form: 'signup' } }">Sign up</router-link>
+            </div>
+        </nav>
+    </div>
 </template>
 
 <script>
@@ -32,11 +36,30 @@
 </script>
 
 <style>
-    nav {
-       background-color: v-bind('globalColors.brown');
+    #header {
+    background-color: v-bind('globalColors.redColor');
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-bottom: solid 5px;
+    border-bottom-color: v-bind(globalColors.darkColor)
     }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
     nav a {
         padding: 20px;
         text-decoration: none;
+        color: v-bind(globalColors.darkColor);
     }
+
+    nav a:hover {
+        cursor: pointer;
+    }
+
 </style>

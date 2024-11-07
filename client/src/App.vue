@@ -1,5 +1,5 @@
 <template>
-    <div id="app" class="s">
+    <div id="app" class="ses">
         <HeaderComp/>
         <router-view/>
     </div>
@@ -7,6 +7,7 @@
 
 <script>
     import { ref , provide } from 'vue';
+    import { globalColors } from './utils/GlobalVariable';
 
     import HeaderComp from './components/HeaderComp.vue';
 
@@ -14,6 +15,9 @@
         name: 'App',
         components: {
             HeaderComp : HeaderComp
+        },
+        data(){
+            return { globalColors };
         },
         setup() {
             // Creation of a reactive variables => (allows child to change it)
@@ -43,12 +47,15 @@
 </script>
 
 <style>
-    #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        margin-top: 60px;
-    }
+html, body, #app {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: v-bind(globalColors.darkColor);
+    background-color: v-bind(globalColors.backgroundColor);
+}
+
 </style>

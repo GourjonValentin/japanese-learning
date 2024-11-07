@@ -1,18 +1,23 @@
 <template>
     <div>
-        <p>English-Japanese Dictionary</p>
-        <div class="language-select">
-            <!-- Switch between English and Japanese -->
-            <button @click="toggleEngToJap()" :class="{ 'selected': englishToJapanese === true}">English to Japanese
-            </button>
-            <button @click="toggleJapToEng()" :class="{ 'selected': japaneseToEnglish === true}">Japanese to English
-            </button>
+        <h3>English-Japanese Dictionary</h3>
+
+        <div class="searching-menu">
+            <div class="language-select">
+                <!-- Switch between English and Japanese -->
+                <button @click="toggleEngToJap()" :class="{ 'selected': englishToJapanese === true}">English to Japanese
+                </button>
+                <button @click="toggleJapToEng()" :class="{ 'selected': japaneseToEnglish === true}">Japanese to English
+                </button>
+            </div>
+            <!-- Search bar -->
+            <form @submit.prevent="translate" class="search-form">
+                <input type="text" placeholder="Search for a word" v-model="searchWord" class="search-input">
+                <button class="search-button">Search</button>
+            </form>
         </div>
-        <!-- Search bar -->
-        <form @submit.prevent="translate">
-            <input type="text" placeholder="Search for a word" v-model="searchWord">
-            <button>Search</button>
-        </form>
+        
+
         <!-- Display the word and its translation -->
         <div class="response" v-bind:hidden="translation === []">
             <p>Searching for Word: {{ searchWord }}</p>
@@ -101,32 +106,94 @@ export default {
 </script>
 
 <style scoped>
-.language-select > button {
-    background-color: v-bind('globalColors.white');
-    border: 1px solid v-bind('globalColors.brown');
-    color: v-bind('globalColors.black');
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-}
+    .searching-menu {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin: 30px 0;
+        padding: 20px;
+    }
 
-.language-select > button.selected {
-    background-color: v-bind('globalColors.brown');
-}
+    .language-select {
+        display: flex;
+        gap: 10px;
+    }
 
-.jp-title, .en-title {
-    font-size: 20px;
-    font-weight: bold;
-}
+    .language-select > button {
+        background-color: v-bind('globalColors.lightColor');
+        border: 2px solid v-bind('globalColors.darkColor');
+        border-radius: 20%;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
 
-.tr-elt {
-    margin-top: 20px;
-    border: 1px solid black;
-    padding: 10px;
-}
+    .language-select > button:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: scale(1.05);
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .language-select > button.selected {
+        background-color: v-bind('globalColors.brownColor');
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 10px 15px;
+        font-size: 16px;
+        border: 2px solid v-bind('globalColors.darkColor');
+        border-radius: 25px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+        border-color: v-bind('globalColors.brownColor');
+    }
+
+    .search-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: v-bind('globalColors.darkColor');
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .search-button:hover {
+        background-color: v-bind('globalColors.brownColor');
+        transform: scale(1.05);
+    }
+
+    .search-button:active {
+        transform: scale(0.95);
+    }
+
+    .jp-title, .en-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .tr-elt {
+        margin-top: 20px;
+        border: 1px solid black;
+        padding: 10px;
+    }
 
 </style>
