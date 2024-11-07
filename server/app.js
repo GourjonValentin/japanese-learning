@@ -38,7 +38,7 @@ db.connect((err) => {
 
 
 app.get('/', (req, res) => {
-    res.status(200).send({ status: "ok" });
+    res.status(200).send({ status: "Connected to japanese-learning server" });
 });
 
 const util = require('util');
@@ -67,7 +67,12 @@ app.post('/login', async (req, res) => {
         const isValid = await bcrypt.compare(password, user.password);
 
         if (isValid) {
-            res.status(200).json({ message: "Connected successfully" });
+            var token = jwt.sign(
+                { username: username },
+                secretKey,
+                { expiresIn: '1h' }
+            )
+            res.status(200).json({ username: "username", sessionToken: token });
         } else {
             res.status(403).json({ message: "Invalid credentials" });
         }
