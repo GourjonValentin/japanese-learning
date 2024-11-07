@@ -14,8 +14,11 @@
             <button>Search</button>
         </form>
         <!-- Display the word and its translation -->
-        <div class="response" v-bind:hidden="!translation">
+        <div class="response" v-bind:hidden="translation === []">
             <p>Searching for Word: {{ searchWord }}</p>
+            <div class="loading">
+                <img v-bind:hidden="!loading" src="@/assets/chop-spedup.gif" alt="Loading ..." width="200" height="150">
+            </div>
             <div v-for="tr in translation" :key="tr.id" class="tr-elt">
                 <p class="jp-title">Japanese writting</p>
                 <div v-for="japanese in tr.japanese" :key="japanese.id" class="jp">
@@ -51,7 +54,8 @@ export default {
             error: "",
             englishToJapanese: true,
             japaneseToEnglish: false,
-            globalColors: globalColors
+            globalColors: globalColors,
+            loading: false
         };
     },
     methods: {
@@ -66,7 +70,12 @@ export default {
             this.englishToJapanese = false;
             this.japaneseToEnglish = true;
         },
+        toggleLoading() {
+            // Toggle the loading state
+            this.loading = !this.loading;
+        },
         async translate() {
+            this.toggleLoading()
             // Search for the word in the dictionnary
 
             // Preprocess the word
@@ -81,7 +90,7 @@ export default {
             // Get the translation
             const response = await axios.get(`http://localhost:3000/api/jisho?keyword=${searchWord}`);
             this.translation = parseTranslation(response.data);
-
+            this.toggleLoading()
         },
     },
     mounted() {
