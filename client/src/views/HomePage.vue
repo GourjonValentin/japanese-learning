@@ -1,16 +1,22 @@
 <template>
-    <h1>Welcome to {{ title }}</h1>
-    <p> home page </p>
+    <h1>{{ title }}</h1>
+    <h2>Welcome {{ username }}</h2>
+    <p> home page</p>
 </template>
-  
+
 <script>
-    import { globalTitle } from '@/utils/GlobalVariable';
+    import { inject } from 'vue'; // to access user variable
+    import { globalTitle } from '../utils/GlobalVariable';
 
     export default {
         data() {
             return {
                 title: globalTitle
             };
+        },
+        setup() {
+            const username = inject('username');
+            return { username };
         }
     };
 </script>
