@@ -38,7 +38,9 @@
 <style>
     #header {
     background-color: v-bind('globalColors.redColor');
-    padding: 15px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin-top: 0px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     border-bottom: solid 5px;
     border-bottom-color: v-bind(globalColors.darkColor)

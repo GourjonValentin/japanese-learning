@@ -122,7 +122,7 @@ export default {
     .language-select > button {
         background-color: v-bind('globalColors.lightColor');
         border: 2px solid v-bind('globalColors.darkColor');
-        border-radius: 20%;
+        border-radius: 20px;
         padding: 10px 20px;
         text-align: center;
         text-decoration: none;
@@ -139,7 +139,8 @@ export default {
     }
 
     .language-select > button.selected {
-        background-color: v-bind('globalColors.brownColor');
+        background-color: v-bind('globalColors.darkColor');
+        color: white;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
