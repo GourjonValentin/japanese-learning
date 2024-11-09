@@ -21,11 +21,13 @@
             const setUsername = inject('setUsername'); // access provider
             const setSessionToken = inject('setSessionToken');
             const setUserId = inject('setUserId');
+            const setFavourites = inject('setFavourites');
 
             return {
                 setUsername,
                 setSessionToken,
-                setUserId
+                setUserId,
+                setFavourites
             };
         },
         data(){
@@ -45,6 +47,7 @@
                             localStorage.setItem('sessionToken', response.data.sessionToken);
                             this.setUsername(this.username); // = this.username
                             this.setUserId(response.data.userId);
+                            this.setFavourites(response.data.favourites);
                             alert(`You are now connected.\nYou will be redirected in Home Page\n`);
                             this.$router.push({path :'/'});
                         } else {

@@ -150,16 +150,20 @@ app.post('/users/edit-favourite', async (req, res) => {
         const { mode, quizId, userId, sessionToken } = req.body;
 
         // check if the user login is matching its id
-        // const { payload } = verifyToken(token, secretKey);
-        // if (payload.id !== userId){
-        // return res.status(403).json({message : "your are not this user owner"});
-        //}
-        const user = await query('SELECT * FROM users WHERE id=?', [userId]);
+         const { payload } = verifyToken(sessionToken, secretKey);
+         console.log(payload);
+         if (payload.id !== userId){
+         return res.status(403).json({message : "your are not this user owner"});
+        }
+        let user = await query('SELECT * FROM users WHERE id=?', [userId]);
         if (user === undefined) {
             return res.status(404).json({ message: 'user not found' });
         }
-        const newFavourites = user.favourites;
-        if (newFavourites === null) {
+        user = user[0];
+        console.log(user);
+        let newFavourites = JSON.parse(user.favourites);
+        console.log(newFavourites);
+        if (newFavourites === null || newFavourites === undefined) {
             newFavourites = [];
         }
         if (mode === 'delete') { // ca marche ???
@@ -168,19 +172,23 @@ app.post('/users/edit-favourite', async (req, res) => {
             })
         }
         else if (mode === 'add') {
-            if (quizId in newFavourites) {
+            if (newFavourites.includes(quizId)) {
                 console.log("already in the list");
-                res.status(304).message({ message: "quiz already in the user favourite quiz" })
+                return res.status(409).json({ message: "quiz already in the user favourite quiz" })
             }
             newFavourites.push(quizId);
         }
+        console.log(newFavourites);
         // try catch the following query ???
-        const result = await query('UPDATE users SET favourites=? WHERE id=?', [newFavourites, userId]);
+        const result = await query('UPDATE users SET favourites=? WHERE id=?', [JSON.stringify(newFavourites), userId]);
         if (result) {
+            console.log("update done");
+            console.log(typeof newFavourites);
             return res.status(200).json({ favourites: newFavourites });
         }
     } catch (err) {
-        return res.status(500);
+        console.error("Error: ", err.message);
+        return res.status(500).json({ message: "Server error", error: err.message });
     }
 });
 
