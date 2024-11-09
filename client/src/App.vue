@@ -47,6 +47,13 @@
 </script>
 
 <style>
+@font-face {
+    font-family: 'JapaneseStyleFont';
+    src: url('@/assets/fonts/JapaneseFontStyle.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 html, body, #app {
     height: 100%;
     margin: 0;
