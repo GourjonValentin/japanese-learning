@@ -20,7 +20,6 @@
         data(){
             return { globalColors };
         },
-
         setup() {
             // Creation of a reactive variables => (allows child to change it)
             const userId = ref('');

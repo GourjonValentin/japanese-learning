@@ -14,6 +14,7 @@ CREATE TABLE users(
 CREATE TABLE quiz(
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255),
+    type varchar(255),
     ownerid int NOT NULL,
     content JSON,
     difficultylevel int,
@@ -33,19 +34,19 @@ CREATE TABLE scores (
 
 
 INSERT INTO users (username, isAdmin, favourites, password)
-VALUES ('admin', 1, [], '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV681uJt2');
+VALUES ('admin', 1, '[]', '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV681uJt2');
 
 INSERT INTO users (username, isAdmin, favourites, password)
-VALUES ('user1', 0, [], '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em');
+VALUES ('user1', 0, '[]', '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em');
 
-INSERT INTO quiz (name, ownerid, content, difficultylevel) VALUES 
+INSERT INTO quiz (name, type, ownerid, content, difficultylevel) VALUES 
 (
-    'Basic basic', 
+    'Basic basic',
+    'simple',
     1, 
     '[
         {
             "id": 0,
-            "type": "simple",
             "title": "What does こんにちは mean?",
             "picture": "",
             "answers": [
@@ -57,7 +58,6 @@ INSERT INTO quiz (name, ownerid, content, difficultylevel) VALUES
         },
         {
             "id": 1,
-            "type": "simple",
             "title": "Translate: みず",
             "picture": "",
             "answers": [
@@ -72,11 +72,11 @@ INSERT INTO quiz (name, ownerid, content, difficultylevel) VALUES
 ),
 (
     'Basic', 
-    1, 
+    'simple',
+    1,
     '[
         {
             "id": 0,
-            "type": "simple",
             "title": "What is the meaning of 私は学生です?",
             "picture": "",
             "answers": [
@@ -89,7 +89,6 @@ INSERT INTO quiz (name, ownerid, content, difficultylevel) VALUES
         },
         {
             "id": 1,
-            "type": "simple",
             "title": "Translate: 食べる",
             "picture": "",
             "answers": [
@@ -103,7 +102,6 @@ INSERT INTO quiz (name, ownerid, content, difficultylevel) VALUES
         },
         {
             "id": 2,
-            "type": "simple",
             "title": "Translate: あなたの猫はかわいですよ。",
             "picture": "",
             "answers": [
@@ -118,3 +116,92 @@ INSERT INTO quiz (name, ownerid, content, difficultylevel) VALUES
     2
 );
 
+INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
+(
+    'Tokyo Ghoul - 東京喰種',
+    'anime',
+    1,
+    3,
+    '[
+        {
+            "id": 0,
+            "title": "What does Liz say ?",
+            "picture": "https://ibb.co/KV0m6WT",
+            "answers": [
+                {"id": 0, "content": "Je te regarde"},
+                {"id": 1, "content": "Tu me vois bien non ?"},
+                {"id": 2, "content": "Regarde toi !"},
+                {"id": 3, "content": "Je te regardais"}
+            ],
+            "correct_answers": [3]
+        },
+        {
+            "id": 1,
+            "title": "How do you pronounce つかまえた ?",
+            "picture": "https://ibb.co/S0DPqtT",
+            "answers": [
+                {"id": 0, "content": "Tsukamaena"},
+                {"id": 1, "content": "Ukamaeta"},
+                {"id": 2, "content": "Ukamaena"},
+                {"id": 3, "content": "Tsukamaeta"}
+            ],
+            "correct_answers": [3]
+        },
+        {
+            "id": 2,
+            "title": "What is the translation of この目",
+            "picture": "https://ibb.co/nMCVPph",
+            "answers": [
+                {"id": 0, "content": "Cet oeil !!!"},
+                {"id": 1, "content": "Mon corps !!!"},
+                {"id": 2, "content": "Ce corps !!!"},
+                {"id": 3, "content": "Mon oeil !!!"}
+            ],
+            "correct_answers": [1]
+        }
+    ]'
+),
+(
+    'Chainsaw Man - チェンソーマン',
+    'anime',
+    1,
+    3,
+    '[
+        {
+            "id": 0,
+            "title": "What is the translation of 死 (し) ?",
+            "picture": "https://ibb.co/HtNW0jr",
+            "answers": [
+                {"id": 0, "content": "Monstre"},
+                {"id": 1, "content": "Sang"},
+                {"id": 2, "content": "Pouvoir"},
+                {"id": 3, "content": "Mort"}
+            ],
+            "correct_answers": [3]
+        },
+        {
+            "id": 1,
+            "title": "What is the prononciation of ポチタ ?",
+            "picture": "https://ibb.co/41prp96",
+            "answers": [
+                {"id": 0, "content": "porita"},
+                {"id": 1, "content": "pochita"},
+                {"id": 2, "content": "horita"},
+                {"id": 3, "content": "hochita"}
+            ],
+            "correct_answers": [1]
+        },
+        {
+            "id": 2,
+            "title": "What is Denshi saying ?",
+            "picture": "https://ibb.co/6bzfWr9",
+            "answers": [
+                {"id": 0, "content": "Gaâhahahaâ"},
+                {"id": 1, "content": "Gyayayayayayha"},
+                {"id": 2, "content": "Hahahahhahaha"},
+                {"id": 3, "content": "Pouahahaha"}
+            ],
+            "correct_answers": [0]
+        }
+    ]'
+);
