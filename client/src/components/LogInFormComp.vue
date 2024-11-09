@@ -20,10 +20,12 @@
         setup(){
             const setUsername = inject('setUsername'); // access provider
             const setSessionToken = inject('setSessionToken');
+            const setUserId = inject('setUserId');
 
             return {
                 setUsername,
-                setSessionToken
+                setSessionToken,
+                setUserId
             };
         },
         data(){
@@ -48,7 +50,7 @@
                             throw new Error("Status server error");
                         }
                     }).catch(error => {
-                        if (error.status === 403){
+                        if (error.status === 401){
                             this.formMessage = "Invalid username or password";
                         }
                         else {

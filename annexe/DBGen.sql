@@ -32,11 +32,11 @@ CREATE TABLE scores (
 );
 
 
-INSERT INTO users (username, isAdmin, password)
-VALUES ('admin', 1, '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV681uJt2');
+INSERT INTO users (username, isAdmin, favourites, password)
+VALUES ('admin', 1, [], '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV681uJt2');
 
-INSERT INTO users (username, isAdmin, password)
-VALUES ('user1', 0, '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em');
+INSERT INTO users (username, isAdmin, favourites, password)
+VALUES ('user1', 0, [], '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em');
 
 INSERT INTO quiz (name, ownerid, content, difficultylevel) VALUES 
 (

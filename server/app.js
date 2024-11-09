@@ -37,24 +37,6 @@ db.connect((err) => {
     }
 });
 
-function parseTranslation(jishoResponse) {
-    const data = jishoResponse.data;
-    let idGen = 0;
-    return data.map(word => {
-        const id = idGen++;
-        const japanese = word.japanese.map(jp => {return { id: idGen++ , word: jp.word, reading: jp.reading } })
-        const english = word.senses.map(sense => {return { id: idGen++ , english_definitions: sense.english_definitions } });
-        return { id, japanese, english };
-    });
-}
-
-async function testParse(keyword) {
-    const resp = await fetch(`http://localhost:3000/api/jisho?keyword=${keyword}`);
-    const data = await resp.json();
-    console.log(parseTranslation(data));
-}
-
-testParse('dog');
 
 app.get('/', (req, res) => {
     res.status(200).send({ status: "Connected to japanese-learning server" });
@@ -87,13 +69,13 @@ app.post('/login', async (req, res) => {
 
         if (isValid) {
             var token = jwt.sign(
-                { username: username },
+                { username: username, id: user.id },
                 secretKey,
                 { expiresIn: '1h' }
             )
-            res.status(200).json({ username: "username", sessionToken: token });
+            res.status(200).json({ username: user.username, favourites: user.favourites, id: user.id, isAdmin: user.isAdmin, sessionToken: token });
         } else {
-            res.status(403).json({ message: "Invalid credentials" });
+            res.status(401).json({ message: "Invalid credentials" });
         }
     } catch (err) {
         console.error("Error: ", err.message);
@@ -113,6 +95,78 @@ app.get('/api/jisho', async (req, res) => {
         } else {
             res.status(500).json({ error: 'Error fetching data' });
         }
+    }
+});
+
+app.get('/quizzes', async (req, res) => {
+    try {
+        const { difficulty, type, favourites } = req.query;
+        let results = await query('SELECT * FROM quiz');
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No quizzes found" });
+        }
+        if (difficulty) {
+            results = results.filter(quiz => quiz.difficulty = difficulty);
+        }
+        if (type) {
+            results = results.filter(quiz => quiz.type = type);
+        }
+        if (favourites) {
+            results = results.filter(quiz => quiz.id in favourites);
+        }
+        console.log(results);
+        results = await Promise.all(
+            results.map(async quiz => {
+                const ownerName = await query('SELECT username FROM users WHERE id=?', [quiz.ownerid]);
+                quiz.ownername = ownerName[0].username;
+                return quiz
+            })
+        );
+        res.status(200).json(results);
+    } catch (error) {
+        console.error('Error fetching quizzes:', error);
+        res.status(500).json({ error: 'Error fetching quizzes' });
+    }
+});
+
+app.post('/users/edit-favourite', async (req, res) => {
+    try {
+        const { mode, quizId, userId, sessionToken } = req.body;
+        if (mode === undefined || quizId === undefined || userId === undefined || !sessionToken) {
+            return res.status(400);
+        }
+        // check if the user login is matching its id
+        // const { payload } = verifyToken(token, secretKey);
+        // if (payload.id !== userId){
+        // return res.status(403).json({message : "your are not this user owner"});
+        //}
+        const user = await query('SELECT * FROM users WHERE id=?', [userId]);
+        if (user === undefined) {
+            return res.status(404).json({ message: 'user not found' });
+        }
+        const newFavourites = user.favourites;
+        if (newFavourites === null) {
+            newFavourites = [];
+        }
+        if (mode === 'delete') { // ca marche ???
+            newFavourites = newFavourites.filter((el) => {
+                return el !== quizId;
+            })
+        }
+        else if (mode === 'add') {
+            if (quizId in newFavourites) {
+                console.log("already in the list");
+                res.status(304).message({ message: "quiz already in the user favourite quiz" })
+            }
+            newFavourites.push(quizId);
+        }
+        // try catch the following query ???
+        const result = await query('UPDATE users SET favourites=? WHERE id=?', [newFavourites, userId]);
+        if (result) {
+            return res.status(200).json({ favourites: newFavourites });
+        }
+    } catch (err) {
+        return res.status(500);
     }
 });
 

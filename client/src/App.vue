@@ -1,5 +1,5 @@
 <template>
-    <div id="app" class="s">
+    <div id="app" class="ss">
         <HeaderComp/>
         <router-view/>
     </div>
@@ -21,25 +21,44 @@
         },
         setup() {
             // Creation of a reactive variables => (allows child to change it)
+            const userId = ref('');
             const username = ref('');
             const sessionToken = ref('');
+            const favourites = ref([]);
+            const isAdmin = ref(''); // 0?
+
 
             // Creation of the providers
+            provide('userId', userId);
             provide('username', username);
             provide('sessionToken', sessionToken);
+            provide('favourites', favourites);
+            provide('isAdmin', isAdmin);
 
+            provide('setUserId', (newUserId) => {
+                userId.value = newUserId;
+            });
             provide('setUsername', (newUsername) => {
                 username.value = newUsername;
             });
             provide('setSessionToken', (newSessionToken) => {
                 sessionToken.value = newSessionToken;
             });
-
+            provide('favourites', (newFavourites) => {
+                favourites.value = newFavourites;
+            });
+            provide('isAdmin', (newIsAdmin) => {
+                isAdmin.value = newIsAdmin;
+            });
             const resetUser = () => {
+                userId.value = '';
                 username.value = '';
                 sessionToken.value = '';
+                favourites.value = [];
+                isAdmin.value = ''; // 0 ?
+
+
             };
-            
             provide('resetUser', resetUser);
             // return necessary ????
         }
