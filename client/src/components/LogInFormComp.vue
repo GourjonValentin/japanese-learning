@@ -40,6 +40,7 @@
                         }
                         else if (response.status === 200){
                             this.setSessionToken(response.data.sessionToken);
+                            localStorage.setItem('sessionToken', response.data.sessionToken);
                             this.setUsername(this.username); // = this.username
 
                             alert(`You are now connected.\nYou will be redirected in Home Page\n`);

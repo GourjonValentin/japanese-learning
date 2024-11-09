@@ -93,7 +93,7 @@ export default {
             }
 
             // Get the translation
-            const response = await axios.get(`http://localhost:3000/api/jisho?keyword=${searchWord}`);
+            const response = await axios.get(`http://localhost:3000/jisho?keyword=${searchWord}`);
             this.translation = parseTranslation(response.data);
             this.toggleLoading()
         },

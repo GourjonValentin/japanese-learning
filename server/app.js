@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 // Load environment variables from .env file
 require('dotenv').config();
+const verifyToken = require('./middleware');
 
 
 const app = express();
@@ -37,25 +38,6 @@ db.connect((err) => {
     }
 });
 
-function parseTranslation(jishoResponse) {
-    const data = jishoResponse.data;
-    let idGen = 0;
-    return data.map(word => {
-        const id = idGen++;
-        const japanese = word.japanese.map(jp => {return { id: idGen++ , word: jp.word, reading: jp.reading } })
-        const english = word.senses.map(sense => {return { id: idGen++ , english_definitions: sense.english_definitions } });
-        return { id, japanese, english };
-    });
-}
-
-async function testParse(keyword) {
-    const resp = await fetch(`http://localhost:3000/api/jisho?keyword=${keyword}`);
-    const data = await resp.json();
-    console.log(parseTranslation(data));
-}
-
-testParse('dog');
-
 app.get('/', (req, res) => {
     res.status(200).send({ status: "Connected to japanese-learning server" });
 });
@@ -64,6 +46,8 @@ const util = require('util');
 
 // Promisify db.query
 const query = util.promisify(db.query).bind(db);
+
+// AUTH
 
 app.post('/login', async (req, res) => {
     const { password, username } = req.body;
@@ -87,7 +71,7 @@ app.post('/login', async (req, res) => {
 
         if (isValid) {
             var token = jwt.sign(
-                { username: username },
+                    { username: username },
                 secretKey,
                 { expiresIn: '1h' }
             )
@@ -101,7 +85,20 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/api/jisho', async (req, res) => {
+app.post('/auth/check', async (req, res) => {
+    const token = req.body.sessionToken;
+    const { status, message, payload } = verifyToken(token, secretKey);
+    if (status === 200) {
+        res.status(200).json({ payload });
+    } else {
+        res.status(status).json({ message });
+    }
+
+});
+
+// DICTIONARY
+
+app.get('/jisho', async (req, res) => {
     try {
         const response = await fetch(`https://jisho.org/api/v1/search/words?keyword=${req.query.keyword}`);
         const data = await response.json();
@@ -115,6 +112,9 @@ app.get('/api/jisho', async (req, res) => {
         }
     }
 });
+
+// QUIZZES
+
 
 
 app.listen(port, () => {

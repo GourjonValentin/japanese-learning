@@ -1,15 +1,16 @@
 <template>
-    <div id="app" class="s">
+    <div id="app" class="ss">
         <HeaderComp/>
         <router-view/>
     </div>
 </template>
 
 <script>
-    import { ref , provide } from 'vue';
+    import {ref, provide} from 'vue';
     import { globalColors } from './utils/GlobalVariable';
 
     import HeaderComp from './components/HeaderComp.vue';
+    import axios from "axios";
 
     export default {
         name: 'App',
@@ -19,6 +20,7 @@
         data(){
             return { globalColors };
         },
+
         setup() {
             // Creation of a reactive variables => (allows child to change it)
             const username = ref('');
@@ -28,12 +30,16 @@
             provide('username', username);
             provide('sessionToken', sessionToken);
 
-            provide('setUsername', (newUsername) => {
+            const setUsername = (newUsername) => {
                 username.value = newUsername;
-            });
-            provide('setSessionToken', (newSessionToken) => {
+            };
+
+            const setSessionToken = (newSessionToken) => {
                 sessionToken.value = newSessionToken;
-            });
+            };
+
+            provide('setUsername', setUsername);
+            provide('setSessionToken', setSessionToken);
 
             const resetUser = () => {
                 username.value = '';
@@ -41,7 +47,42 @@
             };
             
             provide('resetUser', resetUser);
+
+
+
             // return necessary ????
+            return {
+                setSessionToken,
+                setUsername
+            }
+        },
+        methods: {
+            async checkUser() {
+                const sessionToken = localStorage.getItem('sessionToken');
+                if (sessionToken) {
+                    // Check if the session token is still valid
+                    try {
+                        const response = await axios.post('http://localhost:3000/auth/check', {
+                            sessionToken: sessionToken
+                        }).catch(error => {
+                            if (error.status === 401) {
+                                console.log('Invalid token');
+                            }
+                        });
+                        if (response && response.data && response.data.message === 'Valid token') {
+                            // The session token is still valid
+                            this.setSessionToken(sessionToken);
+                            this.setUsername(response.data.username);
+                        }
+                    } catch (error) {
+                        console.error('There was an error!', error);
+
+                    }
+                }
+            }
+        },
+        mounted() {
+            this.checkUser()
         }
     }
 </script>
