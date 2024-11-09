@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import {ref, provide} from 'vue';
+import {ref, provide, watch} from 'vue';
     import { globalColors } from './utils/GlobalVariable';
 
     import HeaderComp from './components/HeaderComp.vue';
@@ -62,11 +62,25 @@
                 sessionToken.value = '';
                 favourites.value = [];
                 isAdmin.value = ''; // 0 ?
-
-
             };
             provide('resetUser', resetUser);
 
+
+            watch(sessionToken, (newSessionToken) => {
+                if (newSessionToken) {
+                    localStorage.setItem('sessionToken', newSessionToken);
+                    console.log("newSessionToken changed to", newSessionToken);
+
+                } else {
+                    localStorage.removeItem('sessionToken');
+                }
+            });
+
+            watch(favourites, (newFavourites) => {
+                if (newFavourites) {
+                    console.log("newFavourites changed to", newFavourites);
+                }
+            }, {deep: true});
 
 
             // return necessary ????

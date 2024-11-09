@@ -13,11 +13,9 @@
     <div class="quizzes">
         <div v-for="quiz in quizzes" :key="quiz.id">
             <div v-if="this.userId !== '' || this.sessionToken !== ''">
-                <div v-if="quiz.id in favourites" class="favourites" @click="changeFavourites(quiz.id, 'delete')">
-                    <img src="@/assets/heart-filled.png"/>
-                </div>
-                <div v-else class="favourites" @click="changeFavourites(quiz.id, 'add')">
-                    <img src="@/assets/heart-unfilled.png"/>
+                <div class="favourites" @click="changeFavourites(quiz.id)">
+                    <img src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                    <img src="@/assets/heart-filled.png" v-else/>
                 </div>
             </div>
             
@@ -46,7 +44,8 @@
             const favourites = inject('favourites');
             const sessionToken = inject('sessionToken');
             const userId = inject('userId');
-            return { favourites, sessionToken, userId };
+            const setFavourites = inject('setFavourites');
+            return { favourites, sessionToken, userId, setFavourites };
         },
         data() {
             return {
@@ -60,7 +59,14 @@
             async startQuiz(){
                 alert("a coder haha");
             },
-            async changeFavourites(quizId, mode){
+            async changeFavourites(quizId){
+                let mode = 'add';
+                console.log("quizId", quizId);
+                console.log("this.favourites", this.favourites);
+                if (this.favourites.includes(quizId)){
+                    mode = 'delete';
+                }
+
                 try {
                     const res = await axios.post('http://localhost:3000/users/edit-favourite', 
                         {
@@ -68,11 +74,17 @@
                             quizId : quizId,
                             userId : this.userId,
                             sessionToken : this.sessionToken
+                        }).catch(err => {
+                            if (err.response.status === 409) {
+                                alert("You have already added this quiz to your favourites");
+                            }
+                            console.log("err", err);
                         });
-                    console.log("res",res.data);
+
+
+                    this.setFavourites(res.data.favourites);
                 } catch (err){
                     console.log("err", err);
-                    alert("error", err);
                 }
             }
         },
