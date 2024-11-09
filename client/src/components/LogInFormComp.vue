@@ -20,10 +20,14 @@
         setup(){
             const setUsername = inject('setUsername'); // access provider
             const setSessionToken = inject('setSessionToken');
+            const setUserId = inject('setUserId');
+            const setFavourites = inject('setFavourites');
 
             return {
                 setUsername,
-                setSessionToken
+                setSessionToken,
+                setUserId,
+                setFavourites
             };
         },
         data(){
@@ -40,15 +44,17 @@
                         }
                         else if (response.status === 200){
                             this.setSessionToken(response.data.sessionToken);
+                            localStorage.setItem('sessionToken', response.data.sessionToken);
                             this.setUsername(this.username); // = this.username
-
+                            this.setUserId(response.data.userId);
+                            this.setFavourites(response.data.favourites);
                             alert(`You are now connected.\nYou will be redirected in Home Page\n`);
                             this.$router.push({path :'/'});
                         } else {
                             throw new Error("Status server error");
                         }
                     }).catch(error => {
-                        if (error.status === 403){
+                        if (error.status === 401){
                             this.formMessage = "Invalid username or password";
                         }
                         else {

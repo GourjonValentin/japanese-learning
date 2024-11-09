@@ -20,7 +20,7 @@
 
 <script>
     import { globalColors } from '../utils/GlobalVariable';
-    import { inject } from 'vue';
+    import {inject} from 'vue';
 
     export default {
         setup(){
