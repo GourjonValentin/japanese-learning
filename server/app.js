@@ -76,7 +76,7 @@ app.post('/login', async (req, res) => {
                 secretKey,
                 { expiresIn: '1h' }
             )
-            res.status(200).json({ username: user.username, favourites: user.favourites, id: user.id, isAdmin: user.isAdmin, sessionToken: token });
+            res.status(200).json({ username: user.username, favourites: user.favourites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token });
         } else {
             res.status(401).json({ message: "Invalid credentials" });
         }
@@ -148,9 +148,7 @@ app.get('/quizzes', async (req, res) => {
 app.post('/users/edit-favourite', async (req, res) => {
     try {
         const { mode, quizId, userId, sessionToken } = req.body;
-        if (mode === undefined || quizId === undefined || userId === undefined || !sessionToken) {
-            return res.status(400);
-        }
+
         // check if the user login is matching its id
         // const { payload } = verifyToken(token, secretKey);
         // if (payload.id !== userId){

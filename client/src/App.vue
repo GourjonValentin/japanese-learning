@@ -1,6 +1,5 @@
 <template>
-    <div id="app" class="ss">
-    <div id="app" class="ss">
+    <div id="app" class="s">
         <HeaderComp/>
         <router-view/>
     </div>
@@ -41,20 +40,21 @@
             const setUsername = (newUsername) => {
                 username.value = newUsername;
             };
+            const setUserId = (newUserId) => {
+                userId.value = newUserId;
+            };
 
             const setSessionToken = (newSessionToken) => {
                 sessionToken.value = newSessionToken;
             };
 
+            provide('setUserId', setUserId);
             provide('setUsername', setUsername);
             provide('setSessionToken', setSessionToken);
-
-            
-
-            provide('favourites', (newFavourites) => {
+            provide('setFavourites', (newFavourites) => {
                 favourites.value = newFavourites;
             });
-            provide('isAdmin', (newIsAdmin) => {
+            provide('setIsAdmin', (newIsAdmin) => {
                 isAdmin.value = newIsAdmin;
             });
             const resetUser = () => {

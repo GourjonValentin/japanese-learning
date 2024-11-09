@@ -44,7 +44,7 @@
                             this.setSessionToken(response.data.sessionToken);
                             localStorage.setItem('sessionToken', response.data.sessionToken);
                             this.setUsername(this.username); // = this.username
-
+                            this.setUserId(response.data.userId);
                             alert(`You are now connected.\nYou will be redirected in Home Page\n`);
                             this.$router.push({path :'/'});
                         } else {
