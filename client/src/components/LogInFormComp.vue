@@ -1,15 +1,13 @@
 <template>
-    <div id="login">
-        <h2>Login</h2>
-        <form @submit.prevent="login">
-            <label>Username : </label>
-            <input type="text" name="username" v-model="username" required="true"/><br/>
-            <label>Password : </label>
-            <input type="password" name="password" v-model="password" required="true"/><br/>
-            <button type="submit">Submit</button>
-        </form>
-        <p id="formMessage">{{ formMessage }}</p>
-    </div>
+    <form @submit.prevent="login">
+        <h1>Welcome Back!</h1>
+        <label>Username : </label>
+        <input type="text" name="username" v-model="username" required="true"/><br/>
+        <label>Password : </label>
+        <input type="password" name="password" v-model="password" required="true"/><br/>
+        <button type="submit">Submit</button>
+    </form>
+    <p id="formMessage">{{ formMessage }}</p>
 </template>
 
 <script>

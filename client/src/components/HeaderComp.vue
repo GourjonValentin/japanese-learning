@@ -11,8 +11,9 @@
                 <router-link :to="{path :'/auth', query : { form : 'signout'}}">Sign out</router-link>
             </div>
             <div v-else class="auth-links">
-                <router-link :to="{path :'/auth', query : { form : 'login'}}">Login</router-link>
-                <router-link :to="{ path: '/auth', query: { form: 'signup' } }">Sign up</router-link>
+                <!-- <router-link :to="{path :'/auth', query : { form : 'login'}}">Login</router-link>
+                <router-link :to="{ path: '/auth', query: { form: 'signup' } }">Sign up</router-link> -->
+                <router-link :to="{ path: '/auth', query: { form: 'login/signup' } }">Log in/Sign up</router-link>
             </div>
         </nav>
     </div>
@@ -43,7 +44,7 @@
     margin-top: 0px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     border-bottom: solid 5px;
-    border-bottom-color: v-bind(globalColors.darkColor)
+    border-bottom-color: v-bind('globalColors.darkColor')
     }
 
     nav {
@@ -57,7 +58,7 @@
     nav a {
         padding: 20px;
         text-decoration: none;
-        color: v-bind(globalColors.darkColor);
+        color: v-bind('globalColors.darkColor');
     }
 
     nav a:hover {
