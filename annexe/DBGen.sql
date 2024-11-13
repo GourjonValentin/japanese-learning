@@ -105,10 +105,10 @@ INSERT INTO quiz (name, type, ownerid, content, difficultylevel) VALUES
             "title": "Translate: あなたの猫はかわいですよ。",
             "picture": "",
             "answers": [
-                {"id": 0, "content": "Mon chien est adorable"},
-                {"id": 1, "content": "Notre chat est mignon"},
-                {"id": 2, "content": "Ton chat est tres mignon non?"},
-                {"id": 3, "content": "Ton chat est mignon!"}
+                {"id": 0, "content": "My dog is adorable"},
+                {"id": 1, "content": "Our cat is cute"},
+                {"id": 2, "content": "Your cat is cute dont you think ?"},
+                {"id": 3, "content": "Your cat is so cute!"}
             ],
             "correct_answers": [3]
         }
@@ -126,19 +126,19 @@ INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
         {
             "id": 0,
             "title": "What does Liz say ?",
-            "picture": "https://ibb.co/KV0m6WT",
+            "picture": "https://i.ibb.co/kqHMKXN/Capture-d-e-cran-2024-11-09-a-19-18-12.png",
             "answers": [
-                {"id": 0, "content": "Je te regarde"},
-                {"id": 1, "content": "Tu me vois bien non ?"},
-                {"id": 2, "content": "Regarde toi !"},
-                {"id": 3, "content": "Je te regardais"}
+                {"id": 0, "content": "I see you"},
+                {"id": 1, "content": "Do you see me well?"},
+                {"id": 2, "content": "Look at you"},
+                {"id": 3, "content": "I saw you"}
             ],
             "correct_answers": [3]
         },
         {
             "id": 1,
             "title": "How do you pronounce つかまえた ?",
-            "picture": "https://ibb.co/S0DPqtT",
+            "picture": "https://i.ibb.co/wCZRDSH/Capture-d-e-cran-2024-11-09-a-19-13-09.png",
             "answers": [
                 {"id": 0, "content": "Tsukamaena"},
                 {"id": 1, "content": "Ukamaeta"},
@@ -150,14 +150,26 @@ INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
         {
             "id": 2,
             "title": "What is the translation of この目",
-            "picture": "https://ibb.co/nMCVPph",
+            "picture": "https://i.ibb.co/Swr1fSq/Capture-d-e-cran-2024-11-09-a-19-22-14.png",
             "answers": [
-                {"id": 0, "content": "Cet oeil !!!"},
-                {"id": 1, "content": "Mon corps !!!"},
-                {"id": 2, "content": "Ce corps !!!"},
-                {"id": 3, "content": "Mon oeil !!!"}
+                {"id": 0, "content": "This eye !!!"},
+                {"id": 1, "content": "My body !!!"},
+                {"id": 2, "content": "This body !!!"},
+                {"id": 3, "content": "My eye !!!"}
             ],
-            "correct_answers": [1]
+            "correct_answers": [0]
+        },
+        {
+            "id": 3,
+            "title": "What is the pronounciation of この目",
+            "picture": "https://i.ibb.co/Swr1fSq/Capture-d-e-cran-2024-11-09-a-19-22-14.png",
+            "answers": [
+                {"id": 0, "content": "Kono itsu"},
+                {"id": 1, "content": "Sono me"},
+                {"id": 2, "content": "Sono itsu"},
+                {"id": 3, "content": "Kono me"}
+            ],
+            "correct_answers": [3]
         }
     ]'
 ),
@@ -170,19 +182,19 @@ INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
         {
             "id": 0,
             "title": "What is the translation of 死 (し) ?",
-            "picture": "https://ibb.co/HtNW0jr",
+            "picture": "https://i.ibb.co/By4Xm9g/Capture-d-e-cran-2024-11-09-a-19-29-16.png",
             "answers": [
-                {"id": 0, "content": "Monstre"},
-                {"id": 1, "content": "Sang"},
-                {"id": 2, "content": "Pouvoir"},
-                {"id": 3, "content": "Mort"}
+                {"id": 0, "content": "Monster"},
+                {"id": 1, "content": "Blood"},
+                {"id": 2, "content": "Power"},
+                {"id": 3, "content": "Death"}
             ],
             "correct_answers": [3]
         },
         {
             "id": 1,
             "title": "What is the prononciation of ポチタ ?",
-            "picture": "https://ibb.co/41prp96",
+            "picture": "https://i.ibb.co/fDHwHBh/Capture-d-e-cran-2024-11-09-a-19-32-57.png",
             "answers": [
                 {"id": 0, "content": "porita"},
                 {"id": 1, "content": "pochita"},
@@ -194,7 +206,7 @@ INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
         {
             "id": 2,
             "title": "What is Denshi saying ?",
-            "picture": "https://ibb.co/6bzfWr9",
+            "picture": "https://i.ibb.co/k0jWS5b/Capture-d-e-cran-2024-11-09-a-19-35-08.png",
             "answers": [
                 {"id": 0, "content": "Gaâhahahaâ"},
                 {"id": 1, "content": "Gyayayayayayha"},

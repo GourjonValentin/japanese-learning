@@ -114,6 +114,24 @@ app.get('/jisho', async (req, res) => {
     }
 });
 
+app.get('/quizzes/:quizId', async (req, res) => {
+    try {
+        const { quizId } = req.params;
+        if (quizId === undefined) {
+            return res.status(400).json({ message: "Invalid format" });
+        }
+        let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
+        if (result.length === 0) {
+            return res.status(404).json({ message: "Quiz not found" });
+        }
+        console.log(result)
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error fetching quizzes:', error);
+        res.status(500).json({ error: 'Error fetching quizzes' });
+    }
+});
+
 app.get('/quizzes', async (req, res) => {
     try {
         const { difficulty, type, favourites } = req.query;
@@ -150,19 +168,20 @@ app.post('/users/edit-favourite', async (req, res) => {
         const { mode, quizId, userId, sessionToken } = req.body;
 
         // check if the user login is matching its id
-         const { payload } = verifyToken(sessionToken, secretKey);
-         console.log(payload);
-         if (payload.id !== userId){
-         return res.status(403).json({message : "your are not this user owner"});
+        const { payload } = verifyToken(sessionToken, secretKey);
+        console.log(payload);
+        if (payload.id !== userId) {
+            return res.status(403).json({ message: "your are not this user owner" });
         }
         let user = await query('SELECT * FROM users WHERE id=?', [userId]);
         if (user === undefined) {
             return res.status(404).json({ message: 'user not found' });
         }
         user = user[0];
-        console.log(user);
-        let newFavourites = JSON.parse(user.favourites);
-        console.log(newFavourites);
+        let newFavourites = user.favourites;
+        if (!(user.favourites instanceof Array)) {
+            newFavourites = JSON.parse(user.favourites);
+        }
         if (newFavourites === null || newFavourites === undefined) {
             newFavourites = [];
         }
@@ -188,9 +207,28 @@ app.post('/users/edit-favourite', async (req, res) => {
         }
     } catch (err) {
         console.error("Error: ", err.message);
+        console.log(err);
         return res.status(500).json({ message: "Server error", error: err.message });
     }
 });
+
+app.post('/save-score', async (req, res) => {
+    const { userId, quizId, score } = req.body;
+    try {
+        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
+        if (results.length === 0) {
+            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
+            res.status(201).json({ message: 'Score saved successfully.' });
+        } else {
+            await query('UPDATE scores SET score = ? WHERE id = ?', [score, results[0].id]);
+            res.status(200).json({ message: 'Score updated successfully.' });
+        }
+    } catch (error) {
+        console.error('Error saving score:', error);
+        res.status(500).json({ error: 'An error occurred while saving the score.' });
+    }
+});
+
 
 
 app.listen(port, () => {
