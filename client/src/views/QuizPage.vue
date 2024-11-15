@@ -1,39 +1,46 @@
 <template>
-    <div class="search">
-        <h2>Search Div</h2>
-    </div>
-    <div class="quiz-category">
-        <div>
-            Simple Quiz
+    <div v-if="this.$route.query.quizId === undefined" class="main">
+        <div class="search">
+            <h2>Search Div</h2>
         </div>
-        <div>
-            Anime Quiz
-        </div>
-    </div>
-    <div class="quizzes">
-        <div v-for="quiz in quizzes" :key="quiz.id">
-            <div v-if="this.userId !== '' || this.sessionToken !== ''">
-                <div class="favourites" @click="changeFavourites(quiz.id)">
-                    <img src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
-                    <img src="@/assets/heart-filled.png" v-else/>
-                </div>
+        <div class="quiz-category">
+            <div>
+                Simple Quiz
             </div>
-            
-            <h3>{{ quiz.name }}</h3>
-            <button class="start-quizz-button" @click="startQuiz">Start Quiz</button>
-            <div class="quizz-caption">
-                <p>Difficulty : </p>
-                <div v-for="i in quiz.difficultylevel" :key="i">
-                    <img src="@/assets/torii.png"/>
-                </div>
+            <div>
+                Anime Quiz
             </div>
-            <p>Owner : {{ quiz.ownername }}</p>
         </div>
-        <p id="quizzesMessage">{{ quizzesMessage }}</p>
+        <div class="quizzes">
+            <div v-for="quiz in quizzes" :key="quiz.id">
+                <div v-if="this.userId !== '' || this.sessionToken !== ''">
+                    <div class="favourites" @click="changeFavourites(quiz.id)">
+                        <img src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                        <img src="@/assets/heart-filled.png" v-else/>
+                    </div>
+                </div>
+                
+                <h3>{{ quiz.name }}</h3>
+                <button class="start-quizz-button" @click="startQuiz(quiz)">Start Quiz</button>
+                <div class="quizz-caption">
+                    <p>Difficulty : </p>
+                    <div v-for="i in quiz.difficultylevel" :key="i">
+                        <img src="@/assets/torii.png"/>
+                    </div>
+                </div>
+                <p>Owner : {{ quiz.ownername }}</p>
+            </div>
+            <p id="quizzesMessage">{{ quizzesMessage }}</p>
+        </div>
+    </div>
+    <div v-else class="renderingQuiz">
+        <QuizRender/>
     </div>
 </template>
 
 <script>
+    import router from '@/router';
+    import QuizRender from '@/components/QuizRender.vue';
     import { globalColors } from '../utils/GlobalVariable';
     import { globalTitle } from '../utils/GlobalVariable';
     import axios from 'axios';
@@ -55,9 +62,12 @@
                 quizzesMessage: ""
             };
         },
+        components: {
+            QuizRender
+        },
         methods : {
-            async startQuiz(){
-                alert("a coder haha");
+            async startQuiz(quiz){
+                    router.push({path:'/quiz', query: { quizId: quiz.id}});    
             },
             async changeFavourites(quizId){
                 let mode = 'add';
@@ -98,7 +108,7 @@
                 } catch (err) {
                     console.log(err)
                     if (err.response.status === 404){
-                    this.quizzesMessage = "Oops... The quizzes could not be reached... ";
+                        this.quizzesMessage = "Oops... The quizzes could not be reached... ";
                     } else if ( err.response.status === 500){
                         this.quizzesMessage = "Oops... The server is currently unavalable...";
                     } else {
@@ -114,14 +124,14 @@
   
 <style>
     * { /* why necessary ?????? */
-        color: v-bind(globalColors.darkColor);
+        color: v-bind('globalColors.darkColor');
     }
     .search {
         margin: 20px;
         padding : 10px;
         border: 2px solid ;
         border-radius: 20px;
-        border-color: v-bind(globalColors.darkColor);
+        border-color: v-bind('globalColors.darkColor');
     }
 
     .quiz-category {
@@ -133,7 +143,7 @@
         padding : 40px;
         border: 2px solid ;
         border-radius: 20px;
-        border-color: v-bind(globalColors.darkColor);
+        border-color: v-bind('globalColors.darkColor');
     }
     
     .quizzes {
@@ -143,7 +153,7 @@
     .quizzes > div {
         border : solid 2px;
         border-radius: 20px;
-        border-color: v-bind(globalColors.darkColor);
+        border-color: v-bind('globalColors.darkColor');
         margin : 30px;
     }
     .favourites {
