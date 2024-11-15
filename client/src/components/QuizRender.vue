@@ -160,7 +160,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .content{
         border: solid 2px v-bind('globalColors.brownColor');
         border-radius: 20px;

@@ -87,7 +87,7 @@
     };
 </script>
 
-<style>
+<style scoped>
     .tabs {
         display: inline-flex;
         position: relative;
