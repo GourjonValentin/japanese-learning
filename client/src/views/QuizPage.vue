@@ -1,7 +1,12 @@
 <template>
     <div v-if="this.$route.query.quizId === undefined" class="main">
         <div class="search">
+            
             <h2>Search Div</h2>
+            <form>
+                <img src="../assets/search_logo.png" alt="search_logo.png"/>
+                <input type="text" placeholder="search"/>
+            </form>
         </div>
         <div class="quiz-category">
             <div>
