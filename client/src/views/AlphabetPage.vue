@@ -128,11 +128,11 @@
     }
 
     .tabs button.active:nth-of-type(1) ~ .indicator {
-        transform: translateX(0); /* Hiragana button */
+        left: 0; /* Hiragana button */
     }
 
     .tabs button.active:nth-of-type(2) ~ .indicator {
-        transform: translateX(100%); /* Katakana button */
+        left: 50%; /* Katakana button */
     }
 
     .grid-letters{
