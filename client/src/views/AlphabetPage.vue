@@ -113,10 +113,6 @@
         transition: color 0.3s;
     }
 
-    button:hover {
-        background-color: v-bind('globalColors.redColor');
-    }
-
     .indicator {
         position: absolute;
         top: 0;
