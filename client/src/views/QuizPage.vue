@@ -1,19 +1,36 @@
 <template>
     <div v-if="this.$route.query.quizId === undefined" class="main">
         <div class="search">
-            
-            <h2>Search Div</h2>
-            <form>
+            <form class="search-form" @submit.prevent="handleSearchSubmit()">
                 <img src="../assets/search_logo.png" alt="search_logo.png"/>
-                <input type="text" placeholder="search"/>
+                <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="search"/>
+                <button  class="search-button" type="submit">Search</button>
             </form>
-        </div>
-        <div class="quiz-category">
-            <div>
-                Simple Quiz
-            </div>
-            <div>
-                Anime Quiz
+            <div class="filter">
+                <div @click="toggleQuizFilterType('simple')"
+                    :class="{active: this.searchFilterType === 'simple'}"
+                >
+                        Simple Quiz
+                </div>
+                <div @click="toggleQuizFilterType('anime')"
+                    :class="{active: this.searchFilterType === 'anime'}"
+                >
+                    Anime Quiz
+                </div>
+                <div v-if="this.userId"
+                    @click="() => {this.searchFilterFavourites = !(this.searchFilterFavourites)}"
+                    :class="{active: this.searchFilterFavourites}"
+                >
+                    Favourites
+                </div>
+                <div>
+                    <select v-model="searchFilterDifficulty">
+                        <option >all</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
             </div>
         </div>
         <div class="quizzes">
@@ -64,13 +81,48 @@
                 title: globalTitle,
                 globalColors : globalColors,
                 quizzes : [],
-                quizzesMessage: ""
+                quizzesMessage: "",
+                searchFilterType: "",
+                searchFilterFavourites: 0,
+                searchFilterDifficulty: "all"
             };
         },
         components: {
             QuizRender
         },
         methods : {
+            toggleQuizFilterType(type){
+                if (this.searchFilterType === ""){
+                    this.searchFilterType = type;
+                } else if (this.searchFilterType == type){
+                    this.searchFilterType = "";
+                } else {
+                    this.searchFilterType = type;
+                }
+            },
+            async handleSearchSubmit(){
+                await axios.get('http://localhost:3000/quizzes',
+                    { params : { 
+                        difficulty : this.searchFilterDifficulty, 
+                        type: (this.searchFilterType === '' ? null : this.searchFilterType), 
+                        favourites : JSON.stringify(this.searchFilterFavourites) ? this.favourites : [], 
+                        name: this.searchName
+                    }}
+                )
+                .then( res => {
+                    if (res.status === 200){
+                        this.quizzes = res.data;
+                        this.quizzesMessage = "";
+                    }
+                })
+                .catch((err) => {
+                    if(err.status === 404){
+                        this.quizzesMessage = "No quizzes found...";
+                        this.quizzes = [];
+                    }
+                    console.log("err",err);
+                })
+            },
             async startQuiz(quiz){
                     router.push({path:'/quiz', query: { quizId: quiz.id}});    
             },
@@ -128,9 +180,7 @@
 </script>
   
 <style>
-    * { /* why necessary ?????? */
-        color: v-bind('globalColors.darkColor');
-    }
+    /* SEARCH STYLES */
     .search {
         margin: 20px;
         padding : 10px;
@@ -139,18 +189,69 @@
         border-color: v-bind('globalColors.darkColor');
     }
 
-    .quiz-category {
+    .search > * {
         display: flex;
-        justify-content: center;
-        gap : 50px;
         align-items: center;
-        margin: 50px;
-        padding : 40px;
-        border: 2px solid ;
-        border-radius: 20px;
-        border-color: v-bind('globalColors.darkColor');
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        max-width: 500px;
+        margin-top: 5px;
+        margin-bottom: 5px;
     }
-    
+
+    .search-input {
+        flex: 1;
+        padding: 8px 15px;
+        border: 2px solid v-bind('globalColors.darkColor');
+        border-radius: 25px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    .search-input:focus {
+        border-color: v-bind('globalColors.lightColor');
+    }
+
+    .search-button {
+        padding: 8px 20px;
+        color: #fff;
+        background-color: v-bind('globalColors.darkColor');
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .search-button:hover {
+        background-color: v-bind('globalColors.lightColor');
+        transform: scale(1.05);
+    }
+
+    .search-button:active {
+        transform: scale(0.95);
+    }
+
+    .filter > div{
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #fff;
+        background-color: v-bind('globalColors.brownColor');
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .filter > div:hover {
+        background-color: v-bind('globalColors.lightColor');
+        transform: scale(1.05);
+    }
+
+    .filter > div.active {
+        background-color: v-bind('globalColors.lightColor');
+    }
+
+    /* QUIZZES STYLES */
     .quizzes {
         display: flex;
         flex-wrap: wrap;

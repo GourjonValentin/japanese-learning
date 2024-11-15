@@ -36,7 +36,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     #header {
     background-color: v-bind('globalColors.redColor');
     padding-top: 30px;
