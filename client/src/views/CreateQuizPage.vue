@@ -20,7 +20,7 @@
             </form>
             <p> {{ quizDifficulty}}</p>
         </div>
-        <div class="questions" v-else>
+        <div class="questions" v-else :key="regenateKey">
             <form @submit.prevent="submitQuestions">
                 <div class="question" v-for="question in quizQuestions" :key="question.id">
                     <p>Question {{ question.id }}</p>
@@ -29,8 +29,8 @@
                     <input :name="'title-' + question.id" type="text" required>
                     <label for="picture" v-if="quizType === 'anime'">Picture link : </label>
                     <input :name="'picture-' + question.id" v-if="quizType === 'anime'" type="text" required>
-                    <p>Answers :</p>
-                    <div v-for="answer in question.answers" :key="answer.id">
+                    <p>Answers :</p>x
+                    <div v-for="answer in question.answers || []" :key="answer.id">
                         <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox" value="coucou" >
                         <input :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
                         <button @click="deleteAnswer(question.id, answer.id)" type="button" v-if="quizQuestions[question.id].answers.length > 2 ">Delete Answer</button>
@@ -70,7 +70,8 @@ import {inject} from "vue";
                 quizDifficulty: 1,
                 quizType: "simple",
                 init: false,
-                quizQuestions: []
+                quizQuestions: [],
+                regenateKey : 0
             };
         },
         methods: {
@@ -87,11 +88,15 @@ import {inject} from "vue";
                 let newQuestion = this.emptyQuestionTemplate();
                 this.quizQuestions.push(newQuestion);
                 this.addAnswer(newQuestion.id);
-                this.addAnswer(newQuestion.id)
+                this.addAnswer(newQuestion.id);
+                this.regenateKey++;
+                console.log("ad", this.quizQuestions);
             },
             deleteQuestion(id) {
                 console.log("Deleting question " + id);
                 this.quizQuestions = this.quizQuestions.filter(elt => elt.id !== id);
+                console.log("ez", this.quizQuestions);
+                this.regenateKey++;
             },
             initQuiz() {
                 this.init = true;
@@ -111,11 +116,11 @@ import {inject} from "vue";
                 console.log(`Deleting answer ${questionId} -> ${answerId}`);
                 let targetQuestion = this.quizQuestions.find(elt => elt.id === questionId);
                 let index = this.quizQuestions.findIndex(elt => elt.id === questionId);
-                if (targetQuestion !== undefined) {
+                if (targetQuestion !== undefined && targetQuestion.answers !== undefined) {
                     console.log("filtering result" + targetQuestion.answers.filter(elt => elt.id !== answerId));
-                    this.quizQuestions[index].answers = targetQuestion.answers.filter(elt => elt.id !== answerId);
-                    console.log(this.quizQuestions)
-                }
+                        this.quizQuestions[index].answers = targetQuestion.answers.filter(elt => elt.id !== answerId);
+                        console.log(this.quizQuestions)
+                    }
             },
             async submitQuestions(submitEvent) {
                 let questions = [];
