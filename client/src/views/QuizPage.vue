@@ -10,6 +10,7 @@
             Anime Quiz
         </div>
     </div>
+    <button class="start-quizz-button" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
     <div class="quizzes">
         <div v-for="quiz in quizzes" :key="quiz.id">
             <div v-if="this.userId !== '' || this.sessionToken !== ''">

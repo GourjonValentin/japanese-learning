@@ -86,6 +86,8 @@ app.post('/login', async (req, res) => {
     }
 });
 
+
+
 app.post('/auth/check', async (req, res) => {
     const token = req.body.sessionToken;
     const { status, message, payload } = verifyToken(token, secretKey);
@@ -128,7 +130,7 @@ app.get('/quizzes', async (req, res) => {
             results = results.filter(quiz => quiz.type = type);
         }
         if (favourites) {
-            results = results.filter(quiz => quiz.id in favourites);
+            results = results.filter(quiz => quiz.id in JSON.parse(favourites));
         }
         console.log(results);
         results = await Promise.all(
@@ -143,6 +145,21 @@ app.get('/quizzes', async (req, res) => {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
     }
+});
+
+app.post('/create', async (req,res) => {
+    const { quizName, quizDifficulty, quizType, quizQuestions, ownerId} = req.body;
+    console.log(quizQuestions);
+    try {
+        await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)',[quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
+
+        //await query(`INSERT INTO quiz(name, type, content, ownerid) VALUES (${quizName}, ${quizType}, [{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}][{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}]${JSON.stringify(JSON.parse(quizQuestions))}, ${parseInt(ownerId)}`)
+        return res.sendStatus(201);
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err});
+    }
+
 });
 
 app.post('/users/edit-favourite', async (req, res) => {
@@ -161,6 +178,8 @@ app.post('/users/edit-favourite', async (req, res) => {
         }
         user = user[0];
         console.log(user);
+        console.log(user.favourites instanceof Array)
+
         let newFavourites = JSON.parse(user.favourites);
         console.log(newFavourites);
         if (newFavourites === null || newFavourites === undefined) {

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently --kill-others \"npm run server\" \"npm run client\"",
-    "devstart": "concurrently --kill-others \"npm run server-dev\" \"npm run client\"",
+    "start": "npm install && concurrently --kill-others \"npm run server\" \"npm run client\"",
+    "devstart": "npm install && concurrently --kill-others \"npm run server-dev\" \"npm run client\"",
     "server": "cd server && npm install && npm start",
     "server-dev": "cd server && npm install && npm run devstart",
     "client": "cd client && npm install && npm run serve"

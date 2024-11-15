@@ -95,6 +95,7 @@ import {ref, provide, watch} from 'vue';
                 if (sessionToken) {
                     // Check if the session token is still valid
                     try {
+
                         const response = await axios.post('http://localhost:3000/auth/check', {
                             sessionToken: sessionToken
                         }).catch(error => {
@@ -102,10 +103,14 @@ import {ref, provide, watch} from 'vue';
                                 console.log('Invalid token');
                             }
                         });
-                        if (response && response.data && response.data.message === 'Valid token') {
+                        console.log('checking user token')
+                        console.log(response)
+                        if (response && response.data && response.status === 200) {
                             // The session token is still valid
                             this.setSessionToken(sessionToken);
-                            this.setUsername(response.data.username);
+                            this.setUsername(response.data.username)
+                            console.log('checking user token')
+
                         }
                     } catch (error) {
                         console.error('There was an error!', error);
@@ -115,6 +120,7 @@ import {ref, provide, watch} from 'vue';
             }
         },
         mounted() {
+            console.log("mounted")
             this.checkUser()
         }
     }
