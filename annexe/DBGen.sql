@@ -26,7 +26,7 @@ CREATE TABLE scores (
     id int NOT NULL AUTO_INCREMENT,
     userid int NOT NULL,
     quizid int NOT NULL,
-    score int NOT NULL,
+    score float NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (userid) REFERENCES users(id),
     FOREIGN KEY (quizid) REFERENCES quiz(id) 

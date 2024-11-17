@@ -25,8 +25,8 @@ app.use(cors())
 // Change values to connect to DB
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: '12345',
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD,
     database: 'japanese_learning_db'
 })
 

@@ -46,16 +46,16 @@
         <div class="content" v-if="quiz.content.length > 0">
             <h4>{{ this.quiz.content[questionNumber].title }}</h4>
             <img v-if="quiz.content[questionNumber].picture !==''" :src="quiz.content[questionNumber].picture" :alt="quiz.content[questionNumber].picture"/>
-            <div :class="{active: (userAnswers[questionNumber] === 0)}" @click="changeUserAnswers(0)">
+            <div :class="{active: (userAnswers[questionNumber].includes(0))}" @click="changeUserAnswers(0)">
                 <p>{{ quiz.content[questionNumber].answers[0].content }}</p>
             </div>
-            <div  :class="{active: (userAnswers[questionNumber] === 1)}" @click="changeUserAnswers(1)">
+            <div  :class="{active: (userAnswers[questionNumber].includes(1))}" @click="changeUserAnswers(1)">
                 <p>{{ quiz.content[questionNumber].answers[1].content }}</p>
             </div>
-            <div  :class="{active: (userAnswers[questionNumber] === 2)}" @click="changeUserAnswers(2)">
+            <div  :class="{active: (userAnswers[questionNumber].includes(2))}" @click="changeUserAnswers(2)" v-if="quiz.content[questionNumber].answers.length > 2">
                 <p>{{ quiz.content[questionNumber].answers[2].content }}</p>
             </div>
-            <div :class="{active: (userAnswers[questionNumber] === 3)}" @click="changeUserAnswers(3)" v-if="quiz.content[questionNumber].answers.length === 4">
+            <div :class="{active: (userAnswers[questionNumber].includes(3))}" @click="changeUserAnswers(3)" v-if="quiz.content[questionNumber].answers.length === 4">
                 <p>{{ quiz.content[questionNumber].answers[3].content }}</p>
             </div>
             {{ questionNumber +1 }}/{{ quiz.content.length }}
@@ -89,16 +89,37 @@
             }
         },
         methods: {
+            initAnswers() {
+                for (let i=0; i < this.quiz.content.length; i++) {
+                    this.userAnswers.push([])
+                }
+            },
             changeUserAnswers(answerNumber){
-                this.userAnswers[this.questionNumber] = answerNumber;
+                if (this.userAnswers[this.questionNumber].includes(answerNumber)) {
+                    // delete
+                    this.userAnswers[this.questionNumber] = this.userAnswers[this.questionNumber].filter(elt => elt !== answerNumber);
+                } else {
+                    if (this.userAnswers[this.questionNumber].length < this.quiz.content[this.questionNumber].correct_answers.length){
+                        this.userAnswers[this.questionNumber].push(answerNumber);
+                    } else {
+                        alert("Too much options selected");
+                    }
+                }
+
+
                 console.log("an : ", this.userAnswers);
             },
             calculateScore(){
                 this.userAnswers.forEach((value, index)=>{
                     console.log("el", value, index);
-                    if (value === this.quiz.content[index].correct_answers[0]){
-                        this.score += 1;
-                    }
+                    let n_correct;
+                    value.forEach((ans_value) => {
+                        if (this.quiz.content[index].correct_answers.includes(ans_value)) {
+                            n_correct++;
+                        }
+
+                    });
+                   this.score += n_correct / this.quiz.content[index].correct_answers.length;
                 });
                 console.log(this.userAnswers);
                 
@@ -118,7 +139,7 @@
             finishQuiz(){
                 console.log("eze", this.userAnswers.length, this.quiz.content.length)
                 if (this.userAnswers.length < this.quiz.content.length){
-                    if (confirm(`You left ${ this.quiz.content.length - this.userAnswers.length } questions unanswers...\nAre you sure you want to end this quiz ?`)){
+                    if (confirm(`You left ${ this.quiz.content.length - this.userAnswers.filter(elt => elt.length > 0).length } questions unanswers...\nAre you sure you want to end this quiz ?`)){
                         this.calculateScore();
                         this.saveScore();
                         this.questionNumber +=1;
@@ -142,6 +163,7 @@
                             this.quiz.content = JSON.parse(this.quiz.content);
                         }
                     }
+                    this.initAnswers()
                 } catch (err){
                     console.log(err)
                     if (err.response.status === 404){
@@ -162,6 +184,7 @@
 
 <style scoped>
     .content{
+        display: block;
         border: solid 2px v-bind('globalColors.brownColor');
         border-radius: 20px;
         margin : 10px;
@@ -179,7 +202,6 @@
     .content > .active {
         background-color: v-bind('globalColors.lightColor');
         border: solid 2px v-bind('globalColors.brownColor');
-
     }
     .content > div > p {
         color: white;
