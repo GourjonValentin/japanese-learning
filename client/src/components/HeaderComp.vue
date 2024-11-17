@@ -6,8 +6,9 @@
                 <router-link to="/">Home</router-link>
                 <router-link to="/quiz">Quiz</router-link>
                 <router-link to="/jisho">Jisho</router-link>
+                <router-link to="/alphabet">Alphabet</router-link>
             </div>
-            <div v-if="this.sessionToken" class="auth-links">
+            <div v-if="sessionToken" class="auth-links">
                 <router-link :to="{path :'/auth', query : { form : 'signout'}}">Sign out</router-link>
             </div>
             <div v-else class="auth-links">

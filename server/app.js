@@ -22,11 +22,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json())
 app.use(cors())
 
-
+// Change values to connect to DB
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root2',
-    password: '',
+    user: 'root',
+    password: '12345',
     database: 'japanese_learning_db'
 })
 
@@ -50,6 +50,57 @@ const query = util.promisify(db.query).bind(db);
 
 // AUTH
 
+app.post('/signup', async (req, res) => {
+    const { username, password } = req.body;
+
+    if(!username || !password) {
+        return res.status(400).json({ message: "Please provide both username and password." });
+    }
+
+    // Array that will store the errors
+    const passwordErrors = [];
+
+    // Password strength requirements
+    if (password.length < 8) {
+        passwordErrors.push("• Password must be at least 8 characters long.");
+    }
+    if (!/[A-Z]/.test(password)) {
+        passwordErrors.push("• Password must include at least one uppercase letter.");
+    }
+    if (!/[a-z]/.test(password)) {
+        passwordErrors.push("• Password must include at least one lowercase letter.");
+    }
+    if (!/\d/.test(password)) {
+        passwordErrors.push("• Password must include at least one number.");
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        passwordErrors.push("• Password must include at least one special character.");
+    }
+
+    try {
+        const existingUser = await query('SELECT * FROM users WHERE username = ?', [username]);
+
+        if (existingUser.length > 0) {
+            return res.status(409).json({ message: "This username is already taken." });
+        }
+
+        // Print the list of errors to rectify in order to sign up
+        if (passwordErrors.length > 0) {
+            return res.status(400).json({ message: passwordErrors });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        await query('INSERT INTO users (username, isAdmin, password, favourites) VALUES(?, 0, ?, "[]")', [username, hashedPassword]);
+
+        res.status(201).json({ message: "User registered successfully." });
+
+    } catch (err) {
+        console.error("Error during signup:", err.message);
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
 app.post('/login', async (req, res) => {
     const { password, username } = req.body;
 
@@ -61,7 +112,7 @@ app.post('/login', async (req, res) => {
         const results = await query('SELECT * FROM users WHERE username=?', [username]);
 
         if (results.length === 0) {
-            return res.status(203).json({ message: "This username is not registered" });
+            return res.status(203).json({ message: "This username is not registered." });
         }
 
         // Assuming results[0] holds the user information
@@ -76,9 +127,9 @@ app.post('/login', async (req, res) => {
                 secretKey,
                 { expiresIn: '1h' }
             )
-            res.status(200).json({ username: user.username, favourites: user.favourites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token });
+            res.status(200).json({ username: user.username, favourites: user.favourites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token, message: "Succesful login" });
         } else {
-            res.status(401).json({ message: "Invalid credentials" });
+            res.status(401).json({ message: "Invalid username or password" });
         }
     } catch (err) {
         console.error("Error: ", err.message);

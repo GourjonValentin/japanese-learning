@@ -36,26 +36,65 @@ import {ref, provide, watch} from 'vue';
             provide('favourites', favourites);
             provide('isAdmin', isAdmin);
 
-            const setUsername = (newUsername) => {
-                username.value = newUsername;
-            };
             const setUserId = (newUserId) => {
                 userId.value = newUserId;
+            };
+
+            const setUsername = (newUsername) => {
+                username.value = newUsername;
             };
 
             const setSessionToken = (newSessionToken) => {
                 sessionToken.value = newSessionToken;
             };
 
+            const setFavourites = (newFavourites) => {
+                favourites.value = newFavourites;
+            };
+
+            const setIsAdmin = (newIsAdmin) => {
+                isAdmin.value = newIsAdmin;
+            };
+
+            const loginUser = async (username, password) => {
+                return await axios.post('http://localhost:3000/login', {
+                    username,
+                    password
+                })
+                    .then(response => {
+                        if (response.status === 203){
+                            return { success: false, message: "No such user"}
+                        }
+                        else if (response.status === 200){
+                            setUsername(username);
+                            setSessionToken(response.data.sessionToken);
+                            localStorage.setItem('sessionToken', response.data.sessionToken);
+                            setUserId(response.data.userId);
+                            setFavourites(response.data.favourites);
+                            setIsAdmin(response.data.isAdmin);
+                            
+                            // alert(`You are now connected.\nYou will be redirected in Home Page\n`);
+                            return { success: true, message: ""}
+                        } else {
+                            throw new Error("Status server error");
+                        }
+                    }).catch(error => {
+                        if (error.status === 401){
+                            return { success: false, message: "Invalid username or password"}
+                        }
+                        else {
+                            return { success: false, message: "A server error occured...\nPlease try later"}
+                        }
+                    });
+            }
+
             provide('setUserId', setUserId);
             provide('setUsername', setUsername);
             provide('setSessionToken', setSessionToken);
-            provide('setFavourites', (newFavourites) => {
-                favourites.value = newFavourites;
-            });
-            provide('setIsAdmin', (newIsAdmin) => {
-                isAdmin.value = newIsAdmin;
-            });
+            provide('setFavourites', setFavourites);
+            provide('setIsAdmin', setIsAdmin);
+            provide('loginUser', loginUser);
+
             const resetUser = () => {
                 userId.value = '';
                 username.value = '';
@@ -129,7 +168,7 @@ import {ref, provide, watch} from 'vue';
 }
 
 html, body, #app {
-    height: 100%;
+    /* height: 100%; */
     margin: 0;
     padding: 0;
     font-family: Avenir, Helvetica, Arial, sans-serif;

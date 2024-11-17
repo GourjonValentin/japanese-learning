@@ -1,32 +1,34 @@
 <template>
-    <div v-if="this.$route.query.form === 'login/signup'" class="container" :class="{ active: isSignUpActive }" id="container">
-        <div class="form-container sign-up">
-            <SignUpFormComp/>
-        </div>
-  
-        <div class="form-container log-in">
-            <LogInFormComp/>
-        </div>
-  
-      <!-- Toggle Container -->
-        <div class="toggle-container">
-            <div class="toggle">
-                <div class="toggle-panel toggle-left">
-                    <h1>Welcome Back!</h1>
-                    <p>Enter your personal details to use all site features</p>
-                    <button class="hidden" @click="toggleSignUp()">Log In</button>
-                </div>
-                <div class="toggle-panel toggle-right">
-                    <h1>Hello, Friend!</h1>
-                    <p>Register with your personal details to use all site features</p>
-                    <button class="hidden" @click="toggleSignUp()">Sign Up</button>
+    <div class="content">
+        <div v-if="this.$route.query.form === 'login/signup'" class="container" :class="{ active: isSignUpActive }" id="container">
+            <div class="form-container sign-up">
+                <SignUpFormComp/>
+            </div>
+    
+            <div class="form-container log-in">
+                <LogInFormComp/>
+            </div>
+    
+            <!-- Toggle Container -->
+            <div class="toggle-container">
+                <div class="toggle">
+                    <div class="toggle-panel toggle-left">
+                        <h1>Already have an account?</h1>
+                        <p>Enter your personal details to use all site features</p>
+                        <button class="hidden" @click="toggleSignUp()">Log In</button>
+                    </div>
+                    <div class="toggle-panel toggle-right">
+                        <h1>こんにちわ!</h1>
+                        <p>Register with your personal details to use all site features</p>
+                        <button class="hidden" @click="toggleSignUp()">Sign Up</button>
+                    </div>
                 </div>
             </div>
         </div>
+    
+        <SignOutComp v-else-if="this.$route.query.form === 'signout'"/>
+        <RoutingError v-else/>
     </div>
-
-    <SignOutComp v-else-if="this.$route.query.form === 'signout'"/>
-    <RoutingError v-else/>
   </template>
   
   <script>
@@ -60,7 +62,7 @@
   };
   </script>
   
-<style scoped>
+<style>
     #formMessage {
         color: red;
         font-size: small;
@@ -68,21 +70,20 @@
 
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-    *{
+    .content{
+        display: flex;
+        justify-content: center;
+    }
+
+    .content *{
         margin: 0;
         padding: 0;
         box-sizing: border-box;
         font-family: 'Montserrat', sans-serif;
     }
 
-    body{
-        background-color: #c9d6ff;
-        background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        height: 100vh;
+    .content h1{
+        font-family: 'JapaneseStyleFont', sans-serif;
     }
 
     .container{
@@ -101,10 +102,6 @@
         line-height: 20px;
         letter-spacing: 0.3px;
         margin: 20px 0;
-    }
-
-    .container span{
-        font-size: 12px;
     }
 
     .container a{
@@ -159,6 +156,11 @@
         top: 0;
         height: 100%;
         transition: all 0.6s ease-in-out;
+    }
+
+    .form-container p{
+        margin: 0;
+        color: v-bind('globalColors.redColor');
     }
 
     .log-in{

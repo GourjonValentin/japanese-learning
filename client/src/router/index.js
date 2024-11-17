@@ -4,6 +4,7 @@ import HomePage from '../views/HomePage';
 import AuthPage from '../views/AuthPage';
 import JishoPage from '../views/JishoPage';
 import QuizPage from '../views/QuizPage';
+import AlphabetPage from '../views/AlphabetPage';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -23,6 +24,10 @@ const router = createRouter({
         {
             path: '/quiz',
             component: QuizPage
+        },
+        {
+            path: '/alphabet',
+            component: AlphabetPage
         }
     ]
 })
