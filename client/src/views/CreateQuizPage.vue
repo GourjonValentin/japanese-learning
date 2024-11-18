@@ -33,16 +33,16 @@
                     <div v-for="answer in question.answers || []" :key="answer.id">
                         <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox" value="coucou">
                         <input :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
-                        <button @click="deleteAnswer(question.id, answer.id)" type="button"
+                        <button @click.prevent="deleteAnswer(question.id, answer.id)" type="button"
                             v-if="question.answers.length > 2">Delete Answer</button>
                     </div>
                     <button @click.prevent="addAnswer(question.id)" type="button"
                         v-if="question.answers.length <= 3">Add anwser choice</button>
 
-                    <button type="button" @click="deleteQuestion(question.id)" v-if="quizQuestions.length > 1">Delete
+                    <button type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizQuestions.length > 1">Delete
                         question {{ question.id }}</button>
                 </div>
-                <button @click="addQuestion" type="button">Add Question</button>
+                <button @click.prevent="addQuestion" type="button">Add Question</button>
                 <button type="submit">Valider Formulaire</button>
             </form>
         </div>
@@ -132,6 +132,7 @@ export default {
         },
         async submitQuestions(submitEvent) {
             let questions = [];
+            let idGen = 0;
             for (let elt of submitEvent.target.elements) {
                 if (elt.name && (elt.name.search('title') !== -1 || elt.name.search('checkbox') !== -1 || elt.name.search('answer') !== -1)) {
                     let splitted = elt.name.split('-');
@@ -139,6 +140,7 @@ export default {
                     switch (type) { // a rajouter pictures
                         case "title": {
                             questions.push({
+                                "id": idGen++,
                                 "title": elt.value,
                                 "picture": "",
                                 "answers": [],
