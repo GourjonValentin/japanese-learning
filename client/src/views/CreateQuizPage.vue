@@ -20,7 +20,7 @@
             </form>
             <p> {{ quizDifficulty }}</p>
         </div>
-        <div class="questions" v-else :key="regenateKey">
+        <div class="questions" v-else>
             <form @submit.prevent="submitQuestions">
                 <div class="question" v-for="question in quizQuestions" :key="question.id">
                     <p>Question {{ question.id }}</p>
@@ -74,8 +74,7 @@ export default {
             quizDifficulty: 1,
             quizType: "simple",
             init: false,
-            quizQuestions: [],
-            regenateKey: 0
+            quizQuestions: []
         };
     },
     methods: {
@@ -93,16 +92,10 @@ export default {
             this.quizQuestions.push(newQuestion);
             this.addAnswer(newQuestion.id);
             this.addAnswer(newQuestion.id);
-            this.regenateKey++;
             console.log("ad", this.quizQuestions);
         },
         deleteQuestion(id) {
-            console.log("avant");
-            console.log(this.quizQuestions);
             this.quizQuestions = this.quizQuestions.filter(elt => elt.id !== id);
-            console.log("apres")
-            console.log(this.quizQuestions);
-            this.regenateKey++;
             console.log("Delete question ", this.quizQuestions);
 
         },
@@ -125,9 +118,7 @@ export default {
             let targetQuestion = this.quizQuestions.find(elt => elt.id === questionId);
             let index = this.quizQuestions.findIndex(elt => elt.id === questionId);
             if (targetQuestion !== undefined && targetQuestion.answers !== undefined) {
-                console.log("filtering result" + targetQuestion.answers.filter(elt => elt.id !== answerId));
                 this.quizQuestions[index].answers = targetQuestion.answers.filter(elt => elt.id !== answerId);
-                console.log(this.quizQuestions)
             }
         },
         async submitQuestions(submitEvent) {
@@ -137,6 +128,8 @@ export default {
                 if (elt.name && (elt.name.search('title') !== -1 || elt.name.search('checkbox') !== -1 || elt.name.search('answer') !== -1)) {
                     let splitted = elt.name.split('-');
                     let type = splitted[0];
+                    let questionId = splitted[1];
+                    let answerId = splitted[2];
                     switch (type) { // a rajouter pictures
                         case "title": {
                             questions.push({
@@ -148,20 +141,21 @@ export default {
                             });
                             break;
                         }
-                        case "checkbox": { // a changer dans correct answers
+                        case "checkbox": {
                             if (elt.checked) {
-                                questions[splitted[1]].correct_answers.push(splitted[2]);
+
+                                questions[this.quizQuestions.findIndex(quizQuestion => quizQuestion.id == questionId)].correct_answers.push(answerId);
                             }
                             break
                         }
-                        case "answer": { // should be ok
-                            questions[splitted[1]].answers.push({
-                                "id": splitted[2],
+                        case "answer": {
+                            questions[this.quizQuestions.findIndex(elt => elt.id == questionId)].answers.push({
+                                "id": answerId,
                                 "content": elt.value
                             });
                             break
                         } case "picture": {
-                            questions[splitted[1]].picture = elt.value;
+                            questions[this.quizQuestions.findIndex(elt => elt.id == questionId)].picture = elt.value;
                             break;
                         } default: {
                             throw Error("Input type not expected");
@@ -175,6 +169,7 @@ export default {
                 this.waiting = true;
                 await this.createQuiz(questions);
                 this.waiting = false;
+
             } else {
                 alert("Quiz not correct");
             }
@@ -199,6 +194,8 @@ export default {
                 .then(response => {
                     if (response.status === 201) {
                         alert('Quiz created');
+                        this.$router.push({path:'/quiz'});
+
                     } else {
                         throw new Error('Status server error');
                     }

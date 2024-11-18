@@ -15,8 +15,6 @@
                     userChoice: this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id) || this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id.toString()) }"
                      v-for="answer in question.answers" :key="answer.id"
                 >
-                    {{ this.userAnswers[question.id] }}
-                    {{ answer.id }}
                     {{ answer.content }}
                 </div>
             </div>
@@ -47,7 +45,6 @@
                 v-for="answer in quiz.content[questionNumber].answers"
                 :key="answer.id"
             >
-                {{ answer.id }}
                 <p>{{ answer.content }}</p>
             </div>
 
@@ -101,11 +98,9 @@ export default {
             }
 
 
-            console.log("an : ", this.userAnswers);
         },
         calculateScore() {
             this.userAnswers.forEach((value, index) => {
-                console.log("el", value, index);
                 let n_correct = 0;
                 value.forEach((ans_value) => {
                     if (this.quiz.content[index].correct_answers.includes(ans_value) || this.quiz.content[index].correct_answers.includes(ans_value.toString())) {
@@ -115,7 +110,6 @@ export default {
                 });
                 this.score += n_correct / this.quiz.content[index].correct_answers.length;
             });
-            console.log(this.userAnswers);
 
         },
         async saveScore() {
@@ -135,7 +129,6 @@ export default {
                 })
         },
         finishQuiz() {
-            console.log("eze", this.userAnswers.length, this.quiz.content.length)
             if (this.userAnswers.length < this.quiz.content.length) {
                 if (confirm(`You left ${this.quiz.content.length - this.userAnswers.filter(elt => elt.length > 0).length} questions unanswers...\nAre you sure you want to end this quiz ?`)) {
                     this.calculateScore();
