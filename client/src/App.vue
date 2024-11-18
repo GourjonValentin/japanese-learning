@@ -177,5 +177,4 @@ html, body, #app {
     color: v-bind('globalColors.darkColor');
     background-color: v-bind('globalColors.backgroundColor');
 }
-
 </style>

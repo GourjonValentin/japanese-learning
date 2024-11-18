@@ -16,7 +16,6 @@
                 <button class="search-button">Search</button>
             </form>
         </div>
-        
 
         <!-- Display the word and its translation -->
         <div class="response" v-bind:hidden="translation === []">

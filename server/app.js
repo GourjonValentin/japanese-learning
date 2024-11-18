@@ -183,23 +183,29 @@ app.get('/quizzes/:quizId', async (req, res) => {
     }
 });
 
+//search
 app.get('/quizzes', async (req, res) => {
     try {
-        const { difficulty, type, favourites } = req.query;
+        const { difficulty, type, favourites, name } = req.query;
         let results = await query('SELECT * FROM quiz');
+        if (difficulty && difficulty !== "all") {
+            console.log(typeof difficulty, typeof results[2].difficultylevel)
+            results = results.filter(quiz => quiz.difficultylevel.toString() === difficulty.toString());
+        }
+        if (type) {
+            results = results.filter(quiz => quiz.type === type);
+        }
+        if (favourites) {
+            results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
+        }
+        if (name) {
+            // not sure.... 
+            results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
+        }
         if (results.length === 0) {
             return res.status(404).json({ message: "No quizzes found" });
         }
-        if (difficulty) {
-            results = results.filter(quiz => quiz.difficulty = difficulty);
-        }
-        if (type) {
-            results = results.filter(quiz => quiz.type = type);
-        }
-        if (favourites) {
-            results = results.filter(quiz => quiz.id in favourites);
-        }
-        console.log(results);
+        //console.log(results);
         results = await Promise.all(
             results.map(async quiz => {
                 const ownerName = await query('SELECT username FROM users WHERE id=?', [quiz.ownerid]);
@@ -207,7 +213,8 @@ app.get('/quizzes', async (req, res) => {
                 return quiz
             })
         );
-        res.status(200).json(results);
+        console.log(results);
+        return res.status(200).json(results);
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
