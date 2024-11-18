@@ -33,7 +33,8 @@
                 </div>
             </div>
         </div>
-        <div class="quizzes">
+        <button class="start-quizz-button" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
+    <div class="quizzes">
             <div v-for="quiz in quizzes" :key="quiz.id">
                 <div v-if="this.userId !== '' || this.sessionToken !== ''">
                     <div class="favourites" @click="changeFavourites(quiz.id)">
@@ -41,7 +42,7 @@
                         <img src="@/assets/heart-filled.png" v-else/>
                     </div>
                 </div>
-                
+
                 <h3>{{ quiz.name }}</h3>
                 <button class="start-quizz-button" @click="startQuiz(quiz)">Start Quiz</button>
                 <div class="quizz-caption">
@@ -102,10 +103,10 @@
             },
             async handleSearchSubmit(){
                 await axios.get('http://localhost:3000/quizzes',
-                    { params : { 
-                        difficulty : this.searchFilterDifficulty, 
-                        type: (this.searchFilterType === '' ? null : this.searchFilterType), 
-                        favourites : JSON.stringify(this.searchFilterFavourites) ? this.favourites : [], 
+                    { params : {
+                        difficulty : this.searchFilterDifficulty,
+                        type: (this.searchFilterType === '' ? null : this.searchFilterType),
+                        favourites : JSON.stringify(this.searchFilterFavourites) ? this.favourites : [],
                         name: this.searchName
                     }}
                 )
@@ -124,7 +125,7 @@
                 })
             },
             async startQuiz(quiz){
-                    router.push({path:'/quiz', query: { quizId: quiz.id}});    
+                    router.push({path:'/quiz', query: { quizId: quiz.id}});
             },
             async changeFavourites(quizId){
                 let mode = 'add';

@@ -199,7 +199,7 @@ app.get('/quizzes', async (req, res) => {
             results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
         }
         if (name) {
-            // not sure.... 
+            // not sure....
             results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
         }
         if (results.length === 0) {
@@ -213,12 +213,26 @@ app.get('/quizzes', async (req, res) => {
                 return quiz
             })
         );
-        console.log(results);
         return res.status(200).json(results);
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
     }
+});
+
+app.post('/create', async (req,res) => {
+    const { quizName, quizDifficulty, quizType, quizQuestions, ownerId} = req.body;
+    console.log(quizQuestions);
+    try {
+        await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)',[quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
+
+        //await query(`INSERT INTO quiz(name, type, content, ownerid) VALUES (${quizName}, ${quizType}, [{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}][{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}]${JSON.stringify(JSON.parse(quizQuestions))}, ${parseInt(ownerId)}`)
+        return res.sendStatus(201);
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err});
+    }
+
 });
 
 app.post('/users/edit-favourite', async (req, res) => {
