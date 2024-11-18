@@ -11,23 +11,27 @@
             <div v-for="question in this.quiz.content" :key="question.id">
                 <p class="title">{{ question.title }}</p>
                 <div :class="{ answer : true,
-                    correct: question.correct_answers[0] === 0,
-                    userChoice: this.userAnswers[question.id] === 0}">
+                    correct: question.correct_answers.includes(0),
+                    userChoice: this.userAnswers[question.id].includes(0)}">
                         {{ question.answers[0].content }}
                 </div>
                 <div :class="{ answer : true,
-                    correct: question.correct_answers[0] === 1,
-                    userChoice: this.userAnswers[question.id] === 1}">
+                    correct: question.correct_answers.includes(1),
+                    userChoice: this.userAnswers[question.id].includes(1)}">
                         {{ question.answers[1].content }}
                 </div>
                 <div :class="{ answer : true,
-                    correct: question.correct_answers[0] === 2, 
-                    userChoice: this.userAnswers[question.id] === 2}">
+                    correct: question.correct_answers.includes(2),
+                    userChoice: this.userAnswers[question.id].includes(2)}"
+                     v-if="question.answers.length > 2"
+                >
                         {{ question.answers[2].content }}
                 </div>
                 <div :class="{ answer : true,
-                    correct: question.correct_answers[0] === 3, 
-                    userChoice: this.userAnswers[question.id] === 3}">
+                    correct: question.correct_answers.includes(3),
+                    userChoice: this.userAnswers[question.id].includes(3)}"
+                     v-if="question.answers.length > 3"
+                >
                         {{ question.answers[3].content }}
                 </div>
             </div>
@@ -112,7 +116,7 @@
             calculateScore(){
                 this.userAnswers.forEach((value, index)=>{
                     console.log("el", value, index);
-                    let n_correct;
+                    let n_correct = 0;
                     value.forEach((ans_value) => {
                         if (this.quiz.content[index].correct_answers.includes(ans_value)) {
                             n_correct++;
@@ -141,12 +145,16 @@
                 if (this.userAnswers.length < this.quiz.content.length){
                     if (confirm(`You left ${ this.quiz.content.length - this.userAnswers.filter(elt => elt.length > 0).length } questions unanswers...\nAre you sure you want to end this quiz ?`)){
                         this.calculateScore();
-                        this.saveScore();
+                        if (this.userId) {
+                            this.saveScore();
+                        }
                         this.questionNumber +=1;
                     }
                 } else {
                     this.calculateScore();
-                    this.saveScore();
+                    if (this.userId) {
+                        this.saveScore();
+                    }
                     this.questionNumber +=1;
                 }
             }
