@@ -1,30 +1,32 @@
 <template>
     <div v-if="this.$route.query.quizId === undefined" class="main">
-        <div class="search">
+        <div class="search styledDiv">
             <form class="search-form" @submit.prevent="handleSearchSubmit()">
                 <img src="../assets/search_logo.png" alt="search_logo.png"/>
-                <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="search"/>
-                <button  class="search-button" type="submit">Search</button>
+                <input class="styledInput" type="text" name="searchName" v-model="searchName" placeholder="search"/>
+                <button  class="styledButton" style="
+                         padding: 8px 20px; font-size: 13px;"
+                         type="submit">Search</button>
             </form>
-            <div class="filter">
-                <div @click="toggleQuizFilterType('simple')"
+            <div>
+                <div class="filter" @click="toggleQuizFilterType('simple')"
                     :class="{active: this.searchFilterType === 'simple'}"
                 >
                         Simple Quiz
                 </div>
-                <div @click="toggleQuizFilterType('anime')"
+                <div class="filter" @click="toggleQuizFilterType('anime')"
                     :class="{active: this.searchFilterType === 'anime'}"
                 >
                     Anime Quiz
                 </div>
-                <div v-if="this.userId"
+                <div class="filter" v-if="this.userId"
                     @click="() => {this.searchFilterFavourites = !(this.searchFilterFavourites)}"
                     :class="{active: this.searchFilterFavourites}"
                 >
                     Favourites
                 </div>
                 <div>
-                    <select v-model="searchFilterDifficulty">
+                    <select class="styledSelectInput" v-model="searchFilterDifficulty">
                         <option >all</option>
                         <option>1</option>
                         <option>2</option>
@@ -33,9 +35,9 @@
                 </div>
             </div>
         </div>
-        <button class="start-quizz-button" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
+        <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
     <div class="quizzes">
-            <div v-for="quiz in quizzes" :key="quiz.id">
+            <div class="styledDiv" v-for="quiz in quizzes" :key="quiz.id">
                 <div v-if="this.userId !== '' || this.sessionToken !== ''">
                     <div class="favourites" @click="changeFavourites(quiz.id)">
                         <img src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
@@ -44,7 +46,7 @@
                 </div>
 
                 <h3>{{ quiz.name }}</h3>
-                <button class="start-quizz-button" @click="startQuiz(quiz)">Start Quiz</button>
+                <button class="styledButton" @click="startQuiz(quiz)">Start Quiz</button>
                 <div class="quizz-caption">
                     <p>Difficulty : </p>
                     <div v-for="i in quiz.difficultylevel" :key="i">
@@ -182,13 +184,6 @@
   
 <style>
     /* SEARCH STYLES */
-    .search {
-        margin: 20px;
-        padding : 10px;
-        border: 2px solid ;
-        border-radius: 20px;
-        border-color: v-bind('globalColors.darkColor');
-    }
 
     .search > * {
         display: flex;
@@ -201,38 +196,7 @@
         margin-bottom: 5px;
     }
 
-    .search-input {
-        flex: 1;
-        padding: 8px 15px;
-        border: 2px solid v-bind('globalColors.darkColor');
-        border-radius: 25px;
-        outline: none;
-        transition: border-color 0.3s;
-    }
-    .search-input:focus {
-        border-color: v-bind('globalColors.lightColor');
-    }
-
-    .search-button {
-        padding: 8px 20px;
-        color: #fff;
-        background-color: v-bind('globalColors.darkColor');
-        border: none;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-    }
-
-    .search-button:hover {
-        background-color: v-bind('globalColors.lightColor');
-        transform: scale(1.05);
-    }
-
-    .search-button:active {
-        transform: scale(0.95);
-    }
-
-    .filter > div{
+    .filter {
         padding: 10px 20px;
         font-size: 14px;
         color: #fff;
@@ -243,12 +207,12 @@
         transition: background-color 0.3s, transform 0.2s;
     }
 
-    .filter > div:hover {
+    .filter:hover {
         background-color: v-bind('globalColors.lightColor');
         transform: scale(1.05);
     }
 
-    .filter > div.active {
+    .filter.active {
         background-color: v-bind('globalColors.lightColor');
     }
 
@@ -256,12 +220,6 @@
     .quizzes {
         display: flex;
         flex-wrap: wrap;
-    }
-    .quizzes > div {
-        border : solid 2px;
-        border-radius: 20px;
-        border-color: v-bind('globalColors.darkColor');
-        margin : 30px;
     }
     .favourites {
         display: flex;
@@ -272,6 +230,7 @@
         cursor: pointer;
         transform: scale(1.05);
     }
+
     .favourites > img {
         height: 40px;
         width: 40px;
@@ -289,26 +248,6 @@
         width: 20px;
         height: 20px;
         margin: 5px;
-    }
-
-    .start-quizz-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        color: #fff;
-        background-color: v-bind('globalColors.darkColor');
-        border: none;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-    }
-
-    .start-quizz-button:hover {
-        background-color: v-bind('globalColors.lightColor');
-        transform: scale(1.05);
-    }
-
-    .start-quizz-button:active {
-        transform: scale(0.95);
     }
 
 </style>

@@ -173,8 +173,8 @@ import {ref, provide, watch} from 'vue';
     font-style: normal;
 }
 
-html, body, #app {
-    /* height: 100%; */
+#app {
+    height: 100%;
     margin: 0;
     padding: 0;
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -182,5 +182,11 @@ html, body, #app {
     -moz-osx-font-smoothing: grayscale;
     color: v-bind('globalColors.darkColor');
     background-color: v-bind('globalColors.backgroundColor');
+}
+
+html, body {
+    background-color: #f4d4b4;
+    padding: 0;
+    margin: 0;
 }
 </style>

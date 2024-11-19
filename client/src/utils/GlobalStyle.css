@@ -1,0 +1,77 @@
+:root {
+    --background-color: #f4d4b4;
+    --light-color: #e4b484;
+    --red-color: #9f3434;
+    --brown-color: #8c7454;
+    --dark-color: #341c1c;
+}
+
+
+.styledButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: var(--dark-color);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* STYLED BUTTON */
+
+.styledButton:hover {
+    background-color: var(--light-color);
+    transform: scale(1.05);
+}
+
+.styledButton:active {
+    transform: scale(0.95);
+}
+
+.styledInput {
+    flex: 1;
+    padding: 8px 15px;
+    border: 2px solid var(--dark-color);
+    border-radius: 25px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.styledDiv {
+    border: 2px solid var(--dark-color);
+    border-radius: 20px;
+    padding : 10px;
+    margin: 20px;
+}
+
+.styledSelectInput {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #fff;
+        background-color: var(--brown-color);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+}
+
+.styledSelectInput select {
+    appearance: auto;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #fff;
+    padding: 0;
+    outline: none;
+}
+
+.styledSelectInput:hover {
+    background-color: var(--light-color);
+    transform: scale(1.05);
+}
+
+styledSelectInput.active {
+        background-color: var(--light-color);
+}

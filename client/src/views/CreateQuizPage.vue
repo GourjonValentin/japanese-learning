@@ -1,49 +1,69 @@
 <template>
     <div>
-        <div class="init-quiz" v-if="!init">
-            <h1>Create a quiz</h1>
-            <form @submit.prevent="initQuiz">
-                <label for="quizName">Quiz name</label>
-                <input type="text" id="quizName" name="quizName" v-model="quizName" required>
-                <label for="quizDifficulty">quizDifficulty</label>
-                <select name="quizDifficulty" id="quizDifficulty" v-model="quizDifficulty" required>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                </select>
-                <label for="quizType">Quiz type</label>
-                <select id="quizType" name="quizType" v-model="quizType">
-                    <option value="simple" selected>Normal Quiz</option>
-                    <option value="anime">Anime Quiz</option>
-                </select>
-                <button type="submit">Create quiz</button>
+        <button @click="$router.push({path:'/quiz'})" class="styledButton">Go back</button>
+        <div class="styledDiv init-div" v-if="!init">
+            <h2>Create a quiz</h2>
+            <form class="init-form" @submit.prevent="initQuiz">
+                <div>
+                    <label for="quizName">Quiz name :</label>
+                    <input class="styledInput" type="text" id="quizName" name="quizName" v-model="quizName" required>
+                </div>
+                <div>
+                    <label for="quizDifficulty">Difficulty :</label>
+                    <div class="styledSelectInput">
+                        <select name="quizDifficulty" id="quizDifficulty" v-model="quizDifficulty" required>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div>
+                    <label for="quizType">Quiz type</label>
+                    <div class="styledSelectInput">
+                        <select id="quizType" name="quizType" v-model="quizType">
+                            <option value="simple" selected>Normal Quiz</option>
+                            <option value="anime">Anime Quiz</option>
+                        </select>
+                    </div>
+
+                </div>
+                <button class="styledButton" style="
+                         padding: 8px 20px; font-size: 13px;" type="submit">Create quiz</button>
             </form>
-            <p> {{ quizDifficulty }}</p>
         </div>
         <div class="questions" v-else>
             <form @submit.prevent="submitQuestions">
-                <div class="question" v-for="question in quizQuestions" :key="question.id">
-                    <p>Question {{ question.id }}</p>
-
-                    <label for="title">Title : </label>
-                    <input :name="'title-' + question.id" type="text" required>
-                    <label for="picture" v-if="quizType === 'anime'">Picture link : </label>
-                    <input :name="'picture-' + question.id" v-if="quizType === 'anime'" type="text" required>
-                    <p>Answers :</p>x
-                    <div v-for="answer in question.answers || []" :key="answer.id">
-                        <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox" value="coucou">
-                        <input :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
-                        <button @click.prevent="deleteAnswer(question.id, answer.id)" type="button"
-                            v-if="question.answers.length > 2">Delete Answer</button>
+                <h2>{{quizName}}</h2>
+                <div class="question styledDiv" v-for="question in quizQuestions" :key="question.id">
+                    <div class="questionHeader">
+                        <p>Question {{ quizQuestions.findIndex(elt => elt.id == question.id) + 1 }}</p>
+                        <button class="deleteQuestion" type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizQuestions.length > 1">
+                            <img src="@/assets/katana_cross.png" alt="Delete question button" width="30" height="30">
+                        </button>
                     </div>
-                    <button @click.prevent="addAnswer(question.id)" type="button"
-                        v-if="question.answers.length <= 3">Add anwser choice</button>
+                    <div class="questionContent">
+                        <label for="title">Title : </label>
+                        <input class="styledInput" :name="'title-' + question.id" type="text" required>
+                        <label for="picture" v-if="quizType === 'anime'">Picture link : </label>
+                        <input class="styledInput" :name="'picture-' + question.id" v-if="quizType === 'anime'" type="text" required>
+                        <p>Answers :</p>
+                        <div class="answers" v-for="answer in question.answers || []" :key="answer.id">
+                            <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox" value="coucou">
+                            <input class="styledInput" :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
+                            <button @click.prevent="deleteAnswer(question.id, answer.id)" type="button"
+                                    v-if="question.answers.length > 2">
+                                <img src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
+                            </button>
+                        </div>
+                        <button @click.prevent="addAnswer(question.id)" class="styledButton" type="button"
+                                v-if="question.answers.length <= 3">Add answer choice</button>
+                    </div>
 
-                    <button type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizQuestions.length > 1">Delete
-                        question {{ question.id }}</button>
                 </div>
-                <button @click.prevent="addQuestion" type="button">Add Question</button>
-                <button type="submit">Valider Formulaire</button>
+                <button class="styledButton" @click.prevent="addQuestion" type="button">Add Question</button>
+                <button class="styledButton" type="submit">Valider Formulaire</button>
             </form>
         </div>
     </div>
@@ -52,6 +72,7 @@
 <script>
 import { inject } from "vue";
 import axios from "axios";
+import {globalColors} from "@/utils/GlobalVariable";
 
 
 
@@ -74,7 +95,8 @@ export default {
             quizDifficulty: 1,
             quizType: "simple",
             init: false,
-            quizQuestions: []
+            quizQuestions: [],
+            globalColors: globalColors
         };
     },
     methods: {
@@ -219,4 +241,106 @@ export default {
 </script>
 
 
-<style scoped></style>
+<style scoped>
+
+.question {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 10px;
+}
+
+.questionHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: -webkit-fill-available;
+    margin: 10px;
+}
+
+.questionHeader > button {
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    background-color: rgba(0, 0, 0, 0);
+    filter: brightness(0) saturate(100%) invert(6%) sepia(9%) saturate(5442%) hue-rotate(321deg) brightness(115%) contrast(86%);
+}
+
+.questionHeader > button:hover {
+    cursor: pointer;
+    transform: scale(1.3);
+    filter: brightness(0) saturate(100%) invert(76%) sepia(51%) saturate(336%) hue-rotate(339deg) brightness(92%) contrast(93%);
+
+}
+
+.questionHeader > button:active {
+    transform: scale(0.95);
+}
+
+
+.questionContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: -webkit-fill-available;
+}
+
+.answers {
+    margin: 5px;
+}
+.answers > * {
+    margin: 2px;
+}
+
+.styledButton {
+    margin-top: 20px;
+}
+
+.init-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.init-div label {
+    margin: 8px;
+}
+
+.init-form > div {
+    margin: 10px;
+}
+
+.answers {
+    border-radius: 25px;
+    padding: 5px 15px;
+    border: solid 2px v-bind('globalColors.darkColor');
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.answers img {
+    transform: rotate(45deg);
+}
+
+.answers > button {
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    background-color: rgba(0, 0, 0, 0);
+    filter: brightness(0) saturate(100%) invert(6%) sepia(9%) saturate(5442%) hue-rotate(321deg) brightness(115%) contrast(86%);
+}
+
+.answers > button:hover {
+    cursor: pointer;
+    transform: scale(1.3);
+    filter: brightness(0) saturate(100%) invert(76%) sepia(51%) saturate(336%) hue-rotate(339deg) brightness(92%) contrast(93%);
+
+}
+
+.answers > button:active {
+    transform: scale(0.95);
+}
+
+
+</style>

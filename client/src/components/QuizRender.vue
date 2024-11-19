@@ -91,6 +91,9 @@ export default {
             } else {
                 let n_corr = this.quiz.content[this.questionNumber].correct_answers.length;
                 if (this.userAnswers[this.questionNumber].length < n_corr || n_corr === 1) {
+                    if (n_corr === 1) {
+                        this.userAnswers[this.questionNumber] = []
+                    }
                     this.userAnswers[this.questionNumber].push(answerNumber);
                 } else {
                     alert("Too much options selected");
