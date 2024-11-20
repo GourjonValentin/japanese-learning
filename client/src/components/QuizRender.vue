@@ -52,12 +52,14 @@
         </div>
     </div>
     <p>{{ quizzesMessage }}</p>
+    <LeaderboardComp :quizId="quiz.id"/>
 </template>
 
 <script>
 import axios from 'axios';
 import {inject} from 'vue';
 import {globalColors} from '@/utils/GlobalVariable';
+import LeaderboardComp from "@/components/LeaderboardComp.vue";
 
 export default {
     setup() {
@@ -68,7 +70,8 @@ export default {
         return {
             quiz: {
                 name: '',
-                content: []
+                content: [],
+                id: this.$route.query.quizId
             },
             quizzesMessage: '',
             questionNumber: 0,
@@ -77,6 +80,9 @@ export default {
             score: 0,
             serverMessage: ''
         }
+    },
+    components: {
+        LeaderboardComp
     },
     methods: {
         initAnswers() {
@@ -160,6 +166,7 @@ export default {
                     if (!(this.quiz.content instanceof Array)) {
                         this.quiz.content = JSON.parse(this.quiz.content);
                     }
+
                 }
                 this.initAnswers()
             } catch (err) {
