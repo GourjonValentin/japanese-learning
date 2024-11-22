@@ -38,10 +38,13 @@
         <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
     <div class="quizzes">
             <div class="styledDiv" v-for="quiz in quizzes" :key="quiz.id">
-                <div v-if="this.userId !== '' || this.sessionToken !== ''">
+                <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                     <div class="favourites" @click="changeFavourites(quiz.id)">
-                        <img src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
-                        <img src="@/assets/heart-filled.png" v-else/>
+                        <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                        <img class="logo" src="@/assets/heart-filled.png" v-else/>
+                    </div>
+                    <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
+                        <img class="logo" src="@/assets/edit.png" />
                     </div>
                 </div>
 
@@ -156,6 +159,15 @@
                 } catch (err){
                     console.log("err", err);
                 }
+            },
+            isQuizOwner(quiz){
+                if (quiz.ownerid == this.userId){
+                    return 1;
+                }
+                return 0;
+            },
+            editQuiz(quizId){
+                this.$router.push({path:'/edit', query : {quizId: quizId}});
             }
         },
         mounted() {
@@ -221,7 +233,12 @@
         display: flex;
         flex-wrap: wrap;
     }
-    .favourites {
+    .quiz-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .favourites.edit {
         display: flex;
         margin-left: 10px;
         margin-top: 10px;
@@ -230,8 +247,12 @@
         cursor: pointer;
         transform: scale(1.05);
     }
+    .edit:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+    }
 
-    .favourites > img {
+    .logo {
         height: 40px;
         width: 40px;
     }
