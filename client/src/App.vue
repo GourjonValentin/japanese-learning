@@ -18,7 +18,10 @@ import {ref, provide, watch} from 'vue';
             HeaderComp : HeaderComp
         },
         data(){
-            return { globalColors };
+            return {
+                globalColors,
+                refresh: 0
+            };
         },
         setup() {
             // Creation of a reactive variables => (allows child to change it)

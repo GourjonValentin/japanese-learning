@@ -1,5 +1,5 @@
 <template>
-    <div v-if="scoresList != []">
+    <div v-if="scoresList.length !== 0">
 
         <h4>Leaderboard</h4>
         <div class="element" v-for="elt of scoresList" :key="elt.score">
