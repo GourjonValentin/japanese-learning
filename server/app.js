@@ -53,7 +53,7 @@ const query = util.promisify(db.query).bind(db);
 app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
 
-    if(!username || !password) {
+    if (!username || !password) {
         return res.status(400).json({ message: "Please provide both username and password." });
     }
 
@@ -235,6 +235,7 @@ app.get('/jisho', async (req, res) => {
 });
 
 app.get('/quizzes/:quizId', async (req, res) => {
+    // est ce que la personne doit etre co ???
     try {
         const { quizId } = req.params;
         if (quizId === undefined) {
@@ -306,17 +307,17 @@ app.get('/user-quizzes', async (req, res) => {
     
 })
 
-app.post('/create', async (req,res) => {
-    const { quizName, quizDifficulty, quizType, quizQuestions, ownerId} = req.body;
+app.post('/create', async (req, res) => {
+    const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
     console.log(quizQuestions);
     try {
-        await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)',[quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
+        await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
 
         //await query(`INSERT INTO quiz(name, type, content, ownerid) VALUES (${quizName}, ${quizType}, [{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}][{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}]${JSON.stringify(JSON.parse(quizQuestions))}, ${parseInt(ownerId)}`)
         return res.sendStatus(201);
     } catch (err) {
         console.log(err)
-        res.status(500).send({ error: err});
+        res.status(500).send({ error: err });
     }
 
 });
@@ -387,6 +388,33 @@ app.post('/save-score', async (req, res) => {
     }
 });
 
+app.get('/is-quiz-owner', async (req, res) => {
+    const token = req.header('Authorization').split(' ')[1]
+    const quizId = req.query.quizId;
+    console.log(req.query);
+    if (token == undefined) {
+        return res.status(400);
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+    console.log(resVerifyToken)
+
+    if (resVerifyToken.status === 200) {
+        if (quizId == undefined) {
+            return res.status(401).json({ message: "Invalid format" });
+        }
+        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
+        if (result.length === 0) {
+            return res.status(404).json({ message: "Quiz not found" });
+        } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+            return res.status(200).send();
+
+        } else {
+            return res.status(403).json({ message: "You are not the owner of this quiz" });
+        }
+    } else {
+        return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
+    }
+});
 
 
 app.listen(port, () => {
