@@ -6,6 +6,7 @@ import JishoPage from '../views/JishoPage';
 import QuizPage from '../views/QuizPage';
 import AlphabetPage from '../views/AlphabetPage';
 import CreateQuizPage from "../views/CreateQuizPage";
+import ProfilePage from '../views/ProfilePage';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -33,7 +34,11 @@ const router = createRouter({
         {
             path: '/create',
             component: CreateQuizPage
-        }
+        },
+        {
+            path: '/profile',
+            component: ProfilePage
+        },
     ]
 })
 

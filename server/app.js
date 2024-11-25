@@ -91,7 +91,10 @@ app.post('/signup', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        await query('INSERT INTO users (username, isAdmin, password, favourites) VALUES(?, 0, ?, "[]")', [username, hashedPassword]);
+        const avatarSeed = () => Math.random().toString(36).substring(2, 18);
+        const avatarPath = `https://api.multiavatar.com/${avatarSeed()}.svg`;
+
+        await query('INSERT INTO users (username, isAdmin, password, favourites, avatarPath) VALUES(?, 0, ?, "[]", ?)', [username, hashedPassword, avatarPath]);
 
         res.status(201).json({ message: "User registered successfully." });
 
@@ -127,13 +130,79 @@ app.post('/login', async (req, res) => {
                 secretKey,
                 { expiresIn: '1h' }
             )
-            res.status(200).json({ username: user.username, favourites: user.favourites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token, message: "Succesful login" });
+            res.status(200).json({ username: user.username, favourites: user.favourites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token, avatarPath: user.avatarPath, message: "Succesful login" });
         } else {
             res.status(401).json({ message: "Invalid username or password" });
         }
     } catch (err) {
         console.error("Error: ", err.message);
         return res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
+app.post('/change-username', async (req, res) => {
+    const { userId, newUsername } = req.body;
+
+    try {
+        const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
+
+        if (existingUser.length > 0) {
+            return res.status(409).json({ message: "This username is already taken." });
+        }
+
+        await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
+
+        res.status(200).json({ message: 'Username updated successfully!' });
+    } catch (error) {
+        console.error('Error updating username:', error);
+        res.status(500).json({ message: 'An error occurred while updating the username.' });
+    }
+});
+
+app.post('/change-password', async (req, res) => {
+    const { userId, currentPassword, newPassword } = req.body;
+
+    // Array that will store the errors
+    const passwordErrors = [];
+
+    // Password strength requirements
+    if (newPassword.length < 8) {
+        passwordErrors.push("• Password must be at least 8 characters long.");
+    }
+    if (!/[A-Z]/.test(newPassword)) {
+        passwordErrors.push("• Password must include at least one uppercase letter.");
+    }
+    if (!/[a-z]/.test(newPassword)) {
+        passwordErrors.push("• Password must include at least one lowercase letter.");
+    }
+    if (!/\d/.test(newPassword)) {
+        passwordErrors.push("• Password must include at least one number.");
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+        passwordErrors.push("• Password must include at least one special character.");
+    }
+
+    try {
+        const user = await query('SELECT * FROM users WHERE id = ?', [userId]);
+
+        const isValid = await bcrypt.compare(currentPassword, user[0].password);
+        if (!isValid) {
+            return res.status(401).json({ message: 'Current password is incorrect.' });
+        }
+
+        // Print the list of errors to rectify in order to sign up
+        if (passwordErrors.length > 0) {
+            return res.status(400).json({ message: passwordErrors });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        await query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
+
+        res.status(200).json({ message: 'Password updated successfully!' });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).json({ message: 'An error occurred while updating the password.' });
     }
 });
 
@@ -219,6 +288,23 @@ app.get('/quizzes', async (req, res) => {
         res.status(500).json({ error: 'Error fetching quizzes' });
     }
 });
+
+app.get('/user-quizzes', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        const results = await query('SELECT quiz.*, scores.score FROM scores JOIN quiz ON scores.quizid = quiz.id WHERE scores.userid = ?', [userId]);
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No quizzes found" });
+        }
+
+        return res.status(200).json(results);
+    } catch (error) {
+        console.error('Error fetching quizzes:', error);
+        res.status(500).json({ error: 'Error fetching quizzes' });
+    }
+    
+})
 
 app.post('/create', async (req,res) => {
     const { quizName, quizDifficulty, quizType, quizQuestions, ownerId} = req.body;

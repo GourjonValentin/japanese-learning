@@ -1,5 +1,9 @@
 <template>
     <div class="content">
+        <audio id="doorSound" preload="auto">
+            <source src="../assets/audio/sliding-door.mp3" type="audio/mpeg" />
+            Your browser does not support the audio element.
+        </audio>
         <div v-if="this.$route.query.form === 'login/signup'" class="container" :class="{ active: isSignUpActive }" id="container">
             <div class="form-container sign-up">
                 <SignUpFormComp/>
@@ -15,12 +19,12 @@
                     <div class="toggle-panel toggle-left">
                         <h1>Already have an account?</h1>
                         <p>Enter your personal details to use all site features</p>
-                        <button class="hidden" @click="toggleSignUp()">Log In</button>
+                        <button class="hidden" @click="() => {playSound(); toggleSignUp()}">Log In</button>
                     </div>
                     <div class="toggle-panel toggle-right">
-                        <h1>こんにちわ!</h1>
+                        <h1>Wanna learn japanese?</h1>
                         <p>Register with your personal details to use all site features</p>
-                        <button class="hidden" @click="toggleSignUp()">Sign Up</button>
+                        <button class="hidden" @click="() => {playSound(); toggleSignUp()}">Sign Up</button>
                     </div>
                 </div>
             </div>
@@ -57,7 +61,14 @@
     methods: {
       toggleSignUp() {
         this.isSignUpActive = !this.isSignUpActive;
-      }
+      },
+      playSound() {
+        const doorSound = document.getElementById("doorSound");
+        if (doorSound) {
+            doorSound.currentTime = 0;
+            doorSound.play();
+        }
+      },
     }
   };
   </script>
@@ -73,6 +84,7 @@
     .content{
         display: flex;
         justify-content: center;
+        margin-top: 40px;
     }
 
     .content *{
@@ -84,6 +96,9 @@
 
     .content h1{
         font-family: 'JapaneseStyleFont', sans-serif;
+        font-weight: 400;
+        /* background-color: v-bind('globalColors.lightColor');
+        border-radius: 15px; */
     }
 
     .container{
@@ -95,6 +110,7 @@
         width: 768px;
         max-width: 100%;
         min-height: 480px;
+        color: v-bind('globalColors.darkColor');
     }
 
     .container p{
@@ -112,7 +128,7 @@
     }
 
     .container button{
-        background-color: #512da8;
+        background-color: v-bind('globalColors.redColor');
         color: #fff;
         font-size: 12px;
         padding: 10px 45px;
@@ -128,6 +144,7 @@
     .container button.hidden{
         background-color: transparent;
         border-color: #fff;
+        margin-top: 10px;
     }
 
     .container form{
@@ -198,21 +215,6 @@
         }
     }
 
-    .social-icons{
-        margin: 20px 0;
-    }
-
-    .social-icons a{
-        border: 1px solid #ccc;
-        border-radius: 20%;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 3px;
-        width: 40px;
-        height: 40px;
-    }
-
     .toggle-container{
         position: absolute;
         top: 0;
@@ -221,36 +223,27 @@
         height: 100%;
         overflow: hidden;
         transition: all 0.6s ease-in-out;
-        border-radius: 150px 0 0 100px;
         z-index: 1000;
     }
 
     .container.active .toggle-container{
         transform: translateX(-100%);
-        border-radius: 0 150px 100px 0;
     }
 
     .toggle{
-        background-color: v-bind('globalColors.redColor');
+        background-image: url("../assets/sliding_door.png");
+        /* background-color: v-bind('globalColors.redColor'); */
+        background-size: 100% 100%;
+        background-position: center;
+        position: absolute;
         height: 100%;
-        /* background: linear-gradient(to right, #5c6bc0, #512da8); */
-        /* background-image: url("../assets/sliding_door.png"); */
-        color: #fff;
-        position: relative;
-        left: -100%;
-        height: 100%;
-        width: 200%;
+        width: 100%;
         transform: translateX(0);
         transition: all 0.6s ease-in-out;
     }
 
-    .container.active .toggle{
-        transform: translateX(50%);
-    }
-
     .toggle-panel{
         position: absolute;
-        width: 50%;
         height: 100%;
         display: flex;
         align-items: center;
@@ -259,6 +252,23 @@
         padding: 0 30px;
         text-align: center;
         top: 0;
+        transform: translateX(0);
+        transition: all 0.6s ease-in-out;
+    }
+
+    .toggle-panel h1{
+        background-color: rgba(228, 180, 132, 0.8);
+        border-radius: 15px;
+    }
+
+    .container.active .toggle{
+        background-image: url("../assets/sliding_door_inverted.png");
+        /* background-color: v-bind('globalColors.redColor'); */
+        background-size: 100% 100%;
+        background-position: center;
+        position: absolute;
+        height: 100%;
+        width: 100%;
         transform: translateX(0);
         transition: all 0.6s ease-in-out;
     }

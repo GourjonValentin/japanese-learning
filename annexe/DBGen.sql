@@ -8,6 +8,7 @@ CREATE TABLE users(
     isAdmin boolean NOT NULL,
     password varchar(255) NOT NULL,
     favourites JSON,
+    avatarPath varchar(255) NOT NULL,
     PRIMARY KEY (id)
 );
 

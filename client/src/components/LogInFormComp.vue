@@ -4,7 +4,7 @@
         <input type="text" name="username" v-model="username" placeholder="Username" required />
         <input type="password" name="password" v-model="password" placeholder="Password" required />
         <p id="formMessage">{{ formMessage }}</p>
-        <button type="submit">Submit</button>
+        <button type="submit">Log In</button>
     </form>
 </template>
 
@@ -27,7 +27,7 @@
                 setUserId,
                 setFavourites,
                 setIsAdmin,
-                loginUser
+                loginUser,
             };
         },
         data(){
