@@ -74,6 +74,19 @@
   </script>
   
 <style>
+    h1 {
+        font-family: 'JapaneseStyleFont', sans-serif;
+        font-size: 50px;
+    }
+
+    #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+    }
+
     #formMessage {
         color: red;
         font-size: small;
@@ -257,7 +270,7 @@
     }
 
     .toggle-panel h1{
-        background-color: rgba(228, 180, 132, 0.8);
+        background-color: rgba(228, 180, 132, 0.95);
         border-radius: 15px;
     }
 
