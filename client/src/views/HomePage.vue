@@ -136,7 +136,7 @@ export default {
   background-color: v-bind('globalColors.redColor');
   color: #fff;
   font-size: 16px;
-  padding: 10px 30px;
+  padding: 10px 15px;
   border: 1px solid transparent;
   border-radius: 8px;
   font-weight: 600;
