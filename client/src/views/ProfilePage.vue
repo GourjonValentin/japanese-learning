@@ -55,10 +55,13 @@
                 </div>
                 <div class="quizzes">
                     <div class="styledDiv" v-for="quiz in userQuizzes" :key="quiz.id">
-                        <div v-if="this.userId !== '' || this.sessionToken !== ''">
+                        <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
-                                <img src="@/assets/heart-filled.png" v-else/>
+                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                                <img class="logo" src="@/assets/heart-filled.png" v-else/>
+                            </div>
+                            <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
+                                <img class="logo" src="@/assets/pencil-icon-colored.png" />
                             </div>
                         </div>
 
@@ -81,10 +84,13 @@
                 </div>
                 <div class="quizzes">
                     <div class="styledDiv" v-for="quiz in userFavQuizzes" :key="quiz.id">
-                        <div v-if="this.userId !== '' || this.sessionToken !== ''">
+                        <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
-                                <img src="@/assets/heart-filled.png" v-else/>
+                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                                <img class="logo" src="@/assets/heart-filled.png" v-else/>
+                            </div>
+                            <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
+                                <img class="logo" src="@/assets/pencil-icon-colored.png" />
                             </div>
                         </div>
 
@@ -231,35 +237,43 @@
             async startQuiz(quiz){
                 router.push({path:'/quiz', query: { quizId: quiz.id}});
             },
-            // a deplacer dans app.vue pour l'utiliser sans répétition dans quizpage.vue ????
-            // async changeFavourites(quizId){
-            //     let mode = 'add';
-            //     console.log("quizId", quizId);
-            //     console.log("this.favourites", this.favourites);
-            //     if (this.favourites.includes(quizId)){
-            //         mode = 'delete';
-            //     }
+            isQuizOwner(quiz){
+                if (quiz.ownerid == this.userId){
+                    return 1;
+                }
+                return 0;
+            },
+            editQuiz(quizId){
+                this.$router.push({path:'/edit', query : {quizId: quizId}});
+            },
+            async changeFavourites(quizId){
+                let mode = 'add';
+                console.log("quizId", quizId);
+                console.log("this.favourites", this.favourites);
+                if (this.favourites.includes(quizId)){
+                    mode = 'delete';
+                }
 
-            //     try {
-            //         const res = await axios.post('http://localhost:3000/users/edit-favourite', 
-            //             {
-            //                 mode : mode, 
-            //                 quizId : quizId,
-            //                 userId : this.userId,
-            //                 sessionToken : this.sessionToken
-            //             }).catch(err => {
-            //                 if (err.response.status === 409) {
-            //                     alert("You have already added this quiz to your favourites");
-            //                 }
-            //                 console.log("err", err);
-            //             });
+                try {
+                    const res = await axios.post('http://localhost:3000/users/edit-favourite', 
+                        {
+                            mode : mode, 
+                            quizId : quizId,
+                            userId : this.userId,
+                            sessionToken : this.sessionToken
+                        }).catch(err => {
+                            if (err.response.status === 409) {
+                                alert("You have already added this quiz to your favourites");
+                            }
+                            console.log("err", err);
+                        });
 
 
-            //         this.setFavourites(res.data.favourites);
-            //     } catch (err){
-            //         console.log("err", err);
-            //     }
-            // },
+                    this.setFavourites(res.data.favourites);
+                } catch (err){
+                    console.log("err", err);
+                }
+            },
             toggleUsernameEdit() {
                 this.isEditingUsername = !this.isEditingUsername;
                 if (this.isEditingUsername) {

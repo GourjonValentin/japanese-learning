@@ -44,7 +44,7 @@
                         <img class="logo" src="@/assets/heart-filled.png" v-else/>
                     </div>
                     <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
-                        <img class="logo" src="@/assets/edit.png" />
+                        <img class="logo" src="@/assets/pencil-icon-colored.png" />
                     </div>
                 </div>
 
