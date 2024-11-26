@@ -3,12 +3,14 @@
 
     <!-- Header Section -->
     <section class="header-section">
-      <h1 class="main-title">Master Japanese Today!</h1>
-      <p class="subtitle">
-        Learn the language with <strong>INTERACTIVE LESSONS</strong> and <strong>REAL-LIFE PRACTICE</strong>.
-      </p>
-      <img src="@/assets/hero-image.jpg" alt="Japanese Culture" class="hero-image" />
-      <button class="cta-button">Join Now</button>
+      <div class="hero-section">
+        <img src="@/assets/hero-image.jpg" alt="Japanese Culture" class="hero-image" />
+        <div class="text-overlay">
+          <h1 class="main-title">Master Japanese Today!</h1>
+          <p class="subtitle">Learn the language with <strong>INTERACTIVE QUIZZES</strong> and <strong>THE BEST COMMUNITY</strong>.</p>
+          <button class="cta-button" @click="goToQuizPage">Get started</button>
+        </div>
+      </div>
     </section>
 
     <!-- Introduction Section -->
@@ -76,7 +78,11 @@ export default {
         return {
             globalColors: globalColors,
         }
-    }
+    },methods: {
+        goToQuizPage() {
+            this.$router.push({ path: '/quiz' });
+        }
+    },
 };
 </script>
 
@@ -86,42 +92,66 @@ export default {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* Header Section */
+/* Hero Section */
 .header-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
   text-align: center;
-  padding: 40px 20px;
-  background-color: #ffe4e1;
+}
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+.hero-image {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.45); /* Semi-transparent background */
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 90%;
 }
 .main-title {
   font-size: 3em;
   color: v-bind('globalColors.redColor');
 }
 .subtitle {
-  font-size: 1.5em;
+  font-size: 1.2em;
   margin-bottom: 20px;
 }
-.hero-image {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-  margin: 20px 0;
-}
 .cta-button {
-  background-color: #ff5733;
-  color: white;
-  font-size: 1.2em;
-  padding: 10px 20px;
-  border: none;
+  background-color: v-bind('globalColors.redColor');
+  color: #fff;
+  font-size: 16px;
+  padding: 10px 30px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   cursor: pointer;
+  align-self: center;
 }
 .cta-button:hover {
-  background-color: #c70039;
+  background-color: #bf3e3e;
 }
 
 /* Introduction Section */
 .introduction-section {
   padding: 40px 20px;
-  background-color: #f7f7f7;
   text-align: center;
 }
 .introduction-section img {
@@ -132,11 +162,15 @@ export default {
 
 /* Features Section */
 .features-section {
+  margin: 0 50px;
   padding: 40px 20px;
-  background-color: #fff;
+  background-color: #f8e3cd;
   text-align: center;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
 }
 .features-grid {
+  padding-top: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -162,7 +196,6 @@ export default {
 /* Testimonials Section */
 .testimonials-section {
   padding: 40px 20px;
-  background-color: #ffe4e1;
   text-align: center;
 }
 .testimonials blockquote {
