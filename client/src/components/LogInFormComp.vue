@@ -39,7 +39,11 @@
             async login() {
                 const result = await this.loginUser(this.username, this.password);
                 if (result.success) {
-                    this.$router.push({path :'/'});
+                    if (this.$route.query.redirect) {
+                        this.$router.push({path : this.$route.query.redirect});
+                    } else {
+                        this.$router.push({path :'/'});
+                    }
                 } else {
                     this.formMessage = result.message;
                 }
