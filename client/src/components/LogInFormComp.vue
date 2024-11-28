@@ -4,7 +4,7 @@
         <input type="text" name="username" v-model="username" placeholder="Username" required />
         <input type="password" name="password" v-model="password" placeholder="Password" required />
         <p id="formMessage">{{ formMessage }}</p>
-        <button type="submit">Submit</button>
+        <button type="submit">Log In</button>
     </form>
 </template>
 
@@ -27,7 +27,7 @@
                 setUserId,
                 setFavourites,
                 setIsAdmin,
-                loginUser
+                loginUser,
             };
         },
         data(){
@@ -39,7 +39,11 @@
             async login() {
                 const result = await this.loginUser(this.username, this.password);
                 if (result.success) {
-                    this.$router.push({path :'/'});
+                    if (this.$route.query.redirect) {
+                        this.$router.push({path : this.$route.query.redirect});
+                    } else {
+                        this.$router.push({path :'/'});
+                    }
                 } else {
                     this.formMessage = result.message;
                 }

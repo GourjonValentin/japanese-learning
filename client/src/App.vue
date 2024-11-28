@@ -27,6 +27,7 @@ import {ref, provide, watch} from 'vue';
             const sessionToken = ref('');
             const favourites = ref([]);
             const isAdmin = ref(''); // 0?
+            const avatarPath = ref('');
 
 
             // Creation of the providers
@@ -35,6 +36,7 @@ import {ref, provide, watch} from 'vue';
             provide('sessionToken', sessionToken);
             provide('favourites', favourites);
             provide('isAdmin', isAdmin);
+            provide('avatarPath', avatarPath);
 
             const setUserId = (newUserId) => {
                 userId.value = newUserId;
@@ -56,6 +58,10 @@ import {ref, provide, watch} from 'vue';
                 isAdmin.value = newIsAdmin;
             };
 
+            const setAvatarPath = (newAvatarPath) => {
+                avatarPath.value = newAvatarPath;
+            };
+
             const loginUser = async (username, password) => {
                 return await axios.post('http://localhost:3000/login', {
                     username,
@@ -72,6 +78,8 @@ import {ref, provide, watch} from 'vue';
                             setUserId(response.data.userId);
                             setFavourites(response.data.favourites);
                             setIsAdmin(response.data.isAdmin);
+                            setAvatarPath(response.data.avatarPath);
+                            console.log(response.data.avatarPath);
                             
                             // alert(`You are now connected.\nYou will be redirected in Home Page\n`);
                             return { success: true, message: ""}
@@ -94,6 +102,7 @@ import {ref, provide, watch} from 'vue';
             provide('setFavourites', setFavourites);
             provide('setIsAdmin', setIsAdmin);
             provide('loginUser', loginUser);
+            provide('setAvatarPath', setAvatarPath);
 
             const resetUser = () => {
                 userId.value = '';
@@ -147,7 +156,8 @@ import {ref, provide, watch} from 'vue';
                         if (response && response.data && response.status === 200) {
                             // The session token is still valid
                             this.setSessionToken(sessionToken);
-                            this.setUsername(response.data.username)
+                            this.setUsername(response.data.username);
+                            this.setAvatarPath(response.data.avatarPath);
                             console.log('checking user token')
 
                         }

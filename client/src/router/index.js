@@ -7,6 +7,7 @@ import QuizPage from '../views/QuizPage';
 import AlphabetPage from '../views/AlphabetPage';
 import CreateQuizPage from "../views/CreateQuizPage";
 import EditQuizPage from "../views/EditQuizPage";
+import ProfilePage from '../views/ProfilePage';
 import RoutingError from "../views/RoutingError";
 
 const router = createRouter({
@@ -40,6 +41,10 @@ const router = createRouter({
             path: '/edit',
             component: EditQuizPage
         },
+        {
+            path: '/profile',
+            component: ProfilePage
+        }, ,
         {
             path: '/:notFound',
             component: RoutingError

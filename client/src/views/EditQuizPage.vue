@@ -3,7 +3,12 @@
         <h3>You are unauthorized to acces this page</h3>
     </div>
     <div v-else>
-        <h2>Edit {{ quiz.name }}</h2>
+        <div class="flex">
+            <h2>{{ quiz.name }}</h2>
+            <div>
+                <img src="../assets/edit.png" alt="edit_btn"/>
+            </div>
+        </div>
         <div>
             <p class="error-message">{{ this.quizzesMessage }}</p>
         </div>

@@ -65,6 +65,20 @@
             </div>
             <p id="quizzesMessage">{{ quizzesMessage }}</p>
         </div>
+        <div v-if="isAttemptingQuiz" class="dialog-overlay">
+            <div class="dialog">
+                <div class="dialog-header">
+                    <h2>Halt!</h2>
+                    <div @click="toggleAttemptQuiz" class="close-icon">
+                        <img src="@/assets/katana_cross.png" alt="Close">
+                    </div>
+                </div>
+                <div class="dialog-body">
+                    <p>You need to be logged in to attempt a quiz!</p>
+                    <button @click="goToLogIn">Got It</button>
+                </div>
+            </div>
+        </div>
     </div>
     <div v-else class="renderingQuiz">
         <QuizRender/>
@@ -95,7 +109,8 @@
                 quizzesMessage: "",
                 searchFilterType: "",
                 searchFilterFavourites: 0,
-                searchFilterDifficulty: "all"
+                searchFilterDifficulty: "all",
+                isAttemptingQuiz: false,
             };
         },
         components: {
@@ -110,6 +125,9 @@
                 } else {
                     this.searchFilterType = type;
                 }
+            },
+            toggleAttemptQuiz() {
+                this.isAttemptingQuiz = !this.isAttemptingQuiz;
             },
             async handleSearchSubmit(){
                 await axios.get('http://localhost:3000/quizzes',
@@ -134,8 +152,15 @@
                     console.log("err",err);
                 })
             },
+            goToLogIn(){
+                router.push({path:'/auth', query: {form : 'login/signup', redirect: '/quiz'}});
+            },
             async startQuiz(quiz){
+                if (this.sessionToken)
                     router.push({path:'/quiz', query: { quizId: quiz.id}});
+                else {
+                    this.isAttemptingQuiz = true;
+                }
             },
             async changeFavourites(quizId){
                 let mode = 'add';
@@ -314,5 +339,70 @@
         margin: 5px;
     }
 
+    .dialog-overlay{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dialog{
+        background: v-bind('globalColors.lightColor');
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .dialog-header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .close-icon{
+        display: flex;
+        cursor: pointer;
+    }
+
+    .close-icon img{
+        width: 20px;
+        height: 20px;
+        transition: color 0.3s ease;
+    }
+
+    .close-icon img:hover{
+        transform: scale(1.3);
+        background-color: #613b151d;
+        border-radius: 8px;
+    }
+
+    .dialog-body{
+        background-color: v-bind('globalColors.lightColor');
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dialog-body button{
+        background-color: v-bind('globalColors.redColor');
+        color: #fff;
+        font-size: 12px;
+        padding: 10px 45px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-top: 20px;
+        cursor: pointer;
+        align-self: center;
+    }
 </style>
   
