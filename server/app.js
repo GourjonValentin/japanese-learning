@@ -361,8 +361,7 @@ app.delete('/delete-quiz', async (req, res) => {
     } catch (err) {
         return res.status(500).json({ err: err });
     }
-
-})
+});
 
 
 app.listen(port, () => {

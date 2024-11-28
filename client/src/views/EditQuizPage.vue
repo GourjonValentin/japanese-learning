@@ -1,15 +1,14 @@
 <template>
     <div v-if="this.permitted === false">
         <h3>You are unauthorized to acces this page</h3>
-        <router-link class="styledButton" style="text-decoration: none;" to="/quiz">Go Back</router-link>
     </div>
     <div v-else>
         <h2>Edit {{ quiz.name }}</h2>
         <div>
-            <router-link class="styledButton" style="text-decoration: none;" to="/quiz">Go Back</router-link>
             <p class="error-message">{{ this.quizzesMessage }}</p>
         </div>
     </div>
+    <router-link class="styledButton" style="text-decoration: none;" to="/quiz">Go Back</router-link>
     
 </template>
 
@@ -38,8 +37,8 @@
             async isOwner(quizId){
                 try {
                     let res = await axios.get('http://localhost:3000/is-quiz-owner', {
-                    params: {'quizId': quizId},
-                    headers: {'Authorization': `Bearer ${this.sessionToken}`} 
+                        params: {'quizId': quizId},
+                        headers: {'Authorization': `Bearer ${this.sessionToken}`} 
                     });
                     if (res.status === 200 || res.status === 204){
                         return true;
