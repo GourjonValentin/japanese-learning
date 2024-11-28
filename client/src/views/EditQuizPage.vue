@@ -4,7 +4,7 @@
     </div>
     <div v-else>
         <div class="flex">
-            <h2>{{ quiz.name }}</h2>
+            <h2>{{ quiz.name }}d</h2>
             <div @click="toggle-edit">
                 <img src="../assets/pencil-icon.png" alt="edit_btn"/>
             </div>
