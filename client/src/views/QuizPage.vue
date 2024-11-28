@@ -37,14 +37,19 @@
         </div>
         <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
     <div class="quizzes">
-            <div class="styledDiv" v-for="quiz in quizzes" :key="quiz.id">
+            <div class="styledDiv quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                     <div class="favourites" @click="changeFavourites(quiz.id)">
                         <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
                         <img class="logo" src="@/assets/heart-filled.png" v-else/>
                     </div>
-                    <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
-                        <img class="logo" src="@/assets/edit.png" />
+                    <div  class="tools" v-if="isQuizOwner(quiz) == 1">
+                        <div @click="editQuiz(quiz)" class="edit">
+                            <img class="logo" src="@/assets/edit.png" />
+                        </div>
+                        <div @click="deleteQuiz(quiz)" class="delete">
+                            <img class="logo" src="@/assets/delete.webp" />
+                        </div>
                     </div>
                 </div>
 
@@ -168,6 +173,25 @@
             },
             editQuiz(quizId){
                 this.$router.push({path:'/edit', query : {quizId: quizId}});
+            },
+            async deleteQuiz(quiz){
+                if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){
+                    try {
+                        let res = await axios.delete('http://localhost:3000/delete-quiz',{
+                            params : {'quizId' : quiz.id}, 
+                            headers: {'Authorization': `Bearer ${this.sessionToken}`} 
+                        });
+                        if (res.status === 200){
+                            this.quizzes = res.data;
+                        } else {
+                            alert(`Sorry the quiz ${quiz.name} couldn't be removed`);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+                } else {
+                    return;
+                }
             }
         },
         mounted() {
@@ -178,11 +202,18 @@
                         this.quizzes = res.data; // ???
                     }
                 } catch (err) {
-                    console.log(err)
-                    if (err.response.status === 404){
+                    console.log("erre", err)
+                    if (err.response === undefined){
+                        if(err.code === "ERR_NETWORK"){
+                            this.quizzesMessage = "Oops... The server is currently unavailable...";
+                        } else {
+                            this.quizzesMessage = "Oops... An error occured...";
+                        }
+                    }
+                    else if (err.response.status === 404){
                         this.quizzesMessage = "Oops... The quizzes could not be reached... ";
                     } else if ( err.response.status === 500){
-                        this.quizzesMessage = "Oops... The server is currently unavalable...";
+                        this.quizzesMessage = "Oops... The server couldn't respond to the request...";
                     } else {
                         this.quizzesMessage = "Oops... The quizzes could not be loaded... ";
                     }
@@ -193,7 +224,7 @@
         }
     };
 </script>
-  
+
 <style>
     /* SEARCH STYLES */
 
@@ -233,9 +264,17 @@
         display: flex;
         flex-wrap: wrap;
     }
+
+    .quiz {
+        min-width: 180px;
+    }
     .quiz-header {
         display: flex;
         justify-content: space-between;
+    }
+
+    .quiz-header .tools {
+        display: flex;
     }
 
     .favourites.edit {
@@ -251,10 +290,14 @@
         cursor: pointer;
         transform: scale(1.05);
     }
+    .delete:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+    }
 
     .logo {
-        height: 40px;
-        width: 40px;
+        height: 35px;
+        width: 35px;
     }
 
     .quizz-caption {

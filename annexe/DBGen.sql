@@ -29,7 +29,7 @@ CREATE TABLE scores (
     score float NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (userid) REFERENCES users(id),
-    FOREIGN KEY (quizid) REFERENCES quiz(id) 
+    FOREIGN KEY (quizid) REFERENCES quiz(id)
 );
 
 

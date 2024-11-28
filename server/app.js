@@ -330,6 +330,40 @@ app.get('/is-quiz-owner', async (req, res) => {
     }
 });
 
+app.delete('/delete-quiz', async (req, res) => {
+    try {
+        const token = req.header('Authorization').split(' ')[1];
+        const quizId = req.query.quizId;
+        if (token == undefined) {
+            return res.status(400).send();
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        console.log("resr", resVerifyToken);
+
+        if (resVerifyToken.status === 200) {
+            if (quizId == undefined) {
+                return res.status(401).json({ message: "Invalid format" });
+            }
+            let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
+            if (result.length === 0) {
+                return res.status(404).json({ message: "Quiz not found" });
+            } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+                result = await query('DELETE FROM scores WHERE quizid = ?', [quizId]);
+                result = await query('DELETE FROM quiz WHERE id = ?', [quizId]);
+                result = await query('SELECT * FROM quiz');
+                return res.status(200).json(result)
+            } else {
+                return res.status(403).json({ message: "You are not the owner of this quiz" });
+            }
+        } else {
+            return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
+        }
+    } catch (err) {
+        return res.status(500).json({ err: err });
+    }
+
+})
+
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

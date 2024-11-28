@@ -1,7 +1,6 @@
 <template>
     <div>
-        <h3>English-Japanese Dictionary</h3>
-
+        <h1>Japanese Dictionary</h1>
         <div class="searching-menu">
             <div class="language-select">
                 <!-- Switch between English and Japanese -->
