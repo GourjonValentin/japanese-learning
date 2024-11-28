@@ -44,11 +44,11 @@ const router = createRouter({
         {
             path: '/profile',
             component: ProfilePage
-        }, ,
+        },
         {
             path: '/:notFound',
             component: RoutingError
-        },
+        }
     ]
 })
 

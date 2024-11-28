@@ -5,8 +5,8 @@
     <div v-else>
         <div class="flex">
             <h2>{{ quiz.name }}</h2>
-            <div>
-                <img src="../assets/edit.png" alt="edit_btn"/>
+            <div @click="toggle-edit">
+                <img src="../assets/pencil-icon.png" alt="edit_btn"/>
             </div>
         </div>
         <div>
@@ -14,7 +14,6 @@
         </div>
     </div>
     <router-link class="styledButton" style="text-decoration: none;" to="/quiz">Go Back</router-link>
-    
 </template>
 
 <script>

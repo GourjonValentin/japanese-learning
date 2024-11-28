@@ -45,7 +45,7 @@
                     </div>
                     <div  class="tools" v-if="isQuizOwner(quiz) == 1">
                         <div @click="editQuiz(quiz)" class="edit">
-                            <img class="logo" src="@/assets/edit.png" />
+                            <img class="logo" src="@/assets/pencil-icon.png" />
                         </div>
                         <div @click="deleteQuiz(quiz)" class="delete">
                             <img class="logo" src="@/assets/delete.webp" />
