@@ -250,5 +250,13 @@
         margin: 5px;
     }
 
+    .renderingQuiz {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+    }
+
 </style>
   

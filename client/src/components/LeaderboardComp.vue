@@ -1,9 +1,9 @@
 <template>
-    <div v-if="scoresList.length !== 0">
+    <div class="leaderboard" v-if="scoresList.length !== 0">
 
         <h4>Leaderboard</h4>
         <div class="element" v-for="elt of scoresList" :key="elt.score">
-            {{ elt.username }} : {{ elt.score }}
+            {{ elt.username }} : <i>{{ elt.score }}</i>
         </div>
     </div>
 </template>
@@ -51,16 +51,18 @@ export default {
 </script>
 
 <style scoped>
-    div {
-        background-color: v-bind("globalColors.brownColor");
+    .leaderboard {
+        background-color: #f7e3cd;
         width: fit-content;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 10px;
         border-radius: 20px;
-        border: 2px solid v-bind("globalColors.darkColor");
-
+        border: none;
+        box-shadow: 1px 1px 15px  black;
+        flex-direction: column;
+        position: relative;
     }
 
 </style>
