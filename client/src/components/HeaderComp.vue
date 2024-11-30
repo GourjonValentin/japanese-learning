@@ -4,7 +4,7 @@
         <nav>
             <div class="pages-links">
                 <router-link to="/">Home</router-link>
-                <router-link to="/quiz">Quiz</router-link>
+                <router-link to="/quizz">Quizz</router-link>
                 <router-link to="/jisho">Jisho</router-link>
                 <router-link to="/alphabet">Alphabet</router-link>
             </div>

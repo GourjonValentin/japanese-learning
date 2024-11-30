@@ -56,7 +56,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: v-bind('globalColors.backgroundColor');
+    background-color: var(--background-color);
 }
 
 .styledDiv {
@@ -112,7 +112,7 @@ styledSelectInput.active {
 }
 
 .dialog{
-    background: v-bind('globalColors.lightColor');
+    background: var(--light-color);
     padding: 20px;
     border-radius: 10px;
     width: 400px;
@@ -128,7 +128,7 @@ styledSelectInput.active {
 }
 
 .dialog-body{
-    background-color: v-bind('globalColors.lightColor');
+    background-color: var(--light-color);
     display: flex;
     flex-direction: column;
 }

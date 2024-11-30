@@ -195,11 +195,17 @@ import {ref, provide, watch} from 'vue';
     -moz-osx-font-smoothing: grayscale;
     color: v-bind('globalColors.darkColor');
     background-color: v-bind('globalColors.backgroundColor');
+    text-align: center;
 }
 
 html, body {
     background-color: #f4d4b4;
     padding: 0;
     margin: 0;
+}
+
+h1 {
+    font-family: 'JapaneseStyleFont', sans-serif;
+    font-size: 50px;
 }
 </style>

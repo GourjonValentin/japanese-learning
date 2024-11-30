@@ -1,8 +1,8 @@
 <template>
     <div id="sign-out">
-        <h3>Want to leave us ?</h3>
+        <h2>Want to leave us ?</h2>
         <form @submit.prevent="signout">
-            <button type="submit">Sign Out</button>
+            <button class="styledButton-red" type="submit">Sign Out</button>
         </form>
     </div>
 </template>

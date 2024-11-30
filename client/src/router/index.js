@@ -3,10 +3,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../views/HomePage';
 import AuthPage from '../views/AuthPage';
 import JishoPage from '../views/JishoPage';
-import QuizPage from '../views/QuizPage';
+import QuizzPage from '../views/QuizzPage';
 import AlphabetPage from '../views/AlphabetPage';
-import CreateQuizPage from "../views/CreateQuizPage";
-import EditQuizPage from "../views/EditQuizPage";
+import CreateQuizzPage from "../views/CreateQuizzPage";
+import EditQuizzPage from "../views/EditQuizzPage";
 import ProfilePage from '../views/ProfilePage';
 import RoutingError from "../views/RoutingError";
 
@@ -26,8 +26,8 @@ const router = createRouter({
             component: JishoPage
         },
         {
-            path: '/quiz',
-            component: QuizPage
+            path: '/quizz',
+            component: QuizzPage
         },
         {
             path: '/alphabet',
@@ -35,11 +35,11 @@ const router = createRouter({
         },
         {
             path: '/create',
-            component: CreateQuizPage
+            component: CreateQuizzPage
         },
         {
             path: '/edit',
-            component: EditQuizPage
+            component: EditQuizzPage
         },
         {
             path: '/profile',

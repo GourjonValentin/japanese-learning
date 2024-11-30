@@ -54,26 +54,26 @@
                     <h2>Quizzes history</h2>
                 </div>
                 <div class="quizzes">
-                    <div class="styledDiv" v-for="quiz in userQuizzes" :key="quiz.id">
-                        <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                    <div class="styledDiv" v-for="quizz in userQuizzes" :key="quizz.id">
+                        <div class="quizz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
+                            <div class="favourites" @click="changeFavourites(quizz.id)">
+                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quizz.id) === -1)"/>
                                 <img class="logo" src="@/assets/heart-filled.png" v-else/>
                             </div>
-                            <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
+                            <div class="edit" @click="editQuizz(quizz.id)" v-if="isQuizzOwner(quizz) == 1">
                                 <img class="logo" src="@/assets/pencil-icon-colored.png" />
                             </div>
                         </div>
 
-                        <h3>{{ quiz.name }}</h3>
-                        <button class="styledButton" @click="startQuiz(quiz)">Start Quiz</button>
+                        <h3>{{ quizz.name }}</h3>
+                        <button class="styledButton" @click="startQuizz(quizz)">Start Quizz</button>
                         <div class="quizz-caption">
                             <p>Difficulty : </p>
-                            <div v-for="i in quiz.difficultylevel" :key="i">
+                            <div v-for="i in quizz.difficultylevel" :key="i">
                                 <img src="@/assets/torii.png"/>
                             </div>
                         </div>
-                        <p>Best score : {{ quiz.score }} / {{ quiz.content.length }}</p>
+                        <p>Best score : {{ quizz.score }} / {{ quizz.content.length }}</p>
                     </div>
                     <p id="userQuizzesMessage">{{ userQuizzesMessage }}</p>
                 </div>
@@ -83,22 +83,22 @@
                     <h2>Favorite quizzes</h2>
                 </div>
                 <div class="quizzes">
-                    <div class="styledDiv" v-for="quiz in userFavQuizzes" :key="quiz.id">
-                        <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                    <div class="styledDiv" v-for="quizz in userFavQuizzes" :key="quizz.id">
+                        <div class="quizz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
+                            <div class="favourites" @click="changeFavourites(quizz.id)">
+                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quizz.id) === -1)"/>
                                 <img class="logo" src="@/assets/heart-filled.png" v-else/>
                             </div>
-                            <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
+                            <div class="edit" @click="editQuizz(quizz.id)" v-if="isQuizzOwner(quizz) == 1">
                                 <img class="logo" src="@/assets/pencil-icon-colored.png" />
                             </div>
                         </div>
 
-                        <h3>{{ quiz.name }}</h3>
-                        <button class="styledButton" @click="startQuiz(quiz)">Start Quiz</button>
+                        <h3>{{ quizz.name }}</h3>
+                        <button class="styledButton" @click="startQuizz(quizz)">Start Quizz</button>
                         <div class="quizz-caption">
                             <p>Difficulty : </p>
-                            <div v-for="i in quiz.difficultylevel" :key="i">
+                            <div v-for="i in quizz.difficultylevel" :key="i">
                                 <img src="@/assets/torii.png"/>
                             </div>
                         </div>
@@ -234,23 +234,23 @@
                     }
                 }
             },
-            async startQuiz(quiz){
-                router.push({path:'/quiz', query: { quizId: quiz.id}});
+            async startQuizz(quizz){
+                router.push({path:'/quizz', query: { quizzId: quizz.id}});
             },
-            isQuizOwner(quiz){
-                if (quiz.ownerid == this.userId){
+            isQuizzOwner(quizz){
+                if (quizz.ownerid == this.userId){
                     return 1;
                 }
                 return 0;
             },
-            editQuiz(quizId){
-                this.$router.push({path:'/edit', query : {quizId: quizId}});
+            editQuizz(quizzId){
+                this.$router.push({path:'/edit', query : {quizzId: quizzId}});
             },
-            async changeFavourites(quizId){
+            async changeFavourites(quizzId){
                 let mode = 'add';
-                console.log("quizId", quizId);
+                console.log("quizzId", quizzId);
                 console.log("this.favourites", this.favourites);
-                if (this.favourites.includes(quizId)){
+                if (this.favourites.includes(quizzId)){
                     mode = 'delete';
                 }
 
@@ -258,12 +258,12 @@
                     const res = await axios.post('http://localhost:3000/users/edit-favourite', 
                         {
                             mode : mode, 
-                            quizId : quizId,
+                            quizzId : quizzId,
                             userId : this.userId,
                             sessionToken : this.sessionToken
                         }).catch(err => {
                             if (err.response.status === 409) {
-                                alert("You have already added this quiz to your favourites");
+                                alert("You have already added this quizz to your favourites");
                             }
                             console.log("err", err);
                         });

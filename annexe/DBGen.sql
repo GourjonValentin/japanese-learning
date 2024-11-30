@@ -12,7 +12,7 @@ CREATE TABLE users(
     PRIMARY KEY (id)
 );
 
-CREATE TABLE quiz(
+CREATE TABLE quizz(
     id int NOT NULL AUTO_INCREMENT,
     name varchar(255),
     type varchar(255),
@@ -26,11 +26,11 @@ CREATE TABLE quiz(
 CREATE TABLE scores (
     id int NOT NULL AUTO_INCREMENT,
     userid int NOT NULL,
-    quizid int NOT NULL,
+    quizzid int NOT NULL,
     score float NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (userid) REFERENCES users(id),
-    FOREIGN KEY (quizid) REFERENCES quiz(id)
+    FOREIGN KEY (quizzid) REFERENCES quizz(id)
 );
 
 
@@ -40,7 +40,7 @@ VALUES ('admin', 1, '[]', '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV
 INSERT INTO users (username, isAdmin, favourites, password, avatarPath)
 VALUES ('user1', 0, '[]', '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em', 'https://api.multiavatar.com/c6195hhi8y8.svg');
 
-INSERT INTO quiz (name, type, ownerid, content, difficultylevel) VALUES 
+INSERT INTO quizz (name, type, ownerid, content, difficultylevel) VALUES 
 (
     'Basic basic',
     'simple',
@@ -117,7 +117,7 @@ INSERT INTO quiz (name, type, ownerid, content, difficultylevel) VALUES
     2
 );
 
-INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
+INSERT INTO quizz(name, type, ownerid, difficultylevel, content) VALUES
 (
     'Tokyo Ghoul - 東京喰種',
     'anime',

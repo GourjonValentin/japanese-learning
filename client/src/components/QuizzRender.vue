@@ -1,18 +1,18 @@
 <template>
-    <router-link to="/quiz">Go back</router-link>
-    <h3>{{ quiz.name }}</h3>
+    <router-link to="/quizz">Go back</router-link>
+    <h3>{{ quizz.name }}</h3>
     <!--Je ne sais pas comment appele la classe...-->
-    <div class="results" v-if="this.questionNumber === quiz.content.length">
+    <div class="results" v-if="this.questionNumber === quizz.content.length">
         <p>Here is your score :</p>
-        <div class="score">{{ score }} / {{ this.quiz.content.length }}</div>
+        <div class="score">{{ score }} / {{ this.quizz.content.length }}</div>
         <p class="serverMessage">{{ this.serverMessage }}</p>
         <details>
             <summary>Details</summary>
-            <div v-for="question in this.quiz.content" :key="question.id">
+            <div v-for="question in this.quizz.content" :key="question.id">
                 <p class="title">{{ question.title }}</p>
                 <div :class="{ answer : true,
                     correct: question.correct_answers.includes(answer.id) || question.correct_answers.includes(answer.id.toString()),
-                    userChoice: this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id) || this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id.toString()) }"
+                    userChoice: this.userAnswers[quizz.content.findIndex(elt => elt.id === question.id)].includes(answer.id) || this.userAnswers[quizz.content.findIndex(elt => elt.id === question.id)].includes(answer.id.toString()) }"
                      v-for="answer in question.answers" :key="answer.id"
                 >
                     {{ answer.content }}
@@ -20,7 +20,7 @@
             </div>
         </details>
     </div>
-    <div v-else class="quiz???">
+    <div v-else class="quizz???">
         <nav>
             <div>
                 <button class="previous" @click="this.questionNumber -=1" v-if="this.questionNumber !== 0">Previous
@@ -28,31 +28,31 @@
             </div>
             <div>
                 <button class="next" @click="this.questionNumber +=1"
-                        v-if="this.questionNumber < quiz.content.length - 1">Next
+                        v-if="this.questionNumber < quizz.content.length - 1">Next
                 </button>
-                <button class="next" @click="finishQuiz()" v-else-if="this.questionNumber === quiz.content.length - 1">
+                <button class="next" @click="finishQuizz()" v-else-if="this.questionNumber === quizz.content.length - 1">
                     Finish
                 </button>
             </div>
         </nav>
-        <div class="content" v-if="quiz.content.length > 0">
-            <h4>{{ this.quiz.content[questionNumber].title }}</h4>
-            <img v-if="quiz.content[questionNumber].picture !==''" :src="quiz.content[questionNumber].picture"
-                 :alt="quiz.content[questionNumber].picture"/>
+        <div class="content" v-if="quizz.content.length > 0">
+            <h4>{{ this.quizz.content[questionNumber].title }}</h4>
+            <img v-if="quizz.content[questionNumber].picture !==''" :src="quizz.content[questionNumber].picture"
+                 :alt="quizz.content[questionNumber].picture"/>
             <div
                 :class="{active: (userAnswers[questionNumber].includes(answer.id))}"
                 @click="changeUserAnswers(answer.id)"
-                v-for="answer in quiz.content[questionNumber].answers"
+                v-for="answer in quizz.content[questionNumber].answers"
                 :key="answer.id"
             >
                 <p>{{ answer.content }}</p>
             </div>
 
-            {{ questionNumber + 1 }}/{{ quiz.content.length }}
+            {{ questionNumber + 1 }}/{{ quizz.content.length }}
         </div>
     </div>
     <p>{{ quizzesMessage }}</p>
-    <LeaderboardComp :quizId="quiz.id"/>
+    <LeaderboardComp :quizzId="quizz.id"/>
 </template>
 
 <script>
@@ -68,10 +68,10 @@ export default {
     },
     data() {
         return {
-            quiz: {
+            quizz: {
                 name: '',
                 content: [],
-                id: this.$route.query.quizId
+                id: this.$route.query.quizzId
             },
             quizzesMessage: '',
             questionNumber: 0,
@@ -86,7 +86,7 @@ export default {
     },
     methods: {
         initAnswers() {
-            for (let i = 0; i < this.quiz.content.length; i++) {
+            for (let i = 0; i < this.quizz.content.length; i++) {
                 this.userAnswers.push([])
             }
         },
@@ -95,7 +95,7 @@ export default {
                 // delete
                 this.userAnswers[this.questionNumber] = this.userAnswers[this.questionNumber].filter(elt => elt !== answerNumber);
             } else {
-                let n_corr = this.quiz.content[this.questionNumber].correct_answers.length;
+                let n_corr = this.quizz.content[this.questionNumber].correct_answers.length;
                 if (this.userAnswers[this.questionNumber].length < n_corr || n_corr === 1) {
                     if (n_corr === 1) {
                         this.userAnswers[this.questionNumber] = []
@@ -112,19 +112,19 @@ export default {
             this.userAnswers.forEach((value, index) => {
                 let n_correct = 0;
                 value.forEach((ans_value) => {
-                    if (this.quiz.content[index].correct_answers.includes(ans_value) || this.quiz.content[index].correct_answers.includes(ans_value.toString())) {
+                    if (this.quizz.content[index].correct_answers.includes(ans_value) || this.quizz.content[index].correct_answers.includes(ans_value.toString())) {
                         n_correct++;
                     }
 
                 });
-                this.score += n_correct / this.quiz.content[index].correct_answers.length;
+                this.score += n_correct / this.quizz.content[index].correct_answers.length;
             });
 
         },
         async saveScore() {
             await axios.post('http://localhost:3000/save-score', {
                 userId: this.userId,
-                quizId: this.quiz.id,
+                quizzId: this.quizz.id,
                 score: this.score
             })
                 .then((res) => {
@@ -137,9 +137,9 @@ export default {
                     this.quizzesMessage = "error";
                 })
         },
-        finishQuiz() {
-            if (this.userAnswers.length < this.quiz.content.length) {
-                if (confirm(`You left ${this.quiz.content.length - this.userAnswers.filter(elt => elt.length > 0).length} questions unanswers...\nAre you sure you want to end this quiz ?`)) {
+        finishQuizz() {
+            if (this.userAnswers.length < this.quizz.content.length) {
+                if (confirm(`You left ${this.quizz.content.length - this.userAnswers.filter(elt => elt.length > 0).length} questions unanswers...\nAre you sure you want to end this quizz ?`)) {
                     this.calculateScore();
                     if (this.userId) {
                         this.saveScore();
@@ -156,15 +156,15 @@ export default {
         }
     },
     mounted() {
-        const getQuiz = async () => {
+        const getQuizz = async () => {
             try {
-                let quizId = this.$route.query.quizId;
-                let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`);
+                let quizzId = this.$route.query.quizzId;
+                let res = await axios.get(`http://localhost:3000/quizzes/${quizzId}`);
 
                 if (res.status === 200 || res.status === 304) {
-                    this.quiz = res.data[0];
-                    if (!(this.quiz.content instanceof Array)) {
-                        this.quiz.content = JSON.parse(this.quiz.content);
+                    this.quizz = res.data[0];
+                    if (!(this.quizz.content instanceof Array)) {
+                        this.quizz.content = JSON.parse(this.quizz.content);
                     }
 
                 }
@@ -182,7 +182,7 @@ export default {
                 }
             }
         };
-        getQuiz();
+        getQuizz();
     }
 }
 </script>

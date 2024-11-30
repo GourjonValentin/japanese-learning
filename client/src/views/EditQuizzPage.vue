@@ -1,7 +1,7 @@
 <template>
     <div v-if="this.permitted === false">
         <h2>You are unauthorized to acces this page</h2>
-        <router-link class="minor-button-edit-page" style="text-decoration: none;" to="/quiz">Go Back</router-link>
+        <router-link class="minor-button-edit-page" style="text-decoration: none;" to="/quizz">Go Back</router-link>
     </div>
     <div v-else class="edit-div">
 
@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div class="dialog-body">
-                        <form @submit.prevent="() => {quiz.name = editedTitle; isTitleForm = false;}">
+                        <form @submit.prevent="() => {quizz.name = editedTitle; isTitleForm = false;}">
                             <input class="styledInput" type="text" v-model="editedTitle" />
                             <button class="styledButton-red" type="submit">Save</button>
                         </form>
@@ -33,9 +33,9 @@
                 <div class="dialog-body">
                         <form @submit.prevent="saveMainAttributes">
                             <div>
-                                <label for="quizDifficulty">Difficulty :</label>
+                                <label for="quizzDifficulty">Difficulty :</label>
                                 <div class="styledSelectInput">
-                                    <select name="quizDifficulty" id="quizDifficulty" v-model="editedMainAttributes.difficultylevel" required>
+                                    <select name="quizzDifficulty" id="quizzDifficulty" v-model="editedMainAttributes.difficultylevel" required>
                                         <option>1</option>
                                         <option>2</option>
                                         <option>3</option>
@@ -43,11 +43,11 @@
                                 </div>
                             </div>
                             <div>
-                                <label for="quizType">Quiz type</label>
+                                <label for="quizzType">Quizz type</label>
                                 <div class="styledSelectInput">
-                                    <select id="quizType" name="quizType" v-model="editedMainAttributes.type">
-                                        <option value="simple" selected>Normal Quiz</option>
-                                        <option value="anime">Anime Quiz</option>
+                                    <select id="quizzType" name="quizzType" v-model="editedMainAttributes.type">
+                                        <option value="simple" selected>Normal Quizz</option>
+                                        <option value="anime">Anime Quizz</option>
                                     </select>
                                 </div>
                             </div>
@@ -70,8 +70,8 @@
                     <form @submit.prevent="saveQuestion">
                         <label for="title">Question Title : </label>
                         <input class="styledInput" type="text" v-model = editedQuestion.title>
-                        <label for="picture" v-if="this.quiz.type === 'anime'">Picture link : </label>
-                        <input class="styledInput" v-if="this.quiz.type === 'anime'" type="text" v-model="editedQuestion.picture" required>
+                        <label for="picture" v-if="this.quizz.type === 'anime'">Picture link : </label>
+                        <input class="styledInput" v-if="this.quizz.type === 'anime'" type="text" v-model="editedQuestion.picture" required>
                         <p>Answers :</p>
                         <div class="answers" v-for="answer in editedQuestion.answers || []" :key="answer.id">
                             <input type="checkbox" :checked="this.editedQuestion.correct_answers.includes(answer.id)" @change="checkboxChangeHandler($event, answer.id)">
@@ -105,8 +105,8 @@
                     <form @submit.prevent="saveAddedQuestion">
                         <label for="title">Question Title : </label>
                         <input class="styledInput" type="text" v-model = editedQuestion.title>
-                        <label for="picture" v-if="this.quiz.type === 'anime'">Picture link : </label>
-                        <input class="styledInput" v-if="this.quiz.type === 'anime'" type="text" v-model="editedQuestion.picture" required>
+                        <label for="picture" v-if="this.quizz.type === 'anime'">Picture link : </label>
+                        <input class="styledInput" v-if="this.quizz.type === 'anime'" type="text" v-model="editedQuestion.picture" required>
                         <p>Answers :</p>
                         <div class="answers" v-for="answer in editedQuestion.answers || []" :key="answer.id">
                             <input type="checkbox" :checked="this.editedQuestion.correct_answers.includes(answer.id)" @change="checkboxChangeHandler($event, answer.id)">
@@ -158,8 +158,8 @@
         </div>
 
         <div class="field">
-            <h1>{{ quiz.name }}</h1>
-            <div @click="()=>{editedTitle = quiz.name; isTitleForm = true;}" >
+            <h1>{{ quizz.name }}</h1>
+            <div @click="()=>{editedTitle = quizz.name; isTitleForm = true;}" >
                 <img src="../assets/pencil-icon.png" alt="edit_btn" class="editing-logo"/>
             </div>
         </div>
@@ -173,22 +173,22 @@
             <div class="main-attributes-body">
                 <div>
                     <p>Difficulty level :</p>
-                    <p>{{ quiz.difficultylevel }}</p>
+                    <p>{{ quizz.difficultylevel }}</p>
                 </div>
                 <div>
                     <p>Type :</p>
-                    <p>{{ quiz.type }}</p>
+                    <p>{{ quizz.type }}</p>
                 </div>
             </div>
         </div>
         <h2>Questions</h2>
-        <div class="quiz-content">
-            <div class="quiz-questions" v-for="question in quiz.content" :key="question.id">
+        <div class="quizz-content">
+            <div class="quizz-questions" v-for="question in quizz.content" :key="question.id">
                 <div id="questions-editing-logo">
-                    <div class="edit-logo-question-div" @click="deleteQuestionQuiz(question)">
+                    <div class="edit-logo-question-div" @click="deleteQuestionQuizz(question)">
                         <img class="minor-editing-logo" src="@/assets/delete.webp" alt="delete_btn"/>
                     </div>
-                    <div class="edit-logo-question-div" @click="editQuestionQuiz(question)">
+                    <div class="edit-logo-question-div" @click="editQuestionQuizz(question)">
                         <img class="minor-editing-logo" src="../assets/pencil-icon.png" alt="edit_btn"/>
                     </div>
                 </div>
@@ -196,7 +196,7 @@
                 
                 <div class="question-header">
                     <h2>{{ question.title }}</h2>
-                    <p v-if="quiz.type === 'anime'">Picture link : {{ question.picture }}</p>
+                    <p v-if="quizz.type === 'anime'">Picture link : {{ question.picture }}</p>
                 </div>
                 <div class="answer" v-for="answer in question.answers" :key="answer.id">
                     <div class="answer-correct-div">
@@ -208,7 +208,7 @@
                     </div>
                 </div>
             </div>
-            <div class="quiz-questions">
+            <div class="quizz-questions">
                 <h2>Add question</h2>
                 <div @click="addQuestion">
                     <img class="add-button" src="@/assets/plus-button.png" alt="add-button"/>
@@ -219,8 +219,8 @@
             <p class="error-message">{{ this.quizzesMessage }}</p>
         </div>
         <div id="button-div-edit-page">
-            <router-link class="minor-button-edit-page" style="text-decoration: none;" to="/quiz">Go Back</router-link>
-            <button class="styledButton-red" @click="saveQuiz">Save</button>
+            <router-link class="minor-button-edit-page" style="text-decoration: none;" to="/quizz">Go Back</router-link>
+            <button class="styledButton-red" @click="saveQuizz">Save</button>
         </div>
     </div>
 </template>
@@ -240,7 +240,7 @@
         data() {
 
             return {
-                quiz: {
+                quizz: {
                     name: '',
                     content: []
                 },
@@ -248,7 +248,7 @@
                 dialodMessage : '',
                 isEditingTitle: false,
                 permitted : 0,
-                newQuizName : '',
+                newQuizzName : '',
                 globalColors : globalColors,
                 isTitleForm : false,
                 isMainAttributesForm : false,
@@ -271,36 +271,36 @@
             }
         },
         methods : {
-            async isOwner(quizId){
+            async isOwner(quizzId){
                 try {
-                    let res = await axios.get('http://localhost:3000/is-quiz-owner', {
-                        params: {'quizId': quizId},
+                    let res = await axios.get('http://localhost:3000/is-quizz-owner', {
+                        params: {'quizzId': quizzId},
                         headers: {'Authorization': `Bearer ${this.sessionToken}`} 
                     });
                     if (res.status === 200 || res.status === 204){
                         return true;
                     } else {
-                        console.error("Error accessing editing quizz mode for "+this.quiz.id+"\nStatus code: "+res.status)
+                        console.error("Error accessing editing quizz mode for "+this.quizz.id+"\nStatus code: "+res.status)
                         return false;
                     }
                 } catch (err){
-                    console.error("Error accessing editing quizz mode for "+this.quiz.id+"\nError code: "+err)
+                    console.error("Error accessing editing quizz mode for "+this.quizz.id+"\nError code: "+err)
                     return false;
                 }
             },
             saveQuizzTitle(){
-                this.quiz.name = this.newQuizName;
+                this.quizz.name = this.newQuizzName;
             },
             editMainAttributes() {
-                this.editedMainAttributes = {type: this.quiz.type, difficultylevel: this.quiz.difficultylevel};
+                this.editedMainAttributes = {type: this.quizz.type, difficultylevel: this.quizz.difficultylevel};
                 this.isMainAttributesForm = true;
             },
             saveMainAttributes(){
-                this.quiz.type = this.editedMainAttributes.type;
-                this.quiz.difficultylevel = this.editedMainAttributes.difficultylevel;
+                this.quizz.type = this.editedMainAttributes.type;
+                this.quizz.difficultylevel = this.editedMainAttributes.difficultylevel;
                 this.isMainAttributesForm = false;
             },
-            editQuestionQuiz(question){
+            editQuestionQuizz(question){
                 this.editedQuestion = {
                     "id": question.id,
                     "title": question.title,
@@ -310,7 +310,7 @@
                 };
                 this.isQuestionForm = true;
             },
-            deleteQuestionQuiz(question){
+            deleteQuestionQuizz(question){
                 // faire un confirm stylisé ??
                 this.isConfirmation = true;
                 this.confirmation.result = null;
@@ -320,8 +320,8 @@
                     () => this.confirmation.result,
                     (newVal) => {
                         if (newVal === true){
-                            this.quiz.content = this.quiz.content.filter(elt => elt.id != question.id);
-                            this.quiz.content = this.quiz.content.filter(elt => elt.id != question.id);
+                            this.quizz.content = this.quizz.content.filter(elt => elt.id != question.id);
+                            this.quizz.content = this.quizz.content.filter(elt => elt.id != question.id);
                         }
                         unwatchConfirmation();
                     }
@@ -348,9 +348,9 @@
                 }
             },
             addQuestion(){
-                if (this.quiz.content.length > 0){
+                if (this.quizz.content.length > 0){
                     this.editedQuestion = {
-                        "id": this.quiz.content[this.quiz.content.length - 1].id + 1,
+                        "id": this.quizz.content[this.quizz.content.length - 1].id + 1,
                         "title": "",
                         "answers": [
                             {
@@ -392,8 +392,8 @@
                 } else if (this.editedQuestion.title.length === 0){
                     this.dialodMessage = 'Please fill the title of the question !';
                 } else {
-                    let index = this.quiz.content.findIndex(elt => elt.id === this.editedQuestion.id);
-                    this.quiz.content[index] = this.editedQuestion;
+                    let index = this.quizz.content.findIndex(elt => elt.id === this.editedQuestion.id);
+                    this.quizz.content[index] = this.editedQuestion;
                     this.dialodMessage = "";
                     this.isQuestionForm = false;
                 }
@@ -405,23 +405,23 @@
                     this.dialodMessage = 'Please fill the title of the question !';
                 } else {
                     this.dialodMessage = '';
-                    this.quiz.content.push(this.editedQuestion);
+                    this.quizz.content.push(this.editedQuestion);
                     this.isAddingQuestionForm = false;
                 }
                 
             },
-            async saveQuiz(){
-                if (this.quiz.type === 'anime'){
-                    for (let i in this.quiz.content){
-                        if (this.quiz.content[i].picture === ''){
+            async saveQuizz(){
+                if (this.quizz.type === 'anime'){
+                    for (let i in this.quizz.content){
+                        if (this.quizz.content[i].picture === ''){
                             this.alert.title = 'Please complete all required field before submission';
-                            this.alert.body = `You have not provided a picture link for the question : ${this.quiz.content[i].title}`;
+                            this.alert.body = `You have not provided a picture link for the question : ${this.quizz.content[i].title}`;
                             this.isAlert = true;
                             return;
                         }
                     }
                 }
-                if (this.quiz.content.length === 0){
+                if (this.quizz.content.length === 0){
                     this.alert.title = 'Empty quizz cannot be submitted';
                     this.alert.body = 'This quizz contains no questions. Please create at least one question for this quizz.';
                     this.isAlert = true;
@@ -429,8 +429,8 @@
                 }
                 try {
                     let res = await axios.post(
-                        `http://localhost:3000/edit-quizz/${this.quiz.id}`,
-                        {'editedQuiz': this.quiz},
+                        `http://localhost:3000/edit-quizz/${this.quizz.id}`,
+                        {'editedQuizz': this.quizz},
                         {
                             headers: {
                                 Authorization: `Bearer ${this.sessionToken}`,
@@ -444,7 +444,7 @@
                             () => this.isAlert,
                             (newVal) => {
                                 if (!newVal) {
-                                    this.$router.push('/quiz');
+                                    this.$router.push('/quizz');
                                     unwatchAlert();
                                 }
                             }
@@ -454,13 +454,13 @@
                     console.log(err)
                     this.alert.title = 'Error';
                     if (err.response.status === 404) {
-                        this.alert.body = "Oops... The quiz you try to edit does not exist... ";
+                        this.alert.body = "Oops... The quizz you try to edit does not exist... ";
                     } else if (err.response.status === 500) {
                         this.alert.body = "Oops... The server is currently unavalable...";
                     } else if (err.response.status === 400) {
                         this.alert.body = "Oops... Invalid request to the server has been made...";
                     } else {
-                        this.alert.body = "Oops... The quizes could not be loaded... ";
+                        this.alert.body = "Oops... The quizzes could not be loaded... ";
                     }
                     this.isAlert = true;
                 }
@@ -468,32 +468,32 @@
             }
         },
         mounted() {
-            const getQuiz = async () => {
+            const getQuizz = async () => {
                 try {
-                    let quizId = this.$route.query.quizId;
-                    let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`);
+                    let quizzId = this.$route.query.quizzId;
+                    let res = await axios.get(`http://localhost:3000/quizzes/${quizzId}`);
 
                     if (res.status === 200 || res.status === 304) {
-                        this.quiz = res.data[0];
-                        if (!(this.quiz.content instanceof Array)) {
-                            this.quiz.content = JSON.parse(this.quiz.content);
+                        this.quizz = res.data[0];
+                        if (!(this.quizz.content instanceof Array)) {
+                            this.quizz.content = JSON.parse(this.quizz.content);
                         }
                     }
                 } catch (err) {
                     console.log(err)
                     if (err.response.status === 404) {
-                        this.quizzesMessage = "Oops... The quiz could not be found... ";
+                        this.quizzesMessage = "Oops... The quizz could not be found... ";
                     } else if (err.response.status === 500) {
                         this.quizzesMessage = "Oops... The server is currently unavalable...";
                     } else if (err.response.status === 400) {
                         this.quizzesMessage = "Oops... Invalid request to the server has been made...";
                     } else {
-                        this.quizzesMessage = "Oops... The quizes could not be loaded... ";
+                        this.quizzesMessage = "Oops... The quizzes could not be loaded... ";
                     }
                 }
             };
-            getQuiz().then(async () => {
-                this.permitted = await this.isOwner(this.quiz.id);
+            getQuizz().then(async () => {
+                this.permitted = await this.isOwner(this.quizz.id);
             }
             ).catch((err) => {
                     this.quizzesMessage = "Oops... The quizzes could not be loaded";
@@ -553,12 +553,12 @@
     width: 30px;
     height: 30px;
 }
-.quiz-content {
+.quizz-content {
     display: flex;
     flex-wrap: wrap;
 }
 
-.quiz-questions {
+.quizz-questions {
     min-width: 200px;
     display: flex;
     flex-direction: column;
