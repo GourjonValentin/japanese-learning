@@ -304,9 +304,10 @@ app.get('/user-quizzes', async (req, res) => {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
     }
-    
+
 })
 
+// url below is unclear .... can be renamed ???
 app.post('/create', async (req, res) => {
     const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
     console.log(quizQuestions);
@@ -389,7 +390,10 @@ app.post('/save-score', async (req, res) => {
 });
 
 app.get('/is-quiz-owner', async (req, res) => {
-    const token = req.header('Authorization').split(' ')[1]
+    if (req.header('Authorization') === undefined) {
+        return res.status(401).json({ message: "Invalid format" });
+    }
+    const token = req.header('Authorization').split(' ')[1];
     const quizId = req.query.quizId;
     console.log(req.query);
     if (token == undefined) {
@@ -449,6 +453,38 @@ app.delete('/delete-quiz', async (req, res) => {
     }
 });
 
+app.post('/edit-quizz/:quizId', async (req, res) => {
+    if (req.header('Authorization') === undefined) {
+        return res.status(401).json({ message: "Invalid format" });
+    }
+    const token = req.header('Authorization').split(' ')[1];
+    const { quizId } = req.params;
+    const { editedQuiz } = req.body;
+
+    if (token == undefined) {
+        return res.status(400);
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+
+    if (resVerifyToken.status === 200) {
+        if (quizId === undefined || editedQuiz === undefined) {
+            return res.status(401).json({ message: "Invalid format" });
+        }
+        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
+        if (result.length === 0) {
+            return res.status(404).json({ message: "Quiz not found" });
+        } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+            //la requete SQL ne marche pas erreur syntaxique :  You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?' at line 1
+            result = await query('UPDATE quiz SET name=?, type=?, content=?, difficultylevel=? WHERE id = ?',
+                [editedQuiz.name, editedQuiz.type, JSON.stringify(editedQuiz.content), parseInt(editedQuiz.difficultylevel), quizId]);
+            return res.sendStatus(200);
+        } else {
+            return res.status(403).json({ message: "You are not the owner of this quiz" });
+        }
+    } else {
+        return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

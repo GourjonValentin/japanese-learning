@@ -26,9 +26,9 @@
                         </div>
                         <div class="dialog-body">
                             <form @submit.prevent="saveUsername">
-                                <input type="text" v-model="newUsername" placeholder="Enter new username" maxlength="20" />
+                                <input class="styledInput" type="text" v-model="newUsername" placeholder="Enter new username" maxlength="20" />
                                 <p v-if="updateUsernameMessage" style="white-space: pre-wrap;">{{ updateUsernameMessage }}</p>
-                                <button type="submit">Save</button>
+                                <button class="styledButton-red" type="submit">Save</button>
                             </form>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                     <input type="password" v-model="password" placeholder="New password" required />
                     <input type="password" v-model="confirmPassword" placeholder="Confirm new password" required />
                     <p v-if="updatePasswordMessage" style="white-space: pre-wrap;">{{ updatePasswordMessage }}</p>
-                    <button type="submit">Save</button>
+                    <button class="styledButton-red" type="submit">Save</button>
                 </form>
             </div>
             <!-- <div id="confidentialty-settings">
@@ -448,24 +448,6 @@
     border-radius: 8px;
 }
 
-.dialog-body{
-    background-color: v-bind('globalColors.lightColor');
-    display: flex;
-    flex-direction: column;
-}
-
-.dialog-body form{
-    display: flex;
-    flex-direction: column;
-}
-
-.dialog-body input{
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: v-bind('globalColors.backgroundColor');
-}
-
 #password-settings{
     display: flex;
 }
@@ -475,21 +457,6 @@
     flex-direction: column;
     justify-content: center;
     height: 100%;
-}
-
-#password-settings button, .dialog-body button{
-    background-color: v-bind('globalColors.redColor');
-    color: #fff;
-    font-size: 12px;
-    padding: 10px 45px;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-top: 20px;
-    cursor: pointer;
-    align-self: center;
 }
 
 #password-settings input{

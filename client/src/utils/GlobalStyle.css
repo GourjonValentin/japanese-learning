@@ -18,6 +18,21 @@
     transition: background-color 0.3s, transform 0.2s;
 }
 
+.styledButton-red {
+    background-color: var(--red-color);
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    cursor: pointer;
+    align-self: center;
+}
+
 /* STYLED BUTTON */
 
 .styledButton:hover {
@@ -28,7 +43,7 @@
 .styledButton:active {
     transform: scale(0.95);
 }
-
+/*
 .styledInput {
     flex: 1;
     padding: 8px 15px;
@@ -36,6 +51,12 @@
     border-radius: 25px;
     outline: none;
     transition: border-color 0.3s;
+}*/
+.styledInput {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: v-bind('globalColors.backgroundColor');
 }
 
 .styledDiv {
@@ -74,4 +95,49 @@
 
 styledSelectInput.active {
         background-color: var(--light-color);
+}
+
+/* DIALOG */
+
+.dialog-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog{
+    background: v-bind('globalColors.lightColor');
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dialog-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dialog-body{
+    background-color: v-bind('globalColors.lightColor');
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-body form{
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-message {
+    color: var(--red-color);
 }

@@ -1,72 +1,57 @@
-SAUVEGARDE DE L'ANCIEN LOGIN COMPOSANTS
-
 <template>
-  <div id="login">
-      <h2>Login</h2>
-      <form @submit.prevent="login">
-          <label>Username : </label>
-          <input type="text" name="username" v-model="username" required="true"/><br/>
-          <label>Password : </label>
-          <input type="password" name="password" v-model="password" required="true"/><br/>
-          <button type="submit">Submit</button>
-      </form>
-      <p id="formMessage">{{ formMessage }}</p>
-  </div>
-</template>
-
-<script>
-  import { inject } from 'vue'; // to change user variable and send it to the provider
-  import axios from 'axios';
-
+    <form @submit.prevent="submitForm">
+      <div v-for="number in generatedNumbers" :key="number">
+        <!-- Liaison bidirectionnelle avec v-model -->
+        <label>
+          <input 
+            type="checkbox" 
+            :value="number" 
+            v-model="checkedNumbers" 
+          />
+          {{ number }}
+        </label>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  
+    <!-- Debug pour visualiser les valeurs cochées -->
+    <p>Checked Numbers: {{ checkedNumbers }}</p>
+  </template>
+  
+  <script>
+  import { ref } from 'vue';
+  
   export default {
-      data(){
-          return {
-              formMessage:""
-          };
-      },
-      methods : {
-          async login() {
-              await axios.post('http://localhost:3000/login', { username : this.username, password : this.password})
-                  .then(response => {
-                      if (response.status === 203){
-                          this.formMessage = "No such user";
-                      }
-                      else if (response.status === 200){
-                          this.setSessionToken(response.data.sessionToken);
-                          this.setUsername("hehe"); // = this.username
-                          //this.$emit("current-user", this.user); // trhow user to parent components with the current-user param
-
-                          alert(`You are now connected.\nYou will be redirected in Home Page\nUsername :`);
-                          //this.$router.push({path :'/'});
-                      } else {
-                          throw new Error("Status server error");
-                      }
-                  }).catch(error => {
-                      if (error.status === 403){
-                          this.formMessage = "Invalid username or password";
-                      }
-                      else {
-                          this.formMessage = "A server error occured...\nPlease try later";
-                      }
-                      console.error('There was an error!', error);
-                  });
-          }
-      },
-      setup(){
-
-          
-          const setUser = inject('setUsername'); // access provider
-          const setSessionToken = inject('setSessionToken');
-          /* necesseray ?????
-          const setCurrentUser = (currentUser) => {
-              setUser(currentUser);
-          };*/
-
-          return {
-              setUser,
-              setSessionToken
-          };
-      }
-  }
-
-</script>
+    setup() {
+      // Tableau réactif pour stocker les numéros générés
+      const generatedNumbers = ref([]);
+      // Tableau réactif pour stocker les numéros cochés
+      const checkedNumbers = ref([]);
+  
+      // Génération des numéros aléatoires
+      const generateRandomNumbers = () => {
+        const numbers = [];
+        const numberOfNumbers = Math.floor(Math.random() * 4) + 1; // Entre 1 et 4 numéros
+        for (let i = 0; i < numberOfNumbers; i++) {
+          numbers.push(Math.floor(Math.random() * 100)); // Numéros entre 0 et 99
+        }
+        generatedNumbers.value = numbers;
+      };
+  
+      // Soumission du formulaire
+      const submitForm = () => {
+        console.log('Checked Numbers:', checkedNumbers.value); // Les numéros cochés
+      };
+  
+      // Génère les numéros au chargement du composant
+      generateRandomNumbers();
+  
+      return {
+        generatedNumbers,
+        checkedNumbers,
+        submitForm,
+      };
+    },
+  };
+  </script>
+  

@@ -45,7 +45,7 @@
                     </div>
                     <div  class="tools" v-if="isQuizOwner(quiz) == 1">
                         <div @click="editQuiz(quiz)" class="edit">
-                            <img class="logo" src="@/assets/pencil-icon.png" />
+                            <img class="logo" src="@/assets/pencil-icon-colored.png" />
                         </div>
                         <div @click="deleteQuiz(quiz)" class="delete">
                             <img class="logo" src="@/assets/delete.webp" />
@@ -75,7 +75,7 @@
                 </div>
                 <div class="dialog-body">
                     <p>You need to be logged in to attempt a quiz!</p>
-                    <button @click="goToLogIn">Got It</button>
+                    <button class="styledButton-red" @click="goToLogIn">Got It</button>
                 </div>
             </div>
         </div>
@@ -339,34 +339,6 @@
         margin: 5px;
     }
 
-    .dialog-overlay{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .dialog{
-        background: v-bind('globalColors.lightColor');
-        padding: 20px;
-        border-radius: 10px;
-        width: 400px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .dialog-header{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
     .close-icon{
         display: flex;
         cursor: pointer;
@@ -388,21 +360,6 @@
         background-color: v-bind('globalColors.lightColor');
         display: flex;
         flex-direction: column;
-    }
-
-    .dialog-body button{
-        background-color: v-bind('globalColors.redColor');
-        color: #fff;
-        font-size: 12px;
-        padding: 10px 45px;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        margin-top: 20px;
-        cursor: pointer;
-        align-self: center;
     }
 </style>
   

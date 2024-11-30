@@ -50,7 +50,7 @@
                         <input class="styledInput" :name="'picture-' + question.id" v-if="quizType === 'anime'" type="text" required>
                         <p>Answers :</p>
                         <div class="answers" v-for="answer in question.answers || []" :key="answer.id">
-                            <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox" value="coucou">
+                            <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox">
                             <input class="styledInput" :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
                             <button @click.prevent="deleteAnswer(question.id, answer.id)" type="button"
                                     v-if="question.answers.length > 2">
