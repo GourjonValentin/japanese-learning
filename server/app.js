@@ -486,6 +486,26 @@ app.post('/edit-quizz/:quizId', async (req, res) => {
     }
 });
 
+app.get('/scores/:quizId', async (req, res) => {
+    const { quizId } = req.params;
+    try {
+        let results = await query('SELECT u.username, s.score\n' +
+            'FROM scores s\n' +
+            '         JOIN users u ON u.id = s.userid\n' +
+            '         JOIN quiz q ON q.id = s.quizid\n' +
+            'WHERE s.quizid = ?\n' +
+            'ORDER BY s.score\n' +
+            'LIMIT 10;', [quizId]);
+        console.log(results)
+        if (results.length === 0) {
+            return res.sendStatus(204);
+        }
+        return res.status(200).json(results);
+    } catch (err) {
+        res.status(500).json("err : " + err)
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
