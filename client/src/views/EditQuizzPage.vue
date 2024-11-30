@@ -1,7 +1,7 @@
 <template>
     <div v-if="this.permitted === false">
         <h2>You are unauthorized to acces this page</h2>
-        <router-link class="minor-button-edit-page" style="text-decoration: none;" to="/quizz">Go Back</router-link>
+        <router-link class="styledButton-red" style="text-decoration: none;" to="/quizz">Go Back</router-link>
     </div>
     <div v-else class="edit-div">
 
@@ -81,7 +81,7 @@
                                 <img src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
                             </button>
                         </div>
-                        <button @click.prevent="addAnswer()" class="minor-button-edit-page" type="button"
+                        <button @click.prevent="addAnswer()" class="styledButton-brown-minor" type="button"
                             v-if="editedQuestion.answers.length <= 3">Add answer choice</button>
                         <p class="dialog-message">{{ dialodMessage }}</p>
                         <button class="styledButton-red" type="submit">Save</button>
@@ -116,7 +116,7 @@
                                 <img src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
                             </button>
                         </div>
-                        <button @click.prevent="addAnswer()" class="minor-button-edit-page" type="button"
+                        <button @click.prevent="addAnswer()" class="styledButton-brown-minor" type="button"
                             v-if="editedQuestion.answers.length <= 3">Add answer choice</button>
                         <p class="dialog-message">{{ dialodMessage }}</p>
                         <button class="styledButton-red" type="submit">Save</button>
@@ -149,7 +149,7 @@
                 <div class="dialog-body">
                         <p>{{ confirmation.body }}</p>
                         <div class="confirmation-div-button">
-                            <button class="minor-button-edit-page" @click="() => {confirmation.result = false; isConfirmation = false;}">Cancel</button>
+                            <button class="styledButton-brown-minor" @click="() => {confirmation.result = false; isConfirmation = false;}">Cancel</button>
                             <button class="styledButton-red" @click="() => {confirmation.result = true; isConfirmation = false;}">Ok</button>
                         </div>
                         
@@ -183,7 +183,7 @@
         </div>
         <h2>Questions</h2>
         <div class="quizz-content">
-            <div class="quizz-questions" v-for="question in quizz.content" :key="question.id">
+            <div class="styledDiv-pretty" v-for="question in quizz.content" :key="question.id">
                 <div id="questions-editing-logo">
                     <div class="edit-logo-question-div" @click="deleteQuestionQuizz(question)">
                         <img class="minor-editing-logo" src="@/assets/delete.webp" alt="delete_btn"/>
@@ -208,7 +208,7 @@
                     </div>
                 </div>
             </div>
-            <div class="quizz-questions">
+            <div class="styledDiv-pretty">
                 <h2>Add question</h2>
                 <div @click="addQuestion">
                     <img class="add-button" src="@/assets/plus-button.png" alt="add-button"/>
@@ -219,7 +219,7 @@
             <p class="error-message">{{ this.quizzesMessage }}</p>
         </div>
         <div id="button-div-edit-page">
-            <router-link class="minor-button-edit-page" style="text-decoration: none;" to="/quizz">Go Back</router-link>
+            <router-link class="styledButton-brown-minor" style="text-decoration: none;" to="/quizz">Go Back</router-link>
             <button class="styledButton-red" @click="saveQuizz">Save</button>
         </div>
     </div>
@@ -557,18 +557,6 @@
     display: flex;
     flex-wrap: wrap;
 }
-
-.quizz-questions {
-    min-width: 200px;
-    display: flex;
-    flex-direction: column;
-    margin:  20px;
-    padding: 40px 20px;
-    background-color: #f8e3cd;
-    text-align: center;
-    border-radius: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-}
 .edit-logo-question-div {
     display: flex;
     flex-direction: row-reverse;
@@ -615,23 +603,6 @@
 .answercontent > p {
     margin: 10px;
     padding: 0px;
-}
-
-.minor-button-edit-page {
-    align-self: center;
-    width: fit-content;
-    background-color: transparent;
-    border-color: v-bind('globalColors.darkColor');
-    margin-top: 10px;
-    color: v-bind('globalColors.darkColor');
-    font-size: 12px;
-    padding: 10px 45px;
-    border: 1px solid;
-    border-radius: 8px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    cursor: pointer;
 }
 
 #button-div-edit-page > * {

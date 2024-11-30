@@ -6,6 +6,7 @@
     --dark-color: #341c1c;
 }
 
+/* STYLED BUTTON */
 
 .styledButton {
     padding: 10px 20px;
@@ -33,7 +34,39 @@
     align-self: center;
 }
 
-/* STYLED BUTTON */
+.styledButton-brown-minor {
+    align-self: center;
+    width: fit-content;
+    background-color: transparent;
+    border-color: var(--dark-color);
+    margin-top: 10px;
+    color: var(--dark-color);
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.styledButton-red-minor {
+    align-self: center;
+    width: fit-content;
+    background-color: transparent;
+    border-color: var(--red-color);
+    margin-top: 10px;
+    color: var(--red-color);
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
 
 .styledButton:hover {
     background-color: var(--light-color);
@@ -43,6 +76,9 @@
 .styledButton:active {
     transform: scale(0.95);
 }
+
+/* STYLED INPUT */
+
 /*
 .styledInput {
     flex: 1;
@@ -59,33 +95,26 @@
     background-color: var(--background-color);
 }
 
-.styledDiv {
-    border: 2px solid var(--dark-color);
-    border-radius: 20px;
-    padding : 10px;
-    margin: 20px;
-}
-
 .styledSelectInput {
-        display: inline-block;
-        padding: 10px 20px;
-        font-size: 14px;
-        color: #fff;
-        background-color: var(--brown-color);
-        border: none;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background-color: var(--brown-color);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .styledSelectInput select {
-    appearance: auto;
-    border: none;
-    background: transparent;
-    font-size: 14px;
-    color: #fff;
-    padding: 0;
-    outline: none;
+appearance: auto;
+border: none;
+background: transparent;
+font-size: 14px;
+color: #fff;
+padding: 0;
+outline: none;
 }
 
 .styledSelectInput:hover {
@@ -96,6 +125,28 @@
 styledSelectInput.active {
         background-color: var(--light-color);
 }
+
+/* STYLED DIV*/
+
+.styledDiv {
+    border: 2px solid var(--dark-color);
+    border-radius: 20px;
+    padding : 10px;
+    margin: 20px;
+}
+
+.styledDiv-pretty {
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    margin:  20px;
+    padding: 40px 20px;
+    background-color: #f8e3cd;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+}
+
 
 /* DIALOG */
 

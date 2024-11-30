@@ -1,10 +1,16 @@
 <template>
-    <div class="leaderboard" v-if="scoresList.length !== 0">
+    <div class="leaderboard">
 
-        <h4>Leaderboard</h4>
-        <div class="element" v-for="elt of scoresList" :key="elt.score">
-            {{ elt.username }} : <i>{{ elt.score }}</i>
+        <h3>Leaderboard</h3>
+        <div v-if="scoresList.length !== 0">
+            <div class="element" v-for="elt of scoresList" :key="elt.score">
+                {{ elt.username }} : <i>{{ elt.score }}</i>
+            </div>
         </div>
+        <div v-else>
+            <p>No attempt for this quiz yet!</p>
+        </div>
+        
     </div>
 </template>
 
@@ -54,13 +60,15 @@ export default {
     .leaderboard {
         background-color: #f7e3cd;
         width: fit-content;
+        min-height: 400px;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        padding: 10px;
+        padding: 20px 40px;
+        margin: 20px;
         border-radius: 20px;
         border: none;
-        box-shadow: 1px 1px 15px  black;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
         flex-direction: column;
         position: relative;
     }
