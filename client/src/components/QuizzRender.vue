@@ -229,10 +229,6 @@ export default {
     text-decoration: none;
     color: v-bind('globalColors.darkColor');
 }
-.back-arrow {
-    width: 50px;
-    transform: rotate(180deg);
-}
 .render-content {
     width: -webkit-fill-available;
 }

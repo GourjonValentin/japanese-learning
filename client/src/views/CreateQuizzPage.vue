@@ -1,14 +1,45 @@
 <template>
-    <div>
-        <button @click="$router.push({path:'/quizz'})" class="styledButton">Go back</button>
-        <div class="styledDiv init-div" v-if="!init">
+    <div class="go-back-div" @click="goBack">
+        <img class="back-arrow" src="@/assets/back-arrow.png" alt="Go Back"/>
+    </div>
+    <div class="create-quizz">
+        <div class="dialog-overlay" id="alertDialog" v-if="isAlert">
+            <div class="dialog">
+                <div class="dialog-header">
+                    <h2>{{ alert.title }}</h2>
+                </div>
+                <div class="dialog-body">
+                    <p v-html="alert.body"></p>
+                    <form @submit.prevent="() => {isAlert = false}">
+                        <button class="styledButton-red" type="submit">Ok</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="dialog-overlay" id="confirmationDialog" v-if="isConfirmation">
+            <div class="dialog">
+                <div class="dialog-header">
+                    <h2>{{ confirmation.title }}</h2>
+                </div>
+                <div class="dialog-body">
+                        <p>{{ confirmation.body }}</p>
+                        <div class="confirmation-div-button">
+                            <button class="styledButton-brown-minor" @click="() => {confirmation.result = false; isConfirmation = false;}">Cancel</button>
+                            <button class="styledButton-red" @click="() => {confirmation.result = true; isConfirmation = false;}">Ok</button>
+                        </div>
+                        
+                    </div>
+            </div>
+        </div>
+        <div class="styledDiv-pretty init-div" v-if="!init">
             <h2>Create a quizz</h2>
             <form class="init-form" @submit.prevent="initQuizz">
-                <div>
+                <div class="field">
                     <label for="quizzName">Quizz name :</label>
-                    <input class="styledInput" type="text" id="quizzName" name="quizzName" v-model="quizzName" required>
+                    <input class="styledInput" type="text" id="quizzName" name="quizzName" v-model="quizzName" placeholder="Enter a name" required>
                 </div>
-                <div>
+                <div class="field">
+                    <img class="info-icon" @click="openDifficultyInfo" src="@/assets/info-icon.png" alt="info-icon"/>
                     <label for="quizzDifficulty">Difficulty :</label>
                     <div class="styledSelectInput">
                         <select name="quizzDifficulty" id="quizzDifficulty" v-model="quizzDifficulty" required>
@@ -17,9 +48,9 @@
                             <option>3</option>
                         </select>
                     </div>
-
                 </div>
-                <div>
+                <div class="field">
+                    <img class="info-icon" @click="openQuizzTypeInfo" src="@/assets/info-icon.png" alt="info-icon"/>
                     <label for="quizzType">Quizz type</label>
                     <div class="styledSelectInput">
                         <select id="quizzType" name="quizzType" v-model="quizzType">
@@ -29,26 +60,26 @@
                     </div>
 
                 </div>
-                <button class="styledButton" style="
-                         padding: 8px 20px; font-size: 13px;" type="submit">Create quizz</button>
+                <button class="styledButton-brown" style="
+                        padding: 8px 20px; font-size: 13px;" type="submit">Create quizz</button>
             </form>
         </div>
         <div class="questions" v-else>
             <form @submit.prevent="submitQuestions">
                 <h2>{{quizzName}}</h2>
-                <div class="question styledDiv" v-for="question in quizzQuestions" :key="question.id">
+                <div :class="{question: true, 'styledDiv-pretty': true, error: hasError(question.id)}" v-for="question in quizzQuestions" :key="question.id">
                     <div class="questionHeader">
-                        <p>Question {{ quizzQuestions.findIndex(elt => elt.id == question.id) + 1 }}</p>
-                        <button class="deleteQuestion" type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizzQuestions.length > 1">
-                            <img src="@/assets/katana_cross.png" alt="Delete question button" width="30" height="30">
+                        <h4>Question {{ quizzQuestions.findIndex(elt => elt.id == question.id) + 1 }}</h4>
+                        <button class="close-icon" type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizzQuestions.length > 1">
+                            <img src="@/assets/katana_cross.png" alt="Delete question button">
                         </button>
                     </div>
                     <div class="questionContent">
-                        <label for="title">Title : </label>
+                        <label for="title"><h4>Title :</h4></label>
                         <input class="styledInput" :name="'title-' + question.id" type="text" required>
                         <label for="picture" v-if="quizzType === 'anime'">Picture link : </label>
                         <input class="styledInput" :name="'picture-' + question.id" v-if="quizzType === 'anime'" type="text" required>
-                        <p>Answers :</p>
+                        <h4>Answers :</h4>
                         <div class="answers" v-for="answer in question.answers || []" :key="answer.id">
                             <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox">
                             <input class="styledInput" :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
@@ -57,13 +88,13 @@
                                 <img src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
                             </button>
                         </div>
-                        <button @click.prevent="addAnswer(question.id)" class="styledButton" type="button"
+                        <button @click.prevent="addAnswer(question.id)" class="styledButton-brown-minor" type="button"
                                 v-if="question.answers.length <= 3">Add answer choice</button>
                     </div>
 
                 </div>
-                <button class="styledButton" @click.prevent="addQuestion" type="button">Add Question</button>
-                <button class="styledButton" type="submit">Valider Formulaire</button>
+                <button class="styledButton-red-minor" @click.prevent="addQuestion" type="button">Add Question</button>
+                <button class="styledButton-red" type="submit">Valider Formulaire</button>
             </form>
         </div>
     </div>
@@ -96,10 +127,67 @@ export default {
             quizzType: "simple",
             init: false,
             quizzQuestions: [],
-            globalColors: globalColors
+            globalColors: globalColors,
+            isAlert: false,
+            alert: {
+                body: '',
+                title: ''
+            },
+            isConfirmation: false,
+            confirmation: {
+                body: '',
+                title: '',
+                result: null
+            },
+            hasValidateForm: false,
+            questions: []
         };
     },
     methods: {
+        openDifficultyInfo(){
+            this.alert.title = 'Difficulty Level'; 
+            this.alert.body = 'The difficulty level is an indicator for other users to try your quizz.<br>There is 3 difficulty level :\n1st one being the easiest one,\n3rd being for the more experienced user';
+            this.isAlert = true;
+        },
+        openQuizzTypeInfo(){
+            this.alert.title = 'Quizz Type'; 
+            this.alert.body = 'There is 2 types of quizzes:<br>&nbsp;&nbsp;&nbsp;&nbsp;Simple: simple CMQ<br>&nbsp;&nbsp;&nbsp;&nbsp;Anime: each question is related to a picture';
+            this.isAlert = true;
+        },
+        goBack() {
+            if (!(this.quizzName == '')) {
+                this.confirmation.title = 'Caution !';
+                this.confirmation.body = 'Unsaved changes have been made on this page. If exiting this edition page, all current changes will be lost.';
+                this.isConfirmation = true;
+                const unwatchConfirmation = this.$watch(
+                    () => this.confirmation.result,
+                    (newVal) => {
+                        if (newVal === true){
+                            this.$router.push('/quizz');
+                        }
+                        unwatchConfirmation();
+                    }
+                );
+            } else {
+                this.$router.push('/quizz');
+            }
+        },
+        hasError(questionId){
+            if (this.hasValidateForm){
+                let q = this.questions.filter(el => el.id === questionId);
+                if (q.length > 0){
+                    if(q[0].correct_answers.length === 0){
+                        return true; 
+                    } else {
+                        return false;
+                    }
+                } else {
+                    console.error('questionId not found');
+                }
+            } else {
+                return false;
+            }
+        },
         emptyQuestionTemplate() {
             return {
                 id: this.idGen++,
@@ -114,12 +202,9 @@ export default {
             this.quizzQuestions.push(newQuestion);
             this.addAnswer(newQuestion.id);
             this.addAnswer(newQuestion.id);
-            console.log("ad", this.quizzQuestions);
         },
         deleteQuestion(id) {
             this.quizzQuestions = this.quizzQuestions.filter(elt => elt.id !== id);
-            console.log("Delete question ", this.quizzQuestions);
-
         },
         initQuizz() {
             this.init = true;
@@ -136,7 +221,6 @@ export default {
             }
         },
         deleteAnswer(questionId, answerId) {
-            console.log(`Deleting answer ${questionId} -> ${answerId}`);
             let targetQuestion = this.quizzQuestions.find(elt => elt.id === questionId);
             let index = this.quizzQuestions.findIndex(elt => elt.id === questionId);
             if (targetQuestion !== undefined && targetQuestion.answers !== undefined) {
@@ -144,7 +228,7 @@ export default {
             }
         },
         async submitQuestions(submitEvent) {
-            let questions = [];
+            this.questions = [];
             let idGen = 0;
             for (let elt of submitEvent.target.elements) {
                 if (elt.name && (elt.name.search('title') !== -1 || elt.name.search('checkbox') !== -1 || elt.name.search('answer') !== -1)) {
@@ -152,9 +236,9 @@ export default {
                     let type = splitted[0];
                     let questionId = splitted[1];
                     let answerId = splitted[2];
-                    switch (type) { // a rajouter pictures
+                    switch (type) {
                         case "title": {
-                            questions.push({
+                            this.questions.push({
                                 "id": idGen++,
                                 "title": elt.value,
                                 "picture": "",
@@ -165,47 +249,46 @@ export default {
                         }
                         case "checkbox": {
                             if (elt.checked) {
-
-                                questions[this.quizzQuestions.findIndex(quizzQuestion => quizzQuestion.id == questionId)].correct_answers.push(answerId);
+                                this.questions[this.quizzQuestions.findIndex(quizzQuestion => quizzQuestion.id == questionId)].correct_answers.push(answerId);
                             }
                             break
                         }
                         case "answer": {
-                            questions[this.quizzQuestions.findIndex(elt => elt.id == questionId)].answers.push({
+                            this.questions[this.quizzQuestions.findIndex(elt => elt.id == questionId)].answers.push({
                                 "id": answerId,
                                 "content": elt.value
                             });
                             break
                         } case "picture": {
-                            questions[this.quizzQuestions.findIndex(elt => elt.id == questionId)].picture = elt.value;
+                            this.questions[this.quizzQuestions.findIndex(elt => elt.id == questionId)].picture = elt.value;
                             break;
                         } default: {
                             throw Error("Input type not expected");
                         }
-
                     }
                 }
-
             }
-            if (this.validateForm(questions)) {
+            if (this.validateForm(this.questions)) {
                 this.waiting = true;
-                await this.createQuizz(questions);
+                await this.createQuizz(this.questions);
                 this.waiting = false;
-
-            } else {
-                alert("Quizz not correct");
             }
         },
         validateForm(parsedForm) {
+            this.hasValidateForm = true;
             if (parsedForm.length === 0) return false;
             for (let question of parsedForm) {
-
-                if (!question.title || !question.answers.length || !question.correct_answers.length) {
-                    return false
+                if (!question.title || !question.answers.length){
+                    return false;
+                } else if (!question.correct_answers.length) {
+                    this.alert.title = 'Quiz not correct!';
+                    this.alert.body = 'Make sure every questions have at least one correct answer.';
+                    this.isAlert = true;
+                    return false;
                 }
                 for (let answer of question.answers) {
                     if (!answer.content) {
-                        return false
+                        return false;
                     }
                 }
             }
@@ -215,7 +298,9 @@ export default {
             await axios.post('http://localhost:3000/create', { quizzName: this.quizzName, quizzDifficulty: this.quizzDifficulty, quizzType: this.quizzType, quizzQuestions: JSON.stringify(questions), ownerId: this.userId })
                 .then(response => {
                     if (response.status === 201) {
-                        alert('Quizz created');
+                        this.alert.title = "Success!"
+                        this.alert.body ="Your quizz has been submitted successfully. You will be redirected"
+                        this.isAlert = true;
                         this.$router.push({path:'/quizz'});
 
                     } else {
@@ -225,16 +310,6 @@ export default {
                     console.error('There was an error!', error);
                 });
         }
-    },
-    mounted() {
-        /*axios.post('http://localhost:3000/auth/check', {
-            sessionToken: this.sessionToken
-        }).catch(error => {
-            if (error.status === 401) {
-                alert('Invalid token, you will be redirected to home page');
-                this.$router.push({path :'/'});
-            }
-        });*/
     }
 };
 
@@ -242,12 +317,71 @@ export default {
 
 
 <style scoped>
+.create-quizz {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.create-quizz > div {
+    width: -webkit-fill-available;
+}
+/* ALERT BOXES */
+.dialog-header{
+    justify-items: center;
+}
+.dialog-body > p {
+    text-align: justify;
+}
 
+/*  INIT FORM */
+.info-icon {
+    width: 25px;
+    height: 25px;
+}
+.info-icon:hover {
+    cursor: pointer;
+}
+.init-form {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+.init-div {
+    display: flex;
+    flex-direction: column;
+    max-width: 530px;
+}
+.field {
+    display: flex;
+    align-items: center;
+}
+.field > * {
+    margin: 4px;
+}
+
+/* QUESTIONS PART */
+.questions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.questions > form {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: -webkit-fill-available;
+}
 .question {
     display: flex;
     flex-direction: column;
     align-items: start;
     padding: 10px;
+    max-width: 530px;
+    width: -webkit-fill-available;
+
 }
 
 .questionHeader {
@@ -257,33 +391,24 @@ export default {
     width: -webkit-fill-available;
     margin: 10px;
 }
-
 .questionHeader > button {
     border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
     background-color: rgba(0, 0, 0, 0);
-    filter: brightness(0) saturate(100%) invert(6%) sepia(9%) saturate(5442%) hue-rotate(321deg) brightness(115%) contrast(86%);
 }
 
-.questionHeader > button:hover {
-    cursor: pointer;
-    transform: scale(1.3);
-    filter: brightness(0) saturate(100%) invert(76%) sepia(51%) saturate(336%) hue-rotate(339deg) brightness(92%) contrast(93%);
-
+.questionHeader > button > img {
+    width: 30px;
+    height: 30px;
 }
-
-.questionHeader > button:active {
-    transform: scale(0.95);
-}
-
-
 .questionContent {
     display: flex;
     flex-direction: column;
+    margin: 0px 30px 30px 30px;
     align-items: center;
     width: -webkit-fill-available;
+}
+.error {
+    box-shadow: 0 12px 15px v-bind('globalColors.redColor');
 }
 
 .answers {
@@ -297,27 +422,6 @@ export default {
     margin-top: 20px;
 }
 
-.init-div {
-    display: flex;
-    flex-direction: column;
-}
-
-.init-div label {
-    margin: 8px;
-}
-
-.init-form > div {
-    margin: 10px;
-}
-
-.answers {
-    border-radius: 25px;
-    padding: 5px 15px;
-    border: solid 2px v-bind('globalColors.darkColor');
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
 .answers img {
     transform: rotate(45deg);
 }
@@ -330,17 +434,18 @@ export default {
     background-color: rgba(0, 0, 0, 0);
     filter: brightness(0) saturate(100%) invert(6%) sepia(9%) saturate(5442%) hue-rotate(321deg) brightness(115%) contrast(86%);
 }
-
 .answers > button:hover {
     cursor: pointer;
     transform: scale(1.3);
     filter: brightness(0) saturate(100%) invert(76%) sepia(51%) saturate(336%) hue-rotate(339deg) brightness(92%) contrast(93%);
-
 }
-
 .answers > button:active {
     transform: scale(0.95);
 }
-
-
+.go-back-div {
+    display: flex;
+    margin-left: 20px;
+    margin-top: 20px;
+    cursor: pointer;
+}
 </style>

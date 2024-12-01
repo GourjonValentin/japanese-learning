@@ -339,23 +339,6 @@
         margin: 5px;
     }
 
-    .close-icon{
-        display: flex;
-        cursor: pointer;
-    }
-
-    .close-icon img{
-        width: 20px;
-        height: 20px;
-        transition: color 0.3s ease;
-    }
-
-    .close-icon img:hover{
-        transform: scale(1.3);
-        background-color: #613b151d;
-        border-radius: 8px;
-    }
-
     .dialog-body{
         background-color: v-bind('globalColors.lightColor');
         display: flex;
