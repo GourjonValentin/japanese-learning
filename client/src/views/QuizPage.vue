@@ -3,9 +3,8 @@
         <div class="search styledDiv">
             <form class="search-form" @submit.prevent="handleSearchSubmit()">
                 <img src="../assets/search_logo.png" alt="search_logo.png"/>
-                <input class="styledInput" type="text" name="searchName" v-model="searchName" placeholder="search"/>
-                <button  class="styledButton" style="
-                         padding: 8px 20px; font-size: 13px;"
+                <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="search"/>
+                <button  class="search-button"
                          type="submit">Search</button>
             </form>
             <div>
@@ -48,7 +47,7 @@
                             <img class="logo" src="@/assets/pencil-icon-colored.png" />
                         </div>
                         <div @click="deleteQuiz(quiz)" class="delete">
-                            <img class="logo" src="@/assets/delete.webp" />
+                            <img class="logo" src="@/assets/delete-red.webp" />
                         </div>
                     </div>
                 </div>
@@ -264,6 +263,24 @@
         margin-bottom: 5px;
     }
 
+    .search-button {
+        padding: 10px 15px;
+        font-size: 16px;
+        margin-top : 20px;
+        color: #fff;
+        background-color: v-bind('globalColors.redColor');
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .search-button:hover {
+        background-color: v-bind('globalColors.lightColor');
+        transform: scale(1.05);
+    }
+
+
     .filter {
         padding: 10px 20px;
         font-size: 14px;
@@ -310,19 +327,6 @@
     .favourites:hover {
         cursor: pointer;
         transform: scale(1.05);
-    }
-    .edit:hover {
-        cursor: pointer;
-        transform: scale(1.05);
-    }
-    .delete:hover {
-        cursor: pointer;
-        transform: scale(1.05);
-    }
-
-    .logo {
-        height: 35px;
-        width: 35px;
     }
 
     .quiz-caption {

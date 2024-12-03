@@ -83,9 +83,9 @@
                         <div class="answers" v-for="answer in question.answers || []" :key="answer.id">
                             <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox">
                             <input class="styledInput" :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
-                            <button @click.prevent="deleteAnswer(question.id, answer.id)" type="button"
+                            <button class="delete" @click.prevent="deleteAnswer(question.id, answer.id)" type="button"
                                     v-if="question.answers.length > 2">
-                                <img src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
+                                <img class="delete-answer-button" src="@/assets/katana.png" alt="delete Answer">
                             </button>
                         </div>
                         <button @click.prevent="addAnswer(question.id)" class="styledButton-brown-minor" type="button"
@@ -334,6 +334,11 @@ export default {
     text-align: justify;
 }
 
+.confirmation-div-button {
+    display: flex;
+    gap: 10px
+}
+
 /*  INIT FORM */
 .info-icon {
     width: 25px;
@@ -426,6 +431,12 @@ export default {
     transform: rotate(45deg);
 }
 
+/* DELETE ANSWER BUTTON */
+
+.delete-answer-button {
+    width :20px;
+    height : 20px;
+}
 .answers > button {
     border: none;
     border-radius: 25px;
@@ -437,7 +448,6 @@ export default {
 .answers > button:hover {
     cursor: pointer;
     transform: scale(1.3);
-    filter: brightness(0) saturate(100%) invert(76%) sepia(51%) saturate(336%) hue-rotate(339deg) brightness(92%) contrast(93%);
 }
 .answers > button:active {
     transform: scale(0.95);

@@ -75,9 +75,9 @@
                         <div class="answers" v-for="answer in editedQuestion.answers || []" :key="answer.id">
                             <input type="checkbox" :checked="this.editedQuestion.correct_answers.includes(answer.id)" @change="checkboxChangeHandler($event, answer.id)">
                             <input class="styledInput" type="text" v-model=answer.content required>
-                            <button @click.prevent="deleteAnswer(answer.id)" type="button"
+                            <button class="delete" @click.prevent="deleteAnswer(answer.id)" type="button"
                                     v-if="editedQuestion.answers.length > 2">
-                                <img src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
+                                <img class="delete-answer-button" src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
                             </button>
                         </div>
                         <button @click.prevent="addAnswer()" class="styledButton-brown-minor" type="button"
@@ -110,9 +110,9 @@
                         <div class="answers" v-for="answer in editedQuestion.answers || []" :key="answer.id">
                             <input type="checkbox" :checked="this.editedQuestion.correct_answers.includes(answer.id)" @change="checkboxChangeHandler($event, answer.id)">
                             <input class="styledInput" type="text" v-model=answer.content required>
-                            <button @click.prevent="deleteAnswer(answer.id)" type="button"
+                            <button class="delete-answer" @click.prevent="deleteAnswer(answer.id)" type="button"
                                     v-if="editedQuestion.answers.length > 2">
-                                <img src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
+                                <img class="delete-answer-button" src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
                             </button>
                         </div>
                         <button @click.prevent="addAnswer()" class="styledButton-brown-minor" type="button"
@@ -158,28 +158,24 @@
 
         <div class="field">
             <h1>{{ quiz.name }}</h1>
-            <div @click="()=>{editedTitle = quiz.name; isTitleForm = true;}" >
-                <img src="../assets/pencil-icon-colored.png" alt="edit_btn" class="editing-logo"/>
-            </div>
-            <h1>{{ quiz.name }}</h1>
-            <div @click="()=>{editedTitle = quiz.name; isTitleForm = true;}" >
+            <div class="edit" @click="()=>{editedTitle = quiz.name; isTitleForm = true;}" >
                 <img src="../assets/pencil-icon.png" alt="edit_btn" class="editing-logo"/>
             </div>
         </div>
         <div class="main-attributes styledDiv">
             <div class="main-attributes-header">
                 <h2>Main Attributes</h2>
-                <div @click="editMainAttributes" >
-                    <img src="../assets/pencil-icon-colored.png" alt="edit_btn" class="minor-editing-logo"/>
+                <div class="edit" @click="editMainAttributes" >
+                    <img src="../assets/pencil-icon.png" alt="edit_btn" class="minor-editing-logo"/>
                 </div>
             </div>
             <div class="main-attributes-body">
                 <div>
-                    <p>Difficulty level :</p>
+                    <p>Difficulty level : </p>
                     <p>{{ quiz.difficultylevel }}</p>
                 </div>
                 <div>
-                    <p>Type :</p>
+                    <p>Type : </p>
                     <p>{{ quiz.type }}</p>
                 </div>
             </div>
@@ -188,11 +184,11 @@
         <div class="quiz-content">
             <div class="styledDiv-pretty" v-for="question in quiz.content" :key="question.id">
                 <div id="questions-editing-logo">
-                    <div class="edit-logo-question-div" @click="deleteQuestionQuiz(question)">
-                        <img class="minor-editing-logo" src="@/assets/delete.webp" alt="delete_btn"/>
+                    <div class="edit" @click="editQuestionQuiz(question)">
+                        <img class="logo" src="../assets/pencil-icon-colored.png" alt="edit_btn"/>
                     </div>
-                    <div class="edit-logo-question-div" @click="editQuestionQuiz(question)">
-                        <img class="minor-editing-logo" src="../assets/pencil-icon-colored.png" alt="edit_btn"/>
+                    <div class="delete" @click="deleteQuestionQuiz(question)">
+                        <img class="logo" src="@/assets/delete-red.webp" alt="delete_btn"/>
                     </div>
                 </div>
                 
@@ -213,7 +209,7 @@
             </div>
             <div class="styledDiv-pretty">
                 <h2>Add question</h2>
-                <div @click="addQuestion">
+                <div class="edit" @click="addQuestion">
                     <img class="add-button" src="@/assets/plus-button.png" alt="add-button"/>
                 </div>
             </div>
@@ -531,12 +527,22 @@
 }
 
 .main-attributes {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
 }
+
+.main-attributes-body{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+
 .main-attributes-body > div{
     display: flex;
     justify-content: space-around;
-    max-width: 60%
+    max-width: 30%;
 }
 
 .main-attributes-header {
@@ -566,6 +572,9 @@
     justify-items: right;
     margin-bottom: 0px;
     padding-top: 0px;
+}
+.edit-logo-question-div:hover {
+    cursor: pointer;
 }
 .question-header {
     display: flex;
@@ -619,11 +628,34 @@
 
 .confirmation-div-button {
     display: flex;
+    justify-content: center;
     align-items: center;
     justify-items: center;
 }
 
 .confirmation-div-button > button {
     margin: 5px;
+}
+
+.delete-answer-button {
+    width :20px;
+    height : 20px;
+    transform: rotate(45deg);
+}
+
+.delete-answer:hover {
+    cursor: pointer;
+    transform: scale(1.3);
+}
+.delete-answer:active {
+    transform: scale(0.95);
+}
+.delete-answer {
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    background-color: rgba(0, 0, 0, 0);
+    filter: brightness(0) saturate(100%) invert(6%) sepia(9%) saturate(5442%) hue-rotate(321deg) brightness(115%) contrast(86%);
 }
 </style>

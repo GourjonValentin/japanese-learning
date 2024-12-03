@@ -119,10 +119,6 @@ export default {
 </script>
 
 <style scoped>
-
-    .search-input {
-        margin-top: 20px;
-    }
     .searching-menu {
         display: flex;
         align-items: center;
@@ -149,6 +145,7 @@ export default {
 
     .search-button {
         padding: 10px 20px;
+        margin-top: 20px;
         font-size: 16px;
         color: #fff;
         background-color: v-bind('globalColors.darkColor');
