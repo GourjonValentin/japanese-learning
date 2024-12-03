@@ -430,10 +430,11 @@ app.delete('/delete-quiz', async (req, res) => {
             if (quizId == undefined) {
                 return res.status(401).json({ message: "Invalid format" });
             }
+            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
             let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
             if (result.length === 0) {
                 return res.status(404).json({ message: "Quiz not found" });
-            } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+            } else if (isAdmin[0] || result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
                 result = await query('DELETE FROM scores WHERE quizid = ?', [quizId]);
                 result = await query('DELETE FROM quiz WHERE id = ?', [quizId]);
                 result = await query('SELECT * FROM quiz');

@@ -17,6 +17,7 @@
                 <div v-if="showDropdown" class="dropdown-menu">
                     <router-link to="/profile" class="dropdown-item">My Profile</router-link>
                     <router-link to="/profile#confidentialty-settings" class="dropdown-item">Settings</router-link>
+                    <router-link to="/admin-settings" class="dropdown-item" v-if="isAdmin">Admin settings</router-link>
                     <router-link :to="{path :'/auth', query : { form : 'signout'}}" class="dropdown-item">Sign Out</router-link>
                 </div>
             </div>
@@ -35,9 +36,11 @@
         setup(){
             const sessionToken = inject('sessionToken');
             const avatarPath = inject('avatarPath');
+            const isAdmin = inject('isAdmin');
             return {
                 sessionToken,
                 avatarPath,
+                isAdmin
             }
         },
         data(){

@@ -6,6 +6,7 @@
     --dark-color: #341c1c;
 }
 
+/* STYLED BUTTON */
 
 .styledButton {
     padding: 10px 20px;
@@ -13,12 +14,74 @@
     color: #fff;
     background-color: var(--dark-color);
     border: none;
-    border-radius: 25px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
 }
 
-/* STYLED BUTTON */
+.styledButton-red {
+    background-color: var(--red-color);
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    cursor: pointer;
+    align-self: center;
+}
+
+.styledButton-brown {
+    background-color: var(--dark-color);
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    cursor: pointer;
+    align-self: center;
+}
+
+.styledButton-brown-minor {
+    align-self: center;
+    width: fit-content;
+    background-color: transparent;
+    border-color: var(--dark-color);
+    margin-top: 10px;
+    color: var(--dark-color);
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.styledButton-red-minor {
+    align-self: center;
+    width: fit-content;
+    background-color: transparent;
+    border-color: var(--red-color);
+    margin-top: 10px;
+    color: var(--red-color);
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
 
 .styledButton:hover {
     background-color: var(--light-color);
@@ -29,6 +92,9 @@
     transform: scale(0.95);
 }
 
+/* STYLED INPUT */
+
+/*
 .styledInput {
     flex: 1;
     padding: 8px 15px;
@@ -36,25 +102,24 @@
     border-radius: 25px;
     outline: none;
     transition: border-color 0.3s;
-}
-
-.styledDiv {
-    border: 2px solid var(--dark-color);
-    border-radius: 20px;
-    padding : 10px;
-    margin: 20px;
+}*/
+.styledInput {
+    padding: 10px;
+    border: 1px solid #a8a7a7;
+    border-radius: 5px;
+    background-color: var(--background-color);
 }
 
 .styledSelectInput {
-        display: inline-block;
-        padding: 10px 20px;
-        font-size: 14px;
-        color: #fff;
-        background-color: var(--brown-color);
-        border: none;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background-color: var(--brown-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .styledSelectInput select {
@@ -73,5 +138,98 @@
 }
 
 styledSelectInput.active {
-        background-color: var(--light-color);
+    background-color: var(--light-color);
+}
+
+/* STYLED DIV*/
+
+.styledDiv {
+    border: 2px solid var(--dark-color);
+    border-radius: 20px;
+    padding : 10px;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.styledDiv-pretty {
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    margin:  20px;
+    padding: 40px 20px;
+    background-color: #f8e3cd;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+}
+
+
+/* DIALOG */
+
+.dialog-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog{
+    background: var(--light-color);
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dialog-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dialog-body{
+    background-color: var(--light-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-body form{
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-message {
+    color: var(--red-color);
+}
+
+/* ICONS */
+.back-arrow {
+    width: 50px;
+    transform: rotate(180deg);
+}
+
+.close-icon{
+    display: flex;
+    cursor: pointer;
+}
+
+.close-icon img{
+    width: 20px;
+    height: 20px;
+    transition: color 0.3s ease;
+}
+
+.close-icon img:hover{
+    transform: scale(1.3);
+    background-color: #613b151d;
+    border-radius: 8px;
 }

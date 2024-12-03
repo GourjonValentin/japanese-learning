@@ -23,8 +23,10 @@
     export default {
         setup(){
             const sessionToken = inject('sessionToken');
+            const isAdmin = inject('isAdmin');
             return {
-                sessionToken
+                sessionToken,
+                isAdmin
             };
         },
         data() {
@@ -82,6 +84,10 @@
                 }
             };
             getQuiz().then(async () => {
+                if (this.isAdmin) {
+                    this.permitted = true
+                    return
+                }
                 this.permitted = await this.isOwner(this.quiz.id);
             }
             ).catch((err) => {
