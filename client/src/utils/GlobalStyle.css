@@ -54,7 +54,7 @@
     width: fit-content;
     background-color: transparent;
     border-color: var(--dark-color);
-    margin-top: 10px;
+    margin-top: 20px;
     color: var(--dark-color);
     font-size: 12px;
     padding: 10px 45px;
@@ -71,7 +71,7 @@
     width: fit-content;
     background-color: transparent;
     border-color: var(--red-color);
-    margin-top: 10px;
+    margin-top: 20px;
     color: var(--red-color);
     font-size: 12px;
     padding: 10px 45px;
@@ -94,6 +94,7 @@
 
 /* STYLED INPUT */
 
+
 /*
 .styledInput {
     flex: 1;
@@ -110,6 +111,19 @@
     background-color: var(--background-color);
 }
 
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid var(--dark-color);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: var(--brown-color);
+}
 .styledSelectInput {
     display: inline-block;
     padding: 10px 20px;
@@ -228,5 +242,5 @@ styledSelectInput.active {
 .close-icon img:hover{
     transform: scale(1.3);
     background-color: #613b151d;
-    border-radius: 8px;
+    border-radius: 15px;
 }

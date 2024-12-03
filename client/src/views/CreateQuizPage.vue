@@ -94,7 +94,7 @@
 
                 </div>
                 <button class="styledButton-red-minor" @click.prevent="addQuestion" type="button">Add Question</button>
-                <button class="styledButton-red" type="submit">Valider Formulaire</button>
+                <button class="styledButton-red" type="submit">Send Quiz</button>
             </form>
         </div>
     </div>
