@@ -2,7 +2,7 @@
     <div class="render">
         <div class="side-bar">
             <router-link to="/quiz">
-                <img class="back-arrow" src="@/assets/back-arrow.png" alt="Go Back"/>
+                <img class="back-arrow" src="@/assets/icons/back-arrow.png" alt="Go Back"/>
             </router-link>
             <LeaderboardComp :quizId="quiz.id"/>
         </div>
@@ -24,7 +24,7 @@
                         >
                             <div class="answer-correct-div">
                                 <img v-if="question.correct_answers.includes(answer.id) || question.correct_answers.includes(answer.id.toString())"
-                                src="@/assets/checkmark-icon.png" alt="correct" class="checkmark-icon"/>
+                                src="@/assets/icons/checkmark-icon.png" alt="correct" class="checkmark-icon"/>
                             </div>
                             <div :class="{'answercontent':true,
                                     'user-choice': this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id) || this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id.toString()), 

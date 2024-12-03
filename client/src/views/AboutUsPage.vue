@@ -11,9 +11,9 @@
                 </div>
                 <h3>{{ member.name }}</h3>
                 <div class="social-icons">
-                    <a :href="`https://wa.me/${member.number}`" target="_blank"><img src="@/assets/whatsapp.png" alt="Whatsapp"></a>
-                    <a :href="`mailto:${member.tp_nb}@mail.apu.edu.my`" target="_blank"><img src="@/assets/email.png" alt="Email"></a>
-                    <a :href="`https://www.linkedin.com/in/${member.linkedin}`" target="_blank"><img src="@/assets/linkedin.png" alt="LinkedIn"></a>
+                    <a :href="`https://wa.me/${member.number}`" target="_blank"><img src="@/assets/icons/whatsapp.png" alt="Whatsapp"></a>
+                    <a :href="`mailto:${member.tp_nb}@mail.apu.edu.my`" target="_blank"><img src="@/assets/icons/email.png" alt="Email"></a>
+                    <a :href="`https://www.linkedin.com/in/${member.linkedin}`" target="_blank"><img src="@/assets/icons/linkedin.png" alt="LinkedIn"></a>
                 </div>
             </div>
         </div>

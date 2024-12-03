@@ -221,7 +221,7 @@
     }
 
     .toggle{
-        background-image: url("../assets/sliding_door.png");
+        background-image: url("@/assets/sliding_door.png");
         /* background-color: v-bind('globalColors.redColor'); */
         background-size: 100% 100%;
         background-position: center;
@@ -252,7 +252,7 @@
     }
 
     .container.active .toggle{
-        background-image: url("../assets/sliding_door_inverted.png");
+        background-image: url("@/assets/sliding_door_inverted.png");
         /* background-color: v-bind('globalColors.redColor'); */
         background-size: 100% 100%;
         background-position: center;

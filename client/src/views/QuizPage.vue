@@ -2,7 +2,7 @@
     <div v-if="this.$route.query.quizId === undefined" class="main">
         <div class="search styledDiv">
             <form class="search-form" @submit.prevent="handleSearchSubmit()">
-                <img src="../assets/search_logo.png" alt="search_logo.png"/>
+                <img src="@/assets/icons/search_logo.png" alt="search_logo.png"/>
                 <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="search"/>
                 <button  class="search-button"
                          type="submit">Search</button>
@@ -39,15 +39,15 @@
             <div class="styledDiv quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                     <div class="favourites" @click="changeFavourites(quiz.id)">
-                        <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
-                        <img class="logo" src="@/assets/heart-filled.png" v-else/>
+                        <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                        <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                     </div>
                     <div  class="tools" v-if="isQuizOwner(quiz) == 1">
                         <div @click="editQuiz(quiz)" class="edit">
-                            <img class="logo" src="@/assets/pencil-icon-colored.png" />
+                            <img class="logo" src="@/assets/icons/pencil-icon-colored.png" />
                         </div>
                         <div @click="deleteQuiz(quiz)" class="delete">
-                            <img class="logo" src="@/assets/delete-red.webp" />
+                            <img class="logo" src="@/assets/icons/delete-red.webp" />
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                 <div class="quiz-caption">
                     <p>Difficulty : </p>
                     <div v-for="i in quiz.difficultylevel" :key="i">
-                        <img src="@/assets/torii.png"/>
+                        <img src="@/assets/icons/torii.png"/>
                     </div>
                 </div>
                 <p>Owner : {{ quiz.ownername }}</p>
@@ -69,7 +69,7 @@
                 <div class="dialog-header">
                     <h2>Halt!</h2>
                     <div @click="toggleAttemptQuiz" class="close-icon">
-                        <img src="@/assets/katana_cross.png" alt="Close">
+                        <img src="@/assets/icons/katana_cross.png" alt="Close">
                     </div>
                 </div>
                 <div class="dialog-body">

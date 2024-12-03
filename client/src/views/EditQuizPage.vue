@@ -9,7 +9,7 @@
                 <div class="dialog-header">
                     <h2>Change Title</h2>
                     <div @click="() => {isTitleForm = false}" class="close-icon">
-                        <img src="@/assets/katana_cross.png" alt="Close">
+                        <img src="@/assets/icons/katana_cross.png" alt="Close">
                     </div>
                 </div>
                 <div class="dialog-body">
@@ -26,7 +26,7 @@
                 <div class="dialog-header">
                     <h2>Editing Form</h2>
                     <div @click="() => {isMainAttributesForm = false}" class="close-icon">
-                        <img src="@/assets/katana_cross.png" alt="Close">
+                        <img src="@/assets/icons/katana_cross.png" alt="Close">
                     </div>
                 </div>
                 <div class="dialog-body">
@@ -62,7 +62,7 @@
                     <!-- Sure que ce soit la bonne indexation ???-->
                     <h2>Editing Questions n°{{ editedQuestion.id +1 }}</h2>
                     <div @click="() => {isQuestionForm = false}" class="close-icon">
-                        <img src="@/assets/katana_cross.png" alt="Close">
+                        <img src="@/assets/icons/katana_cross.png" alt="Close">
                     </div>
                 </div>
                 <div class="dialog-body">
@@ -77,7 +77,7 @@
                             <input class="styledInput" type="text" v-model=answer.content required>
                             <button class="delete" @click.prevent="deleteAnswer(answer.id)" type="button"
                                     v-if="editedQuestion.answers.length > 2">
-                                <img class="delete-answer-button" src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
+                                <img class="delete-answer-button" src="@/assets/icons/katana.png" alt="delete Answer" width="20px" height="20px">
                             </button>
                         </div>
                         <button @click.prevent="addAnswer()" class="styledButton-brown-minor" type="button"
@@ -97,7 +97,7 @@
                     <!-- Sure que ce soit la bonne indexation ???-->
                     <h2>Adding Question</h2>
                     <div @click="() => {isAddingQuestionForm = false}" class="close-icon">
-                        <img src="@/assets/katana_cross.png" alt="Close">
+                        <img src="@/assets/icons/katana_cross.png" alt="Close">
                     </div>
                 </div>
                 <div class="dialog-body">
@@ -112,7 +112,7 @@
                             <input class="styledInput" type="text" v-model=answer.content required>
                             <button class="delete-answer" @click.prevent="deleteAnswer(answer.id)" type="button"
                                     v-if="editedQuestion.answers.length > 2">
-                                <img class="delete-answer-button" src="@/assets/katana.png" alt="delete Answer" width="20px" height="20px">
+                                <img class="delete-answer-button" src="@/assets/icons/katana.png" alt="delete Answer" width="20px" height="20px">
                             </button>
                         </div>
                         <button @click.prevent="addAnswer()" class="styledButton-brown-minor" type="button"
@@ -159,14 +159,14 @@
         <div class="field">
             <h1>{{ quiz.name }}</h1>
             <div class="edit" @click="()=>{editedTitle = quiz.name; isTitleForm = true;}" >
-                <img src="../assets/pencil-icon.png" alt="edit_btn" class="editing-logo"/>
+                <img src="@/assets/icons/pencil-icon.png" alt="edit_btn" class="editing-logo"/>
             </div>
         </div>
         <div class="main-attributes styledDiv">
             <div class="main-attributes-header">
                 <h2>Main Attributes</h2>
                 <div class="edit" @click="editMainAttributes" >
-                    <img src="../assets/pencil-icon.png" alt="edit_btn" class="minor-editing-logo"/>
+                    <img src="@/assets/icons/pencil-icon.png" alt="edit_btn" class="minor-editing-logo"/>
                 </div>
             </div>
             <div class="main-attributes-body">
@@ -185,10 +185,10 @@
             <div class="styledDiv-pretty" v-for="question in quiz.content" :key="question.id">
                 <div id="questions-editing-logo">
                     <div class="edit" @click="editQuestionQuiz(question)">
-                        <img class="logo" src="../assets/pencil-icon-colored.png" alt="edit_btn"/>
+                        <img class="logo" src="@/assets/icons/pencil-icon-colored.png" alt="edit_btn"/>
                     </div>
                     <div class="delete" @click="deleteQuestionQuiz(question)">
-                        <img class="logo" src="@/assets/delete-red.webp" alt="delete_btn"/>
+                        <img class="logo" src="@/assets/icons/delete-red.webp" alt="delete_btn"/>
                     </div>
                 </div>
                 
@@ -200,7 +200,7 @@
                 <div class="answer" v-for="answer in question.answers" :key="answer.id">
                     <div class="answer-correct-div">
                         <img v-if="question.correct_answers.includes(answer.id)"
-                        src="@/assets/checkmark-icon.png" alt="correct" class="checkmark-icon"/>
+                        src="@/assets/icons/checkmark-icon.png" alt="correct" class="checkmark-icon"/>
                     </div>
                     <div :class="{correct : question.correct_answers.includes(answer.id), answercontent: true}">
                         <p>{{ answer.content }}</p>
@@ -210,7 +210,7 @@
             <div class="styledDiv-pretty">
                 <h2>Add question</h2>
                 <div class="edit" @click="addQuestion">
-                    <img class="add-button" src="@/assets/plus-button.png" alt="add-button"/>
+                    <img class="add-button" src="@/assets/icons/plus-button.png" alt="add-button"/>
                 </div>
             </div>
         </div>

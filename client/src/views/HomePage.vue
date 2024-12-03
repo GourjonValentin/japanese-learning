@@ -28,22 +28,22 @@
         <h2>Key Features</h2>
         <div class="features-grid">
             <div class="feature-item">
-                <img src="@/assets/alphabet-icon.png" alt="Alphabet Learning" />
+                <img src="@/assets/icons/alphabet-icon.png" alt="Alphabet Learning" />
                 <h3>Get the Basics Straight</h3>
                 <p>Learn the main japanese alphabets through a unique interactive display.</p>
             </div>
             <div class="feature-item">
-                <img src="@/assets/quiz-icon.png" alt="Interactive Lessons" />
+                <img src="@/assets/icons/quiz-icon.png" alt="Interactive Lessons" />
                 <h3>Interactive Quizzes</h3>
                 <p>Learn through quizzes, inspired by mangas, imagined by us, or users.</p>
             </div>
             <div class="feature-item">
-                <img src="@/assets/tracking-icon.png" alt="Progress Tracking" />
+                <img src="@/assets/icons/tracking-icon.png" alt="Progress Tracking" />
                 <h3>Progress Tracking</h3>
                 <p>Track your journey and improve on your previous quizzes.</p>
             </div>
             <div class="feature-item">
-                <img src="@/assets/community-icon.png" alt="Community Support" />
+                <img src="@/assets/icons/community-icon.png" alt="Community Support" />
                 <h3>Community Support</h3>
                 <p>Join a community of learners and native speakers.</p>
             </div>

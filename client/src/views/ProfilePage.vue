@@ -14,14 +14,14 @@
                 <div class="avatar"><img :src="avatarPath" alt="avatar" class="user-avatar"/></div>
                 <div class="username"><h1>{{ username }}</h1></div>
                 <div @click="toggleUsernameEdit" class="edit-icon">
-                    <img v-if="!isEditingUsername" src="@/assets/pencil-icon.png" alt="Edit" />
+                    <img v-if="!isEditingUsername" src="@/assets/icons/pencil-icon.png" alt="Edit" />
                 </div>
                 <div v-if="isEditingUsername" class="dialog-overlay">
                     <div class="dialog">
                         <div class="dialog-header">
                             <h2>Change Username</h2>
                             <div @click="toggleUsernameEdit" class="close-icon">
-                                <img src="@/assets/katana_cross.png" alt="Close">
+                                <img src="@/assets/icons/katana_cross.png" alt="Close">
                             </div>
                         </div>
                         <div class="dialog-body">
@@ -57,11 +57,11 @@
                     <div class="styledDiv" v-for="quiz in userQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
-                                <img class="logo" src="@/assets/heart-filled.png" v-else/>
+                                <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                                <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                             </div>
                             <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
-                                <img class="logo" src="@/assets/pencil-icon-colored.png" />
+                                <img class="logo" src="@/assets/icons/pencil-icon-colored.png" />
                             </div>
                         </div>
 
@@ -70,7 +70,7 @@
                         <div class="quiz-caption">
                             <p>Difficulty : </p>
                             <div v-for="i in quiz.difficultylevel" :key="i">
-                                <img src="@/assets/torii.png"/>
+                                <img src="@/assets/icons/torii.png"/>
                             </div>
                         </div>
                         <p>Best score : {{ quiz.score }} / {{ quiz.content.length }}</p>
@@ -86,11 +86,11 @@
                     <div class="styledDiv" v-for="quiz in userFavQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
-                                <img class="logo" src="@/assets/heart-filled.png" v-else/>
+                                <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                                <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                             </div>
                             <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
-                                <img class="logo" src="@/assets/pencil-icon-colored.png" />
+                                <img class="logo" src="@/assets/icons/pencil-icon-colored.png" />
                             </div>
                         </div>
 
@@ -99,7 +99,7 @@
                         <div class="quiz-caption">
                             <p>Difficulty : </p>
                             <div v-for="i in quiz.difficultylevel" :key="i">
-                                <img src="@/assets/torii.png"/>
+                                <img src="@/assets/icons/torii.png"/>
                             </div>
                         </div>
                     </div>

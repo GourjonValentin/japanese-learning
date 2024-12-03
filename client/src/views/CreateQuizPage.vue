@@ -1,6 +1,6 @@
 <template>
     <div class="go-back-div" @click="goBack">
-        <img class="back-arrow" src="@/assets/back-arrow.png" alt="Go Back"/>
+        <img class="back-arrow" src="@/assets/icons/back-arrow.png" alt="Go Back"/>
     </div>
     <div class="create-quiz">
         <div class="dialog-overlay" id="alertDialog" v-if="isAlert">
@@ -39,7 +39,7 @@
                     <input class="styledInput" type="text" id="quizName" name="quizName" v-model="quizName" placeholder="Enter a name" required>
                 </div>
                 <div class="field">
-                    <img class="info-icon" @click="openDifficultyInfo" src="@/assets/info-icon.png" alt="info-icon"/>
+                    <img class="info-icon" @click="openDifficultyInfo" src="@/assets/icons/info-icon.png" alt="info-icon"/>
                     <label for="quizDifficulty">Difficulty :</label>
                     <div class="styledSelectInput">
                         <select name="quizDifficulty" id="quizDifficulty" v-model="quizDifficulty" required>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 <div class="field">
-                    <img class="info-icon" @click="openQuizTypeInfo" src="@/assets/info-icon.png" alt="info-icon"/>
+                    <img class="info-icon" @click="openQuizTypeInfo" src="@/assets/icons/info-icon.png" alt="info-icon"/>
                     <label for="quizType">Quiz type</label>
                     <div class="styledSelectInput">
                         <select id="quizType" name="quizType" v-model="quizType">
@@ -71,7 +71,7 @@
                     <div class="questionHeader">
                         <h4>Question {{ quizQuestions.findIndex(elt => elt.id == question.id) + 1 }}</h4>
                         <button class="close-icon" type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizQuestions.length > 1">
-                            <img src="@/assets/katana_cross.png" alt="Delete question button">
+                            <img src="@/assets/icons/katana_cross.png" alt="Delete question button">
                         </button>
                     </div>
                     <div class="questionContent">
@@ -85,7 +85,7 @@
                             <input class="styledInput" :name="'answer-' + question.id + '-' + answer.id + '-value'" type="text" required>
                             <button class="delete" @click.prevent="deleteAnswer(question.id, answer.id)" type="button"
                                     v-if="question.answers.length > 2">
-                                <img class="delete-answer-button" src="@/assets/katana.png" alt="delete Answer">
+                                <img class="delete-answer-button" src="@/assets/icons/katana.png" alt="delete Answer">
                             </button>
                         </div>
                         <button @click.prevent="addAnswer(question.id)" class="styledButton-brown-minor" type="button"
