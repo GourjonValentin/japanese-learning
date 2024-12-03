@@ -1,9 +1,5 @@
 <template>
     <div class="content">
-        <audio id="doorSound" preload="auto">
-            <source src="../assets/audio/sliding-door.mp3" type="audio/mpeg" />
-            Your browser does not support the audio element.
-        </audio>
         <div v-if="this.$route.query.form === 'login/signup'" class="container" :class="{ active: isSignUpActive }" id="container">
             <div class="form-container sign-up">
                 <SignUpFormComp/>
@@ -19,12 +15,12 @@
                     <div class="toggle-panel toggle-left">
                         <h1>Already have an account?</h1>
                         <p>Enter your personal details to use all site features</p>
-                        <button class="hidden" @click="() => {playSound(); toggleSignUp()}">Log In</button>
+                        <button class="hidden" @click="toggleSignUp">Log In</button>
                     </div>
                     <div class="toggle-panel toggle-right">
                         <h1>Wanna learn japanese?</h1>
                         <p>Register with your personal details to use all site features</p>
-                        <button class="hidden" @click="() => {playSound(); toggleSignUp()}">Sign Up</button>
+                        <button class="hidden" @click="toggleSignUp">Sign Up</button>
                     </div>
                 </div>
             </div>
@@ -61,13 +57,6 @@
     methods: {
       toggleSignUp() {
         this.isSignUpActive = !this.isSignUpActive;
-      },
-      playSound() {
-        const doorSound = document.getElementById("doorSound");
-        if (doorSound) {
-            doorSound.currentTime = 0;
-            doorSound.play();
-        }
       },
     }
   };
