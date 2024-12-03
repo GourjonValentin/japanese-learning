@@ -9,6 +9,7 @@ import CreateQuizPage from "../views/CreateQuizPage";
 import EditQuizPage from "../views/EditQuizPage";
 import ProfilePage from '../views/ProfilePage';
 import RoutingError from "../views/RoutingError";
+import AboutUsPage from "../views/AboutUsPage";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -44,6 +45,10 @@ const router = createRouter({
         {
             path: '/profile',
             component: ProfilePage
+        },
+        {
+            path: '/AboutUs',
+            component: AboutUsPage
         },
         {
             path: '/:notFound',

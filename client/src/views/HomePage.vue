@@ -64,7 +64,7 @@
     <!-- Footer Section -->
     <footer class="footer-section">
       <p>&copy; 2024 Louise Monciero - Valentin Gourjon - Fares Darghouth. All Rights Reserved.</p>
-      <p><a href="/contact">Contact Us</a> | <a href="/privacy">Privacy Policy</a></p>
+      <router-link to="/AboutUs">About Us</router-link>
     </footer>
 
   </div>
@@ -151,7 +151,7 @@ export default {
 
 /* Introduction Section */
 .introduction-section {
-  padding: 40px 20px;
+  padding: 40px 100px;
   text-align: center;
 }
 .introduction-section img {
