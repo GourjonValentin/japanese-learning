@@ -2,7 +2,7 @@
     <div class="go-back-div" @click="goBack">
         <img class="back-arrow" src="@/assets/back-arrow.png" alt="Go Back"/>
     </div>
-    <div class="create-quizz">
+    <div class="create-quiz">
         <div class="dialog-overlay" id="alertDialog" v-if="isAlert">
             <div class="dialog">
                 <div class="dialog-header">
@@ -32,17 +32,17 @@
             </div>
         </div>
         <div class="styledDiv-pretty init-div" v-if="!init">
-            <h2>Create a quizz</h2>
-            <form class="init-form" @submit.prevent="initQuizz">
+            <h2>Create a quiz</h2>
+            <form class="init-form" @submit.prevent="initQuiz">
                 <div class="field">
-                    <label for="quizzName">Quizz name :</label>
-                    <input class="styledInput" type="text" id="quizzName" name="quizzName" v-model="quizzName" placeholder="Enter a name" required>
+                    <label for="quizName">Quiz name :</label>
+                    <input class="styledInput" type="text" id="quizName" name="quizName" v-model="quizName" placeholder="Enter a name" required>
                 </div>
                 <div class="field">
                     <img class="info-icon" @click="openDifficultyInfo" src="@/assets/info-icon.png" alt="info-icon"/>
-                    <label for="quizzDifficulty">Difficulty :</label>
+                    <label for="quizDifficulty">Difficulty :</label>
                     <div class="styledSelectInput">
-                        <select name="quizzDifficulty" id="quizzDifficulty" v-model="quizzDifficulty" required>
+                        <select name="quizDifficulty" id="quizDifficulty" v-model="quizDifficulty" required>
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -50,35 +50,35 @@
                     </div>
                 </div>
                 <div class="field">
-                    <img class="info-icon" @click="openQuizzTypeInfo" src="@/assets/info-icon.png" alt="info-icon"/>
-                    <label for="quizzType">Quizz type</label>
+                    <img class="info-icon" @click="openQuizTypeInfo" src="@/assets/info-icon.png" alt="info-icon"/>
+                    <label for="quizType">Quiz type</label>
                     <div class="styledSelectInput">
-                        <select id="quizzType" name="quizzType" v-model="quizzType">
-                            <option value="simple" selected>Normal Quizz</option>
-                            <option value="anime">Anime Quizz</option>
+                        <select id="quizType" name="quizType" v-model="quizType">
+                            <option value="simple" selected>Normal Quiz</option>
+                            <option value="anime">Anime Quiz</option>
                         </select>
                     </div>
 
                 </div>
                 <button class="styledButton-brown" style="
-                        padding: 8px 20px; font-size: 13px;" type="submit">Create quizz</button>
+                        padding: 8px 20px; font-size: 13px;" type="submit">Create quiz</button>
             </form>
         </div>
         <div class="questions" v-else>
             <form @submit.prevent="submitQuestions">
-                <h2>{{quizzName}}</h2>
-                <div :class="{question: true, 'styledDiv-pretty': true, error: hasError(question.id)}" v-for="question in quizzQuestions" :key="question.id">
+                <h2>{{quizName}}</h2>
+                <div :class="{question: true, 'styledDiv-pretty': true, error: hasError(question.id)}" v-for="question in quizQuestions" :key="question.id">
                     <div class="questionHeader">
-                        <h4>Question {{ quizzQuestions.findIndex(elt => elt.id == question.id) + 1 }}</h4>
-                        <button class="close-icon" type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizzQuestions.length > 1">
+                        <h4>Question {{ quizQuestions.findIndex(elt => elt.id == question.id) + 1 }}</h4>
+                        <button class="close-icon" type="button" @click.prevent="deleteQuestion(question.id)" v-if="quizQuestions.length > 1">
                             <img src="@/assets/katana_cross.png" alt="Delete question button">
                         </button>
                     </div>
                     <div class="questionContent">
                         <label for="title"><h4>Title :</h4></label>
                         <input class="styledInput" :name="'title-' + question.id" type="text" required>
-                        <label for="picture" v-if="quizzType === 'anime'">Picture link : </label>
-                        <input class="styledInput" :name="'picture-' + question.id" v-if="quizzType === 'anime'" type="text" required>
+                        <label for="picture" v-if="quizType === 'anime'">Picture link : </label>
+                        <input class="styledInput" :name="'picture-' + question.id" v-if="quizType === 'anime'" type="text" required>
                         <h4>Answers :</h4>
                         <div class="answers" v-for="answer in question.answers || []" :key="answer.id">
                             <input :name="'checkbox-' + question.id + '-' + answer.id" type="checkbox">
@@ -122,11 +122,11 @@ export default {
         return {
             idGen: 0,
             answerIdGen: 0,
-            quizzName: "",
-            quizzDifficulty: 1,
-            quizzType: "simple",
+            quizName: "",
+            quizDifficulty: 1,
+            quizType: "simple",
             init: false,
-            quizzQuestions: [],
+            quizQuestions: [],
             globalColors: globalColors,
             isAlert: false,
             alert: {
@@ -146,16 +146,16 @@ export default {
     methods: {
         openDifficultyInfo(){
             this.alert.title = 'Difficulty Level'; 
-            this.alert.body = 'The difficulty level is an indicator for other users to try your quizz.<br>There is 3 difficulty level :\n1st one being the easiest one,\n3rd being for the more experienced user';
+            this.alert.body = 'The difficulty level is an indicator for other users to try your quiz.<br>There is 3 difficulty level :\n1st one being the easiest one,\n3rd being for the more experienced user';
             this.isAlert = true;
         },
-        openQuizzTypeInfo(){
-            this.alert.title = 'Quizz Type'; 
+        openQuizTypeInfo(){
+            this.alert.title = 'Quiz Type'; 
             this.alert.body = 'There is 2 types of quizzes:<br>&nbsp;&nbsp;&nbsp;&nbsp;Simple: simple CMQ<br>&nbsp;&nbsp;&nbsp;&nbsp;Anime: each question is related to a picture';
             this.isAlert = true;
         },
         goBack() {
-            if (!(this.quizzName == '')) {
+            if (!(this.quizName == '')) {
                 this.confirmation.title = 'Caution !';
                 this.confirmation.body = 'Unsaved changes have been made on this page. If exiting this edition page, all current changes will be lost.';
                 this.isConfirmation = true;
@@ -163,13 +163,13 @@ export default {
                     () => this.confirmation.result,
                     (newVal) => {
                         if (newVal === true){
-                            this.$router.push('/quizz');
+                            this.$router.push('/quiz');
                         }
                         unwatchConfirmation();
                     }
                 );
             } else {
-                this.$router.push('/quizz');
+                this.$router.push('/quiz');
             }
         },
         hasError(questionId){
@@ -199,21 +199,21 @@ export default {
         },
         addQuestion() {
             let newQuestion = this.emptyQuestionTemplate();
-            this.quizzQuestions.push(newQuestion);
+            this.quizQuestions.push(newQuestion);
             this.addAnswer(newQuestion.id);
             this.addAnswer(newQuestion.id);
         },
         deleteQuestion(id) {
-            this.quizzQuestions = this.quizzQuestions.filter(elt => elt.id !== id);
+            this.quizQuestions = this.quizQuestions.filter(elt => elt.id !== id);
         },
-        initQuizz() {
+        initQuiz() {
             this.init = true;
             this.addQuestion()
         },
         addAnswer(id) {
-            let index = this.quizzQuestions.findIndex(elt => elt.id === id);
-            if (this.quizzQuestions[index].answers.length <= 3) {
-                this.quizzQuestions[index].answers.push({
+            let index = this.quizQuestions.findIndex(elt => elt.id === id);
+            if (this.quizQuestions[index].answers.length <= 3) {
+                this.quizQuestions[index].answers.push({
                     id: this.answerIdGen++,
                     content: ""
 
@@ -221,10 +221,10 @@ export default {
             }
         },
         deleteAnswer(questionId, answerId) {
-            let targetQuestion = this.quizzQuestions.find(elt => elt.id === questionId);
-            let index = this.quizzQuestions.findIndex(elt => elt.id === questionId);
+            let targetQuestion = this.quizQuestions.find(elt => elt.id === questionId);
+            let index = this.quizQuestions.findIndex(elt => elt.id === questionId);
             if (targetQuestion !== undefined && targetQuestion.answers !== undefined) {
-                this.quizzQuestions[index].answers = targetQuestion.answers.filter(elt => elt.id !== answerId);
+                this.quizQuestions[index].answers = targetQuestion.answers.filter(elt => elt.id !== answerId);
             }
         },
         async submitQuestions(submitEvent) {
@@ -249,18 +249,18 @@ export default {
                         }
                         case "checkbox": {
                             if (elt.checked) {
-                                this.questions[this.quizzQuestions.findIndex(quizzQuestion => quizzQuestion.id == questionId)].correct_answers.push(answerId);
+                                this.questions[this.quizQuestions.findIndex(quizQuestion => quizQuestion.id == questionId)].correct_answers.push(answerId);
                             }
                             break
                         }
                         case "answer": {
-                            this.questions[this.quizzQuestions.findIndex(elt => elt.id == questionId)].answers.push({
+                            this.questions[this.quizQuestions.findIndex(elt => elt.id == questionId)].answers.push({
                                 "id": answerId,
                                 "content": elt.value
                             });
                             break
                         } case "picture": {
-                            this.questions[this.quizzQuestions.findIndex(elt => elt.id == questionId)].picture = elt.value;
+                            this.questions[this.quizQuestions.findIndex(elt => elt.id == questionId)].picture = elt.value;
                             break;
                         } default: {
                             throw Error("Input type not expected");
@@ -270,7 +270,7 @@ export default {
             }
             if (this.validateForm(this.questions)) {
                 this.waiting = true;
-                await this.createQuizz(this.questions);
+                await this.createQuiz(this.questions);
                 this.waiting = false;
             }
         },
@@ -294,14 +294,14 @@ export default {
             }
             return true
         },
-        async createQuizz(questions) {
-            await axios.post('http://localhost:3000/create', { quizzName: this.quizzName, quizzDifficulty: this.quizzDifficulty, quizzType: this.quizzType, quizzQuestions: JSON.stringify(questions), ownerId: this.userId })
+        async createQuiz(questions) {
+            await axios.post('http://localhost:3000/create', { quizName: this.quizName, quizDifficulty: this.quizDifficulty, quizType: this.quizType, quizQuestions: JSON.stringify(questions), ownerId: this.userId })
                 .then(response => {
                     if (response.status === 201) {
                         this.alert.title = "Success!"
-                        this.alert.body ="Your quizz has been submitted successfully. You will be redirected"
+                        this.alert.body ="Your quiz has been submitted successfully. You will be redirected"
                         this.isAlert = true;
-                        this.$router.push({path:'/quizz'});
+                        this.$router.push({path:'/quiz'});
 
                     } else {
                         throw new Error('Status server error');
@@ -317,13 +317,13 @@ export default {
 
 
 <style scoped>
-.create-quizz {
+.create-quiz {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
 }
-.create-quizz > div {
+.create-quiz > div {
     width: -webkit-fill-available;
 }
 /* ALERT BOXES */

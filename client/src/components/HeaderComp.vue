@@ -4,7 +4,7 @@
         <nav>
             <div class="pages-links">
                 <router-link to="/">Home</router-link>
-                <router-link to="/quizz">Quizz</router-link>
+                <router-link to="/quiz">Quiz</router-link>
                 <router-link to="/jisho">Jisho</router-link>
                 <router-link to="/alphabet">Alphabet</router-link>
             </div>
@@ -68,7 +68,7 @@
 <style scoped>
     #header {
     background-color: v-bind('globalColors.redColor');
-    padding: 20px 0;
+    padding: 20px;
     margin-top: 0px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     border-bottom: solid 5px;
@@ -84,6 +84,7 @@
     }
 
     nav a {
+        font-size: 16px;
         text-decoration: none;
         color: v-bind('globalColors.darkColor');
     }
