@@ -1,20 +1,20 @@
 <template>
     <div class="render">
         <div class="side-bar">
-            <router-link to="/quizz">
+            <router-link to="/quiz">
                 <img class="back-arrow" src="@/assets/back-arrow.png" alt="Go Back"/>
             </router-link>
-            <LeaderboardComp :quizzId="quizz.id"/>
+            <LeaderboardComp :quizId="quiz.id"/>
         </div>
         <div class="render-content">
-            <h2>{{ quizz.name }}</h2>
-            <div id="results" v-if="this.questionNumber === quizz.content.length">
+            <h2>{{ quiz.name }}</h2>
+            <div id="results" v-if="this.questionNumber === quiz.content.length">
                 <p>Here is your score :</p>
-                <div class="score">{{ score }} / {{ this.quizz.content.length }}</div>
+                <div class="score">{{ score }} / {{ this.quiz.content.length }}</div>
                 <p class="serverMessage">{{ this.serverMessage }}</p>
                 <details>
                     <summary>Details</summary>
-                    <div v-for="question in this.quizz.content" :key="question.id">
+                    <div v-for="question in this.quiz.content" :key="question.id">
                         <h4 class="title">{{ question.title }}</h4>
                         <div class="answer-result-div">
                             
@@ -27,7 +27,7 @@
                                 src="@/assets/checkmark-icon.png" alt="correct" class="checkmark-icon"/>
                             </div>
                             <div :class="{'answercontent':true,
-                                    'user-choice': this.userAnswers[quizz.content.findIndex(elt => elt.id === question.id)].includes(answer.id) || this.userAnswers[quizz.content.findIndex(elt => elt.id === question.id)].includes(answer.id.toString()), 
+                                    'user-choice': this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id) || this.userAnswers[quiz.content.findIndex(elt => elt.id === question.id)].includes(answer.id.toString()), 
                                     'correct': question.correct_answers.includes(answer.id) || question.correct_answers.includes(answer.id.toString())}"
                                 >
                                 <p>{{ answer.content }}</p>
@@ -36,7 +36,7 @@
                     </div>
                 </details>
             </div>
-            <div v-else id="quizz">
+            <div v-else id="quiz">
                 <nav class="nav-render">
                     <div>
                         <button class="styledButton-red-minor" @click="this.questionNumber -=1" v-if="this.questionNumber !== 0">Previous
@@ -44,23 +44,23 @@
                     </div>
                     <div>
                         <button class="styledButton-red" @click="this.questionNumber +=1"
-                                v-if="this.questionNumber < quizz.content.length - 1">Next
+                                v-if="this.questionNumber < quiz.content.length - 1">Next
                         </button>
-                        <button class="styledButton-red" @click="finishQuizz()" v-else-if="this.questionNumber === quizz.content.length - 1">
+                        <button class="styledButton-red" @click="finishQuiz()" v-else-if="this.questionNumber === quiz.content.length - 1">
                             Finish
                         </button>
                     </div>
                 </nav>
-                <div class="styledDiv-pretty questionQuizz" v-if="quizz.content.length > 0">
-                    <h3>{{ this.quizz.content[questionNumber].title }}</h3>
-                    <img v-if="quizz.content[questionNumber].picture !==''" :src="quizz.content[questionNumber].picture"
-                        :alt="quizz.content[questionNumber].picture"/>
+                <div class="styledDiv-pretty questionQuiz" v-if="quiz.content.length > 0">
+                    <h3>{{ this.quiz.content[questionNumber].title }}</h3>
+                    <img v-if="quiz.content[questionNumber].picture !==''" :src="quiz.content[questionNumber].picture"
+                        :alt="quiz.content[questionNumber].picture"/>
                     
                     <div class="answers">
                         <div
                             :class="{answer: true, active: (userAnswers[questionNumber].includes(answer.id))}"
                             @click="changeUserAnswers(answer.id)"
-                            v-for="answer in quizz.content[questionNumber].answers"
+                            v-for="answer in quiz.content[questionNumber].answers"
                             :key="answer.id"
                         >
                             <p>{{ answer.content }}</p>
@@ -68,7 +68,7 @@
                     </div>
                     
 
-                    {{ questionNumber + 1 }}/{{ quizz.content.length }}
+                    {{ questionNumber + 1 }}/{{ quiz.content.length }}
                 </div>
             </div>
             <p>{{ quizzesMessage }}</p>
@@ -90,10 +90,10 @@ export default {
     },
     data() {
         return {
-            quizz: {
+            quiz: {
                 name: '',
                 content: [],
-                id: this.$route.query.quizzId
+                id: this.$route.query.quizId
             },
             quizzesMessage: '',
             questionNumber: 0,
@@ -108,7 +108,7 @@ export default {
     },
     methods: {
         initAnswers() {
-            for (let i = 0; i < this.quizz.content.length; i++) {
+            for (let i = 0; i < this.quiz.content.length; i++) {
                 this.userAnswers.push([])
             }
         },
@@ -117,7 +117,7 @@ export default {
                 // delete
                 this.userAnswers[this.questionNumber] = this.userAnswers[this.questionNumber].filter(elt => elt !== answerNumber);
             } else {
-                let n_corr = this.quizz.content[this.questionNumber].correct_answers.length;
+                let n_corr = this.quiz.content[this.questionNumber].correct_answers.length;
                 if (this.userAnswers[this.questionNumber].length < n_corr || n_corr === 1) {
                     if (n_corr === 1) {
                         this.userAnswers[this.questionNumber] = []
@@ -134,19 +134,19 @@ export default {
             this.userAnswers.forEach((value, index) => {
                 let n_correct = 0;
                 value.forEach((ans_value) => {
-                    if (this.quizz.content[index].correct_answers.includes(ans_value) || this.quizz.content[index].correct_answers.includes(ans_value.toString())) {
+                    if (this.quiz.content[index].correct_answers.includes(ans_value) || this.quiz.content[index].correct_answers.includes(ans_value.toString())) {
                         n_correct++;
                     }
 
                 });
-                this.score += n_correct / this.quizz.content[index].correct_answers.length;
+                this.score += n_correct / this.quiz.content[index].correct_answers.length;
             });
 
         },
         async saveScore() {
             await axios.post('http://localhost:3000/save-score', {
                 userId: this.userId,
-                quizzId: this.quizz.id,
+                quizId: this.quiz.id,
                 score: this.score
             })
                 .then((res) => {
@@ -159,9 +159,9 @@ export default {
                     this.quizzesMessage = "error";
                 })
         },
-        finishQuizz() {
-            if (this.userAnswers.length < this.quizz.content.length) {
-                if (confirm(`You left ${this.quizz.content.length - this.userAnswers.filter(elt => elt.length > 0).length} questions unanswers...\nAre you sure you want to end this quizz ?`)) {
+        finishQuiz() {
+            if (this.userAnswers.length < this.quiz.content.length) {
+                if (confirm(`You left ${this.quiz.content.length - this.userAnswers.filter(elt => elt.length > 0).length} questions unanswers...\nAre you sure you want to end this quiz ?`)) {
                     this.calculateScore();
                     if (this.userId) {
                         this.saveScore();
@@ -178,15 +178,15 @@ export default {
         }
     },
     mounted() {
-        const getQuizz = async () => {
+        const getQuiz = async () => {
             try {
-                let quizzId = this.$route.query.quizzId;
-                let res = await axios.get(`http://localhost:3000/quizzes/${quizzId}`);
+                let quizId = this.$route.query.quizId;
+                let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`);
 
                 if (res.status === 200 || res.status === 304) {
-                    this.quizz = res.data[0];
-                    if (!(this.quizz.content instanceof Array)) {
-                        this.quizz.content = JSON.parse(this.quizz.content);
+                    this.quiz = res.data[0];
+                    if (!(this.quiz.content instanceof Array)) {
+                        this.quiz.content = JSON.parse(this.quiz.content);
                     }
 
                 }
@@ -194,7 +194,7 @@ export default {
             } catch (err) {
                 console.log(err)
                 if (err.response.status === 404) {
-                    this.quizzesMessage = "Oops... The quizz could not be found... ";
+                    this.quizzesMessage = "Oops... The quiz could not be found... ";
                 } else if (err.response.status === 500) {
                     this.quizzesMessage = "Oops... The server is currently unavalable...";
                 } else if (err.response.status === 400) {
@@ -204,7 +204,7 @@ export default {
                 }
             }
         };
-        getQuizz();
+        getQuiz();
     }
 }
 </script>
@@ -244,13 +244,13 @@ export default {
 .nav-render button {
     margin: 0px;
 }
-.questionQuizz {
+.questionQuiz {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-.questionQuizz > img {
+.questionQuiz > img {
     max-width: 450px;
     max-height: 450px;
 }

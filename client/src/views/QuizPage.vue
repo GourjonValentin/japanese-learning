@@ -1,5 +1,5 @@
 <template>
-    <div v-if="this.$route.query.quizzId === undefined" class="main">
+    <div v-if="this.$route.query.quizId === undefined" class="main">
         <div class="search styledDiv">
             <form class="search-form" @submit.prevent="handleSearchSubmit()">
                 <img src="../assets/search_logo.png" alt="search_logo.png"/>
@@ -9,15 +9,15 @@
                          type="submit">Search</button>
             </form>
             <div>
-                <div class="filter" @click="toggleQuizzFilterType('simple')"
+                <div class="filter" @click="toggleQuizFilterType('simple')"
                     :class="{active: this.searchFilterType === 'simple'}"
                 >
-                        Simple Quizz
+                        Simple Quiz
                 </div>
-                <div class="filter" @click="toggleQuizzFilterType('anime')"
+                <div class="filter" @click="toggleQuizFilterType('anime')"
                     :class="{active: this.searchFilterType === 'anime'}"
                 >
-                    Anime Quizz
+                    Anime Quiz
                 </div>
                 <div class="filter" v-if="this.userId"
                     @click="() => {this.searchFilterFavourites = !(this.searchFilterFavourites)}"
@@ -35,59 +35,59 @@
                 </div>
             </div>
         </div>
-        <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quizz</button>
+        <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
         <div class="quizzes">
-            <div class="styledDiv quizz" v-for="quizz in quizzes" :key="quizz.id">
-                <div class="quizz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                    <div class="favourites" @click="changeFavourites(quizz.id)">
-                        <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quizz.id) === -1)"/>
+            <div class="styledDiv quiz" v-for="quiz in quizzes" :key="quiz.id">
+                <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
+                    <div class="favourites" @click="changeFavourites(quiz.id)">
+                        <img class="logo" src="@/assets/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
                         <img class="logo" src="@/assets/heart-filled.png" v-else/>
                     </div>
-                    <div  class="tools" v-if="isQuizzOwner(quizz) == 1">
-                        <div @click="editQuizz(quizz)" class="edit">
+                    <div  class="tools" v-if="isQuizOwner(quiz) == 1">
+                        <div @click="editQuiz(quiz)" class="edit">
                             <img class="logo" src="@/assets/pencil-icon-colored.png" />
                         </div>
-                        <div @click="deleteQuizz(quizz)" class="delete">
+                        <div @click="deleteQuiz(quiz)" class="delete">
                             <img class="logo" src="@/assets/delete.webp" />
                         </div>
                     </div>
                 </div>
 
-                <h3>{{ quizz.name }}</h3>
-                <button class="styledButton" @click="startQuizz(quizz)">Start Quizz</button>
-                <div class="quizz-caption">
+                <h3>{{ quiz.name }}</h3>
+                <button class="styledButton" @click="startQuiz(quiz)">Start Quiz</button>
+                <div class="quiz-caption">
                     <p>Difficulty : </p>
-                    <div v-for="i in quizz.difficultylevel" :key="i">
+                    <div v-for="i in quiz.difficultylevel" :key="i">
                         <img src="@/assets/torii.png"/>
                     </div>
                 </div>
-                <p>Owner : {{ quizz.ownername }}</p>
+                <p>Owner : {{ quiz.ownername }}</p>
             </div>
             <p id="quizzesMessage">{{ quizzesMessage }}</p>
         </div>
-        <div v-if="isAttemptingQuizz" class="dialog-overlay">
+        <div v-if="isAttemptingQuiz" class="dialog-overlay">
             <div class="dialog">
                 <div class="dialog-header">
                     <h2>Halt!</h2>
-                    <div @click="toggleAttemptQuizz" class="close-icon">
+                    <div @click="toggleAttemptQuiz" class="close-icon">
                         <img src="@/assets/katana_cross.png" alt="Close">
                     </div>
                 </div>
                 <div class="dialog-body">
-                    <p>You need to be logged in to attempt a quizz!</p>
+                    <p>You need to be logged in to attempt a quiz!</p>
                     <button class="styledButton-red" @click="goToLogIn">Got It</button>
                 </div>
             </div>
         </div>
     </div>
-    <div v-else class="renderingQuizz">
-        <QuizzRender/>
+    <div v-else class="renderingQuiz">
+        <QuizRender/>
     </div>
 </template>
 
 <script>
     import router from '@/router';
-    import QuizzRender from '@/components/QuizzRender.vue';
+    import QuizRender from '@/components/QuizRender.vue';
     import { globalColors } from '../utils/GlobalVariable';
     import { globalTitle } from '../utils/GlobalVariable';
     import axios from 'axios';
@@ -110,14 +110,14 @@
                 searchFilterType: "",
                 searchFilterFavourites: 0,
                 searchFilterDifficulty: "all",
-                isAttemptingQuizz: false,
+                isAttemptingQuiz: false,
             };
         },
         components: {
-            QuizzRender
+            QuizRender
         },
         methods : {
-            toggleQuizzFilterType(type){
+            toggleQuizFilterType(type){
                 if (this.searchFilterType === ""){
                     this.searchFilterType = type;
                 } else if (this.searchFilterType == type){
@@ -126,8 +126,8 @@
                     this.searchFilterType = type;
                 }
             },
-            toggleAttemptQuizz() {
-                this.isAttemptingQuizz = !this.isAttemptingQuizz;
+            toggleAttemptQuiz() {
+                this.isAttemptingQuiz = !this.isAttemptingQuiz;
             },
             async handleSearchSubmit(){
                 await axios.get('http://localhost:3000/quizzes',
@@ -153,20 +153,20 @@
                 })
             },
             goToLogIn(){
-                router.push({path:'/auth', query: {form : 'login/signup', redirect: '/quizz'}});
+                router.push({path:'/auth', query: {form : 'login/signup', redirect: '/quiz'}});
             },
-            async startQuizz(quizz){
+            async startQuiz(quiz){
                 if (this.sessionToken)
-                    router.push({path:'/quizz', query: { quizzId: quizz.id}});
+                    router.push({path:'/quiz', query: { quizId: quiz.id}});
                 else {
-                    this.isAttemptingQuizz = true;
+                    this.isAttemptingQuiz = true;
                 }
             },
-            async changeFavourites(quizzId){
+            async changeFavourites(quizId){
                 let mode = 'add';
-                console.log("quizzId", quizzId);
+                console.log("quizId", quizId);
                 console.log("this.favourites", this.favourites);
-                if (this.favourites.includes(quizzId)){
+                if (this.favourites.includes(quizId)){
                     mode = 'delete';
                 }
 
@@ -174,12 +174,12 @@
                     const res = await axios.post('http://localhost:3000/users/edit-favourite', 
                         {
                             mode : mode, 
-                            quizzId : quizzId,
+                            quizId : quizId,
                             userId : this.userId,
                             sessionToken : this.sessionToken
                         }).catch(err => {
                             if (err.response.status === 409) {
-                                alert("You have already added this quizz to your favourites");
+                                alert("You have already added this quiz to your favourites");
                             }
                             console.log("err", err);
                         });
@@ -190,26 +190,26 @@
                     console.log("err", err);
                 }
             },
-            isQuizzOwner(quizz){
-                if (quizz.ownerid == this.userId){
+            isQuizOwner(quiz){
+                if (quiz.ownerid == this.userId){
                     return 1;
                 }
                 return 0;
             },
-            editQuizz(quizz){
-                this.$router.push({path:'/edit', query : {'quizzId': quizz.id}});
+            editQuiz(quiz){
+                this.$router.push({path:'/edit', query : {'quizId': quiz.id}});
             },
-            async deleteQuizz(quizz){
-                if (confirm(`You are about to delete the quizz *${quizz.name}*...\nAre you sure you want to continue ?`)){
+            async deleteQuiz(quiz){
+                if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){
                     try {
-                        let res = await axios.delete('http://localhost:3000/delete-quizz',{
-                            params : {'quizzId' : quizz.id},
+                        let res = await axios.delete('http://localhost:3000/delete-quiz',{
+                            params : {'quizId' : quiz.id},
                             headers: {'Authorization': `Bearer ${this.sessionToken}`}
                         });
                         if (res.status === 200){
                             this.quizzes = res.data;
                         } else {
-                            alert(`Sorry the quizz ${quizz.name} couldn't be removed`);
+                            alert(`Sorry the quiz ${quiz.name} couldn't be removed`);
                         }
                     } catch (err) {
                         console.error(err);
@@ -290,15 +290,15 @@
         flex-wrap: wrap;
     }
 
-    .quizz {
+    .quiz {
         min-width: 180px;
     }
-    .quizz-header {
+    .quiz-header {
         display: flex;
         justify-content: space-between;
     }
 
-    .quizz-header .tools {
+    .quiz-header .tools {
         display: flex;
     }
 
@@ -325,7 +325,7 @@
         width: 35px;
     }
 
-    .quizz-caption {
+    .quiz-caption {
         display: flex;
         align-items: center;
         margin-left: 20px;
@@ -333,7 +333,7 @@
 
     }
 
-    .quizz-caption img {
+    .quiz-caption img {
         width: 20px;
         height: 20px;
         margin: 5px;

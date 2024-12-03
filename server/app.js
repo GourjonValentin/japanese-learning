@@ -234,16 +234,16 @@ app.get('/jisho', async (req, res) => {
     }
 });
 
-app.get('/quizzes/:quizzId', async (req, res) => {
+app.get('/quizzes/:quizId', async (req, res) => {
     // est ce que la personne doit etre co ???
     try {
-        const { quizzId } = req.params;
-        if (quizzId === undefined) {
+        const { quizId } = req.params;
+        if (quizId === undefined) {
             return res.status(400).json({ message: "Invalid format" });
         }
-        let result = await query('SELECT * FROM quizz WHERE quizz.id=?', [quizzId]);
+        let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
         if (result.length === 0) {
-            return res.status(404).json({ message: "Quizz not found" });
+            return res.status(404).json({ message: "Quiz not found" });
         }
         console.log(result)
         res.status(200).json(result);
@@ -257,30 +257,30 @@ app.get('/quizzes/:quizzId', async (req, res) => {
 app.get('/quizzes', async (req, res) => {
     try {
         const { difficulty, type, favourites, name } = req.query;
-        let results = await query('SELECT * FROM quizz');
+        let results = await query('SELECT * FROM quiz');
         if (difficulty && difficulty !== "all") {
             console.log(typeof difficulty, typeof results[2].difficultylevel)
-            results = results.filter(quizz => quizz.difficultylevel.toString() === difficulty.toString());
+            results = results.filter(quiz => quiz.difficultylevel.toString() === difficulty.toString());
         }
         if (type) {
-            results = results.filter(quizz => quizz.type === type);
+            results = results.filter(quiz => quiz.type === type);
         }
         if (favourites) {
-            results = results.filter(quizz => favourites.includes(quizz.id) || favourites.includes(quizz.id.toString()));
+            results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
         }
         if (name) {
             // not sure....
-            results = results.filter(quizz => quizz.name.toLowerCase().includes(name.toLowerCase()));
+            results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
         }
         if (results.length === 0) {
             return res.status(404).json({ message: "No quizzes found" });
         }
         //console.log(results);
         results = await Promise.all(
-            results.map(async quizz => {
-                const ownerName = await query('SELECT username FROM users WHERE id=?', [quizz.ownerid]);
-                quizz.ownername = ownerName[0].username;
-                return quizz
+            results.map(async quiz => {
+                const ownerName = await query('SELECT username FROM users WHERE id=?', [quiz.ownerid]);
+                quiz.ownername = ownerName[0].username;
+                return quiz
             })
         );
         return res.status(200).json(results);
@@ -293,7 +293,7 @@ app.get('/quizzes', async (req, res) => {
 app.get('/user-quizzes', async (req, res) => {
     try {
         const { userId } = req.query;
-        const results = await query('SELECT quizz.*, scores.score FROM scores JOIN quizz ON scores.quizzid = quizz.id WHERE scores.userid = ?', [userId]);
+        const results = await query('SELECT quiz.*, scores.score FROM scores JOIN quiz ON scores.quizid = quiz.id WHERE scores.userid = ?', [userId]);
 
         if (results.length === 0) {
             return res.status(404).json({ message: "No quizzes found" });
@@ -309,12 +309,12 @@ app.get('/user-quizzes', async (req, res) => {
 
 // url below is unclear .... can be renamed ???
 app.post('/create', async (req, res) => {
-    const { quizzName, quizzDifficulty, quizzType, quizzQuestions, ownerId } = req.body;
-    console.log(quizzQuestions);
+    const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
+    console.log(quizQuestions);
     try {
-        await query('INSERT INTO quizz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizzName, quizzType, quizzDifficulty, quizzQuestions, ownerId]);
+        await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
 
-        //await query(`INSERT INTO quizz(name, type, content, ownerid) VALUES (${quizzName}, ${quizzType}, [{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}][{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}]${JSON.stringify(JSON.parse(quizzQuestions))}, ${parseInt(ownerId)}`)
+        //await query(`INSERT INTO quiz(name, type, content, ownerid) VALUES (${quizName}, ${quizType}, [{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}][{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}]${JSON.stringify(JSON.parse(quizQuestions))}, ${parseInt(ownerId)}`)
         return res.sendStatus(201);
     } catch (err) {
         console.log(err)
@@ -325,7 +325,7 @@ app.post('/create', async (req, res) => {
 
 app.post('/users/edit-favourite', async (req, res) => {
     try {
-        const { mode, quizzId, userId, sessionToken } = req.body;
+        const { mode, quizId, userId, sessionToken } = req.body;
 
         // check if the user login is matching its id
         const { payload } = verifyToken(sessionToken, secretKey);
@@ -347,15 +347,15 @@ app.post('/users/edit-favourite', async (req, res) => {
         }
         if (mode === 'delete') { // ca marche ???
             newFavourites = newFavourites.filter((el) => {
-                return el !== quizzId;
+                return el !== quizId;
             })
         }
         else if (mode === 'add') {
-            if (newFavourites.includes(quizzId)) {
+            if (newFavourites.includes(quizId)) {
                 console.log("already in the list");
-                return res.status(409).json({ message: "quizz already in the user favourite quizz" })
+                return res.status(409).json({ message: "quiz already in the user favourite quiz" })
             }
-            newFavourites.push(quizzId);
+            newFavourites.push(quizId);
         }
         console.log(newFavourites);
         // try catch the following query ???
@@ -373,11 +373,11 @@ app.post('/users/edit-favourite', async (req, res) => {
 });
 
 app.post('/save-score', async (req, res) => {
-    const { userId, quizzId, score } = req.body;
+    const { userId, quizId, score } = req.body;
     try {
-        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizzid = ?', [userId, quizzId]);
+        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
         if (results.length === 0) {
-            await query('INSERT INTO scores (userid, quizzid, score) VALUES (?, ?, ?)', [userId, quizzId, score]);
+            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
             res.status(201).json({ message: 'Score saved successfully.' });
         } else {
             if (results[0].score < score) {
@@ -391,12 +391,12 @@ app.post('/save-score', async (req, res) => {
     }
 });
 
-app.get('/is-quizz-owner', async (req, res) => {
+app.get('/is-quiz-owner', async (req, res) => {
     if (req.header('Authorization') === undefined) {
         return res.status(401).json({ message: "Invalid format" });
     }
     const token = req.header('Authorization').split(' ')[1];
-    const quizzId = req.query.quizzId;
+    const quizId = req.query.quizId;
     console.log(req.query);
     if (token == undefined) {
         return res.status(400);
@@ -405,27 +405,27 @@ app.get('/is-quizz-owner', async (req, res) => {
     console.log(resVerifyToken)
 
     if (resVerifyToken.status === 200) {
-        if (quizzId == undefined) {
+        if (quizId == undefined) {
             return res.status(401).json({ message: "Invalid format" });
         }
-        let result = await query('SELECT * FROM quizz WHERE id = ?', [quizzId]);
+        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
         if (result.length === 0) {
-            return res.status(404).json({ message: "Quizz not found" });
+            return res.status(404).json({ message: "Quiz not found" });
         } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
             return res.status(200).send();
 
         } else {
-            return res.status(403).json({ message: "You are not the owner of this quizz" });
+            return res.status(403).json({ message: "You are not the owner of this quiz" });
         }
     } else {
         return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
     }
 });
 
-app.delete('/delete-quizz', async (req, res) => {
+app.delete('/delete-quiz', async (req, res) => {
     try {
         const token = req.header('Authorization').split(' ')[1];
-        const quizzId = req.query.quizzId;
+        const quizId = req.query.quizId;
         if (token == undefined) {
             return res.status(400).send();
         }
@@ -433,19 +433,19 @@ app.delete('/delete-quizz', async (req, res) => {
         console.log("resr", resVerifyToken);
 
         if (resVerifyToken.status === 200) {
-            if (quizzId == undefined) {
+            if (quizId == undefined) {
                 return res.status(401).json({ message: "Invalid format" });
             }
-            let result = await query('SELECT * FROM quizz WHERE id = ?', [quizzId]);
+            let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
             if (result.length === 0) {
-                return res.status(404).json({ message: "Quizz not found" });
+                return res.status(404).json({ message: "Quiz not found" });
             } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
-                result = await query('DELETE FROM scores WHERE quizzid = ?', [quizzId]);
-                result = await query('DELETE FROM quizz WHERE id = ?', [quizzId]);
-                result = await query('SELECT * FROM quizz');
+                result = await query('DELETE FROM scores WHERE quizid = ?', [quizId]);
+                result = await query('DELETE FROM quiz WHERE id = ?', [quizId]);
+                result = await query('SELECT * FROM quiz');
                 return res.status(200).json(result)
             } else {
-                return res.status(403).json({ message: "You are not the owner of this quizz" });
+                return res.status(403).json({ message: "You are not the owner of this quiz" });
             }
         } else {
             return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
@@ -455,13 +455,13 @@ app.delete('/delete-quizz', async (req, res) => {
     }
 });
 
-app.post('/edit-quizz/:quizzId', async (req, res) => {
+app.post('/edit-quiz/:quizId', async (req, res) => {
     if (req.header('Authorization') === undefined) {
         return res.status(401).json({ message: "Invalid format" });
     }
     const token = req.header('Authorization').split(' ')[1];
-    const { quizzId } = req.params;
-    const { editedQuizz } = req.body;
+    const { quizId } = req.params;
+    const { editedQuiz } = req.body;
 
     if (token == undefined) {
         return res.status(400);
@@ -469,35 +469,35 @@ app.post('/edit-quizz/:quizzId', async (req, res) => {
     let resVerifyToken = verifyToken(token, secretKey);
 
     if (resVerifyToken.status === 200) {
-        if (quizzId === undefined || editedQuizz === undefined) {
+        if (quizId === undefined || editedQuiz === undefined) {
             return res.status(401).json({ message: "Invalid format" });
         }
-        let result = await query('SELECT * FROM quizz WHERE id = ?', [quizzId]);
+        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
         if (result.length === 0) {
-            return res.status(404).json({ message: "Quizz not found" });
+            return res.status(404).json({ message: "Quiz not found" });
         } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
             //la requete SQL ne marche pas erreur syntaxique :  You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?' at line 1
-            result = await query('UPDATE quizz SET name=?, type=?, content=?, difficultylevel=? WHERE id = ?',
-                [editedQuizz.name, editedQuizz.type, JSON.stringify(editedQuizz.content), parseInt(editedQuizz.difficultylevel), quizzId]);
+            result = await query('UPDATE quiz SET name=?, type=?, content=?, difficultylevel=? WHERE id = ?',
+                [editedQuiz.name, editedQuiz.type, JSON.stringify(editedQuiz.content), parseInt(editedQuiz.difficultylevel), quizId]);
             return res.sendStatus(200);
         } else {
-            return res.status(403).json({ message: "You are not the owner of this quizz" });
+            return res.status(403).json({ message: "You are not the owner of this quiz" });
         }
     } else {
         return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
     }
 });
 
-app.get('/scores/:quizzId', async (req, res) => {
-    const { quizzId } = req.params;
+app.get('/scores/:quizId', async (req, res) => {
+    const { quizId } = req.params;
     try {
         let results = await query('SELECT u.username, s.score\n' +
             'FROM scores s\n' +
             '         JOIN users u ON u.id = s.userid\n' +
-            '         JOIN quizz q ON q.id = s.quizzid\n' +
-            'WHERE s.quizzid = ?\n' +
+            '         JOIN quiz q ON q.id = s.quizid\n' +
+            'WHERE s.quizid = ?\n' +
             'ORDER BY s.score\n' +
-            'LIMIT 10;', [quizzId]);
+            'LIMIT 10;', [quizId]);
         console.log(results)
         if (results.length === 0) {
             return res.sendStatus(204);

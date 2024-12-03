@@ -8,7 +8,7 @@
         <div class="text-overlay">
           <h1 class="main-title">Master Japanese Today!</h1>
           <p class="subtitle">Learn the language with <strong>INTERACTIVE QUIZZES</strong> and <strong>THE BEST COMMUNITY</strong>.</p>
-          <button class="cta-button" @click="goToQuizzPage">Get started</button>
+          <button class="cta-button" @click="goToQuizPage">Get started</button>
         </div>
       </div>
     </section>
@@ -33,7 +33,7 @@
                 <p>Learn the main japanese alphabets through a unique interactive display.</p>
             </div>
             <div class="feature-item">
-                <img src="@/assets/quizz-icon.png" alt="Interactive Lessons" />
+                <img src="@/assets/quiz-icon.png" alt="Interactive Lessons" />
                 <h3>Interactive Quizzes</h3>
                 <p>Learn through quizzes, inspired by mangas, imagined by us, or users.</p>
             </div>
@@ -79,8 +79,8 @@ export default {
             globalColors: globalColors,
         }
     },methods: {
-        goToQuizzPage() {
-            this.$router.push({ path: '/quizz' });
+        goToQuizPage() {
+            this.$router.push({ path: '/quiz' });
         }
     },
 };

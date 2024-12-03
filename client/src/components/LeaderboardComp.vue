@@ -19,7 +19,7 @@ import axios from "axios";
 import {globalColors} from "@/utils/GlobalVariable";
 
 export default {
-    props : ["quizzId"],
+    props : ["quizId"],
     setup () {
 
     },
@@ -30,8 +30,8 @@ export default {
         };
     },
     methods : {
-        async getScores(quizzId) {
-            await axios.get(`http://localhost:3000/scores/${quizzId}`).then((res, err) => {
+        async getScores(quizId) {
+            await axios.get(`http://localhost:3000/scores/${quizId}`).then((res, err) => {
                 if (res.status === 200) {
                     this.scoresList = res.data;
                 } else if (res.status === 204) {
@@ -46,9 +46,9 @@ export default {
         }
     },
     mounted() {
-        this.getScores(this.quizzId)
+        this.getScores(this.quizId)
     },
-    quizzId() {
+    quizId() {
 
     }
 }

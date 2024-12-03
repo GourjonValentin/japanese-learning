@@ -148,6 +148,9 @@ styledSelectInput.active {
     border-radius: 20px;
     padding : 10px;
     margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .styledDiv-pretty {
