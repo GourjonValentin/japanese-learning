@@ -160,14 +160,14 @@
         <div class="field">
             <h1>{{ quiz.name }}</h1>
             <div @click="()=>{editedTitle = quiz.name; isTitleForm = true;}" >
-                <img src="../assets/pencil-icon.png" alt="edit_btn" class="editing-logo"/>
+                <img src="../assets/pencil-icon-colored.png" alt="edit_btn" class="editing-logo"/>
             </div>
         </div>
         <div class="main-attributes styledDiv">
             <div class="main-attributes-header">
                 <h2>Main Attributes</h2>
                 <div @click="editMainAttributes" >
-                    <img src="../assets/pencil-icon.png" alt="edit_btn" class="minor-editing-logo"/>
+                    <img src="../assets/pencil-icon-colored.png" alt="edit_btn" class="minor-editing-logo"/>
                 </div>
             </div>
             <div class="main-attributes-body">
@@ -189,7 +189,7 @@
                         <img class="minor-editing-logo" src="@/assets/delete.webp" alt="delete_btn"/>
                     </div>
                     <div class="edit-logo-question-div" @click="editQuestionQuiz(question)">
-                        <img class="minor-editing-logo" src="../assets/pencil-icon.png" alt="edit_btn"/>
+                        <img class="minor-editing-logo" src="../assets/pencil-icon-colored.png" alt="edit_btn"/>
                     </div>
                 </div>
                 

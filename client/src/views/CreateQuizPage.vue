@@ -146,12 +146,12 @@ export default {
     methods: {
         openDifficultyInfo(){
             this.alert.title = 'Difficulty Level'; 
-            this.alert.body = 'The difficulty level is an indicator for other users to try your quiz.<br>There is 3 difficulty level :\n1st one being the easiest one,\n3rd being for the more experienced user';
+            this.alert.body = 'The difficulty level is an indicator for other users to try your quiz.<br>There are 3 difficulty level :\n1st one being the easiest one,\n3rd being for the more experienced user';
             this.isAlert = true;
         },
         openQuizTypeInfo(){
             this.alert.title = 'Quiz Type'; 
-            this.alert.body = 'There is 2 types of quizzes:<br>&nbsp;&nbsp;&nbsp;&nbsp;Simple: simple CMQ<br>&nbsp;&nbsp;&nbsp;&nbsp;Anime: each question is related to a picture';
+            this.alert.body = 'There are 2 types of quizzes:<br>&nbsp;&nbsp;&nbsp;&nbsp;Simple: simple CMQ<br>&nbsp;&nbsp;&nbsp;&nbsp;Anime: each question is related to a picture';
             this.isAlert = true;
         },
         goBack() {
