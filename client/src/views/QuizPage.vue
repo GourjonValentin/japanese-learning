@@ -328,6 +328,7 @@
     .quiz-caption {
         display: flex;
         align-items: center;
+        justify-content: center;
         margin-left: 20px;
         margin-right: 20px;
 
