@@ -452,10 +452,14 @@ app.post('/edit-quiz/:quizId', async (req, res) => {
         if (result.length === 0) {
             return res.status(404).json({ message: "Quiz not found" });
         } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
-            //la requete SQL ne marche pas erreur syntaxique :  You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?' at line 1
-            result = await query('UPDATE quiz SET name=?, type=?, content=?, difficultylevel=? WHERE id = ?',
-                [editedQuiz.name, editedQuiz.type, JSON.stringify(editedQuiz.content), parseInt(editedQuiz.difficultylevel), quizId]);
-            return res.sendStatus(200);
+            if (result[0].name === editedQuiz.name && result[0].type === editedQuiz.type && JSON.stringify(result[0].content) === JSON.stringify(editedQuiz.content) && result[0].difficultylevel === parseInt(editedQuiz.difficultylevel)) {
+                return res.sendStatus(200);
+            } else {
+                result = await query('UPDATE quiz SET name=?, type=?, content=?, difficultylevel=? WHERE id = ?',
+                    [editedQuiz.name, editedQuiz.type, JSON.stringify(editedQuiz.content), parseInt(editedQuiz.difficultylevel), quizId]);
+                result = await query('DELETE FROM scores WHERE quizid=?', [quizId]);
+                return res.sendStatus(200);
+            }
         } else {
             return res.status(403).json({ message: "You are not the owner of this quiz" });
         }
