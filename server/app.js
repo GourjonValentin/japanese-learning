@@ -206,6 +206,15 @@ app.get('/jisho', async (req, res) => {
 // QUIZZES
 
 app.get('/quizzes', async (req, res) => {
+    let token;
+    if (req.headers['authorization']) {
+        token = req.headers['authorization'].split(' ')[1];
+    }
+    let loggedIn = !(token === undefined || token === null)
+    if (loggedIn) {
+        const { status, message, payload } = verifyToken(token, secretKey);
+        loggedIn = status === 200;
+    }
     try {
         const { difficulty, type, favourites, name } = req.query;
         let results = await query('SELECT * FROM quiz');
@@ -233,7 +242,18 @@ app.get('/quizzes', async (req, res) => {
                 return quiz
             })
         );
-        return res.status(200).json(results);
+        if (loggedIn) return res.status(200).json(results);
+        return res.json(results.map(quiz => {
+            return {
+                id: quiz.id,
+                ownername: quiz.ownername,
+                name: quiz.name,
+                type: quiz.type,
+                ownerid: quiz.ownerid,
+                difficultylevel: quiz.difficultylevel
+            }
+        }));
+
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
@@ -436,7 +456,7 @@ app.get('/users', async (req, res) => {
     let resVerifyToken = verifyToken(token, secretKey);
     if (resVerifyToken.status === 200) {
         let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-        if (isAdmin) {
+        if (isAdmin[0].isAdmin) {
             let results = await query('SELECT * FROM users');
             if (results) {
                 res.status(200).json(results);
