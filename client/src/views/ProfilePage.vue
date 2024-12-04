@@ -53,8 +53,8 @@
                 <div class="title-settings">
                     <h2>Quizzes history</h2>
                 </div>
-                <div class="quizzes">
-                    <div class="styledDiv" v-for="quiz in userQuizzes" :key="quiz.id">
+                <div class="quizzes-profil-page">
+                    <div class="styledDiv-pretty" v-for="quiz in userQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favourites" @click="changeFavourites(quiz.id)">
                                 <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
@@ -82,8 +82,8 @@
                 <div class="title-settings">
                     <h2>Favorite quizzes</h2>
                 </div>
-                <div class="quizzes">
-                    <div class="styledDiv" v-for="quiz in userFavQuizzes" :key="quiz.id">
+                <div class="quizzes-profil-page">
+                    <div class="styledDiv-pretty" v-for="quiz in userFavQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favourites" @click="changeFavourites(quiz.id)">
                                 <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
@@ -456,6 +456,12 @@
 
 .title-settings{
     display: flex;
+}
+
+.quizzes-profil-page {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 </style>

@@ -127,7 +127,7 @@ app.post('/login', async (req, res) => {
             )
             res.status(200).json({ username: user.username, favourites: user.favourites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token, avatarPath: user.avatarPath, message: "Succesful login" });
         } else {
-            res.status(401).json({ message: "Invalid username or password" });
+            res.status(401).json({ message: "Invalid username or password." });
         }
     } catch (err) {
         console.error("Error: ", err.message);
@@ -210,7 +210,7 @@ app.get('/auth/check', async (req, res) => {
         let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
         if (userData && userData[0]) {
             let data = userData[0];
-            res.status(200).json({data});
+            res.status(200).json({ data });
         } else {
             res.sendStatus(404);
         }
@@ -523,7 +523,7 @@ app.get('/users', async (req, res) => {
 app.post('/toggle-admin', async (req, res) => {
     const token = req.headers['authorization'].split(' ')[1];
     if (token === undefined) {
-        return res.sendStatus(401); 
+        return res.sendStatus(401);
     }
     let resVerifyToken = verifyToken(token, secretKey);
     if (resVerifyToken.status === 200) {
