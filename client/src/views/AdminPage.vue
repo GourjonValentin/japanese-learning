@@ -305,12 +305,22 @@ export default {
         async toggleAdmin(user) {
             try {
                 if (user.id === this.userId) {
-                    let adminCount = this.users.reduce((total, x) => (total + x.isAdmin));
+                    console.log(this.users)
+                    let adminCount = this.users.filter(elt => elt.isAdmin).length;
+                    console.log(adminCount);
                     if (adminCount === 1) {
                         this.confirmation.title = "Last Admin";
                         this.confirmation.body = "You are the last admin, there will be no admin left after this. Do you still want to proceed ?";
                         this.isConfirmation = 1;
+
+                        while (this.confirmation.result === 1) {
+                            continue;
+                        }
+                        if (this.confirmation.result === false) {
+                            return
+                        }
                     }
+
                 }
                 await axios.post('http://localhost:3000/toggle-admin', {
                     user: user,
