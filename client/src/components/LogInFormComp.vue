@@ -9,12 +9,11 @@
 </template>
 
 <script>
-    import { inject } from 'vue'; // to change user variable and send it to the provider
-    // import axios from 'axios';
+    import { inject } from 'vue';
 
     export default {
         setup(){
-            const setUsername = inject('setUsername'); // access provider
+            const setUsername = inject('setUsername');
             const setSessionToken = inject('setSessionToken');
             const setUserId = inject('setUserId');
             const setFavourites = inject('setFavourites');

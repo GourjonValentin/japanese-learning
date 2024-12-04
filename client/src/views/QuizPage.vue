@@ -1,8 +1,8 @@
 <template>
     <div v-if="this.$route.query.quizId === undefined" class="main">
-        <div class="search styledDiv">
+        <div class="search">
             <form class="search-form" @submit.prevent="handleSearchSubmit()">
-                <img src="@/assets/icons/search_logo.png" alt="search_logo.png"/>
+                <img src="@/assets/icons/search-logo.png" alt="search-logo.png"/>
                 <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="search"/>
                 <button  class="search-button"
                          type="submit">Search</button>
@@ -26,7 +26,7 @@
                 </div>
                 <div>
                     <select class="styledSelectInput" v-model="searchFilterDifficulty">
-                        <option >all</option>
+                        <option >Difficulty</option>
                         <option>1</option>
                         <option>2</option>
                         <option>3</option>
@@ -36,7 +36,7 @@
         </div>
         <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
         <div class="quizzes">
-            <div class="styledDiv quiz" v-for="quiz in quizzes" :key="quiz.id">
+            <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                     <div class="favourites" @click="changeFavourites(quiz.id)">
                         <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
@@ -108,7 +108,7 @@
                 quizzesMessage: "",
                 searchFilterType: "",
                 searchFilterFavourites: 0,
-                searchFilterDifficulty: "all",
+                searchFilterDifficulty: "Difficulty",
                 isAttemptingQuiz: false,
             };
         },
@@ -148,7 +148,7 @@
                         this.quizzesMessage = "No quizzes found...";
                         this.quizzes = [];
                     }
-                    console.log("err",err);
+                    console.error("err",err);
                 })
             },
             goToLogIn(){
@@ -163,8 +163,6 @@
             },
             async changeFavourites(quizId){
                 let mode = 'add';
-                console.log("quizId", quizId);
-                console.log("this.favourites", this.favourites);
                 if (this.favourites.includes(quizId)){
                     mode = 'delete';
                 }
@@ -180,13 +178,13 @@
                             if (err.response.status === 409) {
                                 alert("You have already added this quiz to your favourites");
                             }
-                            console.log("err", err);
+                            console.error("err", err);
                         });
 
 
                     this.setFavourites(res.data.favourites);
                 } catch (err){
-                    console.log("err", err);
+                    console.error("err", err);
                 }
             },
             isQuizOwner(quiz){
@@ -219,14 +217,13 @@
             }
         },
         mounted() {
-            const getAllquizzes = async () => { // arrows functions helping connecting with this.
+            const getAllquizzes = async () => {
                 try {
                     const res = await axios.get('http://localhost:3000/quizzes');
                     if (res.status === 200 || res.status === 304){
-                        this.quizzes = res.data; // ???
+                        this.quizzes = res.data;
                     }
                 } catch (err) {
-                    console.log("erre", err)
                     if (err.response === undefined){
                         if(err.code === "ERR_NETWORK"){
                             this.quizzesMessage = "Oops... The server is currently unavailable...";
@@ -250,7 +247,21 @@
 </script>
 
 <style>
-    /* SEARCH STYLES */
+    /* SEARCH STYLES SECTION */
+
+    .search {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px;
+        margin-bottom: 40px;
+    }
+
+    .search-form > img {
+        margin-top: 20px;
+        width: 50px;
+        height: 50px;
+    }
 
     .search > * {
         display: flex;
@@ -301,13 +312,23 @@
         background-color: v-bind('globalColors.lightColor');
     }
 
-    /* QUIZZES STYLES */
+    /* QUIZZES STYLES SECTION */
     .quizzes {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
     }
 
     .quiz {
+        min-width: 200px;
+        flex-direction: column;
+        margin:  20px;
+        padding: 40px 20px;
+        background-color: #f8e3cd;
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
         min-width: 180px;
     }
     .quiz-header {

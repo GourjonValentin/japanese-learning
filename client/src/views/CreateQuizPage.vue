@@ -326,7 +326,8 @@ export default {
 .create-quiz > div {
     width: -webkit-fill-available;
 }
-/* ALERT BOXES */
+
+/* ALERT & CONFIRMATION BOXES */
 .dialog-header{
     justify-items: center;
 }
@@ -365,7 +366,7 @@ export default {
     margin: 4px;
 }
 
-/* QUESTIONS PART */
+/* QUESTIONS SECTION */
 .questions {
     display: flex;
     justify-content: center;

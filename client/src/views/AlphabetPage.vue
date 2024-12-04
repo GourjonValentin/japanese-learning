@@ -117,7 +117,7 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 50%; /* Half the width of .tabs to cover one button */
+        width: 50%;
         background-color: #c64f4f;
         z-index: 1;
         transition: left 0.3s ease;
@@ -133,9 +133,9 @@
 
     .grid-letters{
         display: grid;
-        grid-template-columns: repeat(5, auto); /* 5 columns, adjusting to content size */
-        gap: 10px; /* Spacing between letters */
-        justify-content: center; /* Center the grid in the container */
+        grid-template-columns: repeat(5, auto);
+        gap: 10px;
+        justify-content: center;
     }
 
     .grid-letter{
@@ -160,11 +160,6 @@
         transition-property: transform, box-shadow;
         transition-timing-function: ease-out;
     }
-
-    /* .letter img{
-        display: block;
-        margin: auto;
-    } */
 
     .light {
         position: absolute;

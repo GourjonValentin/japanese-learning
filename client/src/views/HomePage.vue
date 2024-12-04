@@ -87,12 +87,11 @@ export default {
 </script>
 
 <style>
-/* General Layout */
 .landing-page {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* Hero Section */
+/* HERO SECTION */
 .header-section {
   position: relative;
   width: 100%;
@@ -119,7 +118,7 @@ export default {
   transform: translate(-50%, -50%);
   color: white;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-  background-color: rgba(0, 0, 0, 0.45); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.45);
   padding: 20px;
   border-radius: 10px;
   max-width: 90%;
@@ -149,7 +148,7 @@ export default {
   background-color: #bf3e3e;
 }
 
-/* Introduction Section */
+/* INTRODUCTION SECTION */
 .introduction-section {
   padding: 40px 100px;
   text-align: center;
@@ -160,7 +159,7 @@ export default {
   margin-top: 20px;
 }
 
-/* Features Section */
+/* FEATURES SECTION */
 .features-section {
   margin: 0 50px;
   padding: 40px 20px;
@@ -193,7 +192,7 @@ export default {
   color: #666;
 }
 
-/* Testimonials Section */
+/* TESTIMONIALS SECTION */
 .testimonials-section {
   padding: 40px 20px;
   text-align: center;
@@ -209,7 +208,7 @@ export default {
   color: #666;
 }
 
-/* Footer Section */
+/* FOOTER SECTION */
 .footer-section {
   text-align: center;
   padding: 20px;

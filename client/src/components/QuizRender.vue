@@ -114,7 +114,6 @@ export default {
         },
         changeUserAnswers(answerNumber) {
             if (this.userAnswers[this.questionNumber].includes(answerNumber)) {
-                // delete
                 this.userAnswers[this.questionNumber] = this.userAnswers[this.questionNumber].filter(elt => elt !== answerNumber);
             } else {
                 let n_corr = this.quiz.content[this.questionNumber].correct_answers.length;
@@ -151,11 +150,11 @@ export default {
             })
                 .then((res) => {
                     if (res.status === 200 || res.status === 304) {
-                        console.log('ok');
+                        return; 
                     }
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.error(err);
                     this.quizzesMessage = "error";
                 })
         },
@@ -182,7 +181,6 @@ export default {
             try {
                 let quizId = this.$route.query.quizId;
                 let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`);
-
                 if (res.status === 200 || res.status === 304) {
                     this.quiz = res.data[0];
                     if (!(this.quiz.content instanceof Array)) {
@@ -256,9 +254,9 @@ export default {
 }
 .answers {
     margin: 10px;
-    display: grid;               /* Enable grid layout */
-    grid-template-columns: 1fr 1fr; /* Define two equal columns */
-    grid-template-rows: 1fr 1fr;    /* Define two equal rows */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: 10px;
 }
 .answer {
@@ -279,13 +277,11 @@ export default {
 }
 
 /* RESULTS COMPONENTS */
-
 .answer-result-div {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
 .answercontent {
     margin: 10px;
     border: 2px solid v-bind('globalColors.lightColor');

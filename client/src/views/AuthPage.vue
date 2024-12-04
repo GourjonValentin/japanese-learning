@@ -87,8 +87,6 @@
     .content h1{
         font-family: 'JapaneseStyleFont', sans-serif;
         font-weight: 400;
-        /* background-color: v-bind('globalColors.lightColor');
-        border-radius: 15px; */
     }
 
     .container{
@@ -222,7 +220,6 @@
 
     .toggle{
         background-image: url("@/assets/sliding_door.png");
-        /* background-color: v-bind('globalColors.redColor'); */
         background-size: 100% 100%;
         background-position: center;
         position: absolute;
@@ -253,7 +250,7 @@
 
     .container.active .toggle{
         background-image: url("@/assets/sliding_door_inverted.png");
-        /* background-color: v-bind('globalColors.redColor'); */
+        background-color: v-bind('globalColors.redColor');
         background-size: 100% 100%;
         background-position: center;
         position: absolute;
