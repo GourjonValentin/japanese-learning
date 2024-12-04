@@ -43,7 +43,7 @@
                     <div class="styledDiv-pretty" v-for="user in users" :key="user.id">
                         <div class="quiz-header">
                             <div @click="deleteUser(user)" class="delete">
-                                <img class="logo" src="@/assets/delete.webp" />
+                                <img class="logo" src="@/assets/icons/delete.webp" />
                             </div>
                         </div>
                         <h3> {{ user.username }} </h3>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="search styledDiv-pretty">
                     <form class="search-form" @submit.prevent="handleSearchSubmit()">
-                        <img src="../assets/search_logo.png" alt="search_logo.png"/>
+                        <img src="../assets/icons/search-logo.png" alt="search_logo.png"/>
                         <input class="styledInput" type="text" name="searchName" v-model="searchName" placeholder="search"/>
                         <button  class="styledButton" style="
                          padding: 8px 20px; font-size: 13px;"
@@ -92,13 +92,13 @@
                     <div class="styledDiv-pretty" v-for="quiz in quizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favourites" >
-                                <img class="logo" src="@/assets/heart-unfilled.png"/>
+                                <img class="logo" src="@/assets/icons/heart-unfilled.png"/>
                             </div>
                             <div class="edit" @click="editQuiz(quiz.id)">
-                                <img class="logo" src="@/assets/pencil-icon-colored.png" />
+                                <img class="logo" src="@/assets/icons/pencil-icon-colored.png" />
                             </div>
                             <div @click="deleteQuiz(quiz)" class="delete">
-                                <img class="logo" src="@/assets/delete.webp" />
+                                <img class="logo" src="@/assets/icons/delete.webp" />
                             </div>
                         </div>
 
@@ -107,7 +107,7 @@
                         <div class="quizz-caption">
                             <p>Difficulty : </p>
                             <div v-for="i in quiz.difficultylevel" :key="i">
-                                <img src="@/assets/torii.png"/>
+                                <img src="@/assets/icons/torii.png"/>
                             </div>
                         </div>
                         <p>Owner : {{ quiz.ownername }}</p>
