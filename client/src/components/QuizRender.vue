@@ -50,6 +50,26 @@
                 </details>
             </div>
             <div v-else id="quiz">
+
+                <div class="styledDiv-pretty questionQuiz" v-if="quiz.content.length > 0">
+                    <h3>{{ this.quiz.content[questionNumber].title }}</h3>
+                    <img v-if="quiz.content[questionNumber].picture !==''" :src="quiz.content[questionNumber].picture"
+                    :alt="quiz.content[questionNumber].picture"/>
+
+                    <div class="answers">
+                        <div
+                        :class="{answer: true, active: (userAnswers[questionNumber].includes(answer.id))}"
+                        @click="changeUserAnswers(answer.id)"
+                        v-for="answer in quiz.content[questionNumber].answers"
+                        :key="answer.id"
+                        >
+                            <p>{{ answer.content }}</p>
+                        </div>
+                    </div>
+
+
+                    {{ questionNumber + 1 }}/{{ quiz.content.length }}
+                </div>
                 <nav class="nav-render">
                     <div>
                         <button class="styledButton-red-minor" @click="this.questionNumber -=1" v-if="this.questionNumber !== 0">Previous
@@ -64,25 +84,6 @@
                         </button>
                     </div>
                 </nav>
-                <div class="styledDiv-pretty questionQuiz" v-if="quiz.content.length > 0">
-                    <h3>{{ this.quiz.content[questionNumber].title }}</h3>
-                    <img v-if="quiz.content[questionNumber].picture !==''" :src="quiz.content[questionNumber].picture"
-                        :alt="quiz.content[questionNumber].picture"/>
-                    
-                    <div class="answers">
-                        <div
-                            :class="{answer: true, active: (userAnswers[questionNumber].includes(answer.id))}"
-                            @click="changeUserAnswers(answer.id)"
-                            v-for="answer in quiz.content[questionNumber].answers"
-                            :key="answer.id"
-                        >
-                            <p>{{ answer.content }}</p>
-                        </div>
-                    </div>
-                    
-
-                    {{ questionNumber + 1 }}/{{ quiz.content.length }}
-                </div>
             </div>
             <p>{{ quizzesMessage }}</p>
         </div>
