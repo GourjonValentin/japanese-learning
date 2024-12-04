@@ -240,7 +240,6 @@
                     }
                 }
             }
-
             getAllquizzes();
         }
     };

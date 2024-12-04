@@ -250,7 +250,8 @@ app.get('/quizzes', async (req, res) => {
     try {
         const { difficulty, type, favourites, name } = req.query;
         let results = await query('SELECT * FROM quiz');
-        if (difficulty && difficulty !== "all") {
+
+        if (difficulty && difficulty !== "Difficulty") {
             results = results.filter(quiz => quiz.difficultylevel.toString() === difficulty.toString());
         }
         if (type) {
@@ -263,6 +264,7 @@ app.get('/quizzes', async (req, res) => {
             results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
         }
         if (results.length === 0) {
+            console.log(results);
             return res.status(404).json({ message: "No quizzes found" });
         }
         results = await Promise.all(

@@ -262,13 +262,13 @@
                             if (err.response.status === 409) {
                                 alert("You have already added this quiz to your favourites");
                             }
-                            console.error("err", err);
+                            console.error(err);
                         });
 
 
                     this.setFavourites(res.data.favourites);
                 } catch (err){
-                    console.error("err", err);
+                    console.error(err);
                 }
             },
             toggleUsernameEdit() {
