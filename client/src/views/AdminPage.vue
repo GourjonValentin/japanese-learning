@@ -19,6 +19,21 @@
                 </div>
             </div>
         </div>
+        <div class="dialog-overlay" id="confirmationDialog" v-if="isConfirmation">
+            <div class="dialog">
+                <div class="dialog-header">
+                    <h2>{{ confirmation.title }}</h2>
+                </div>
+                <div class="dialog-body">
+                    <p>{{ confirmation.body }}</p>
+                    <div class="confirmation-div-button">
+                        <button class="styledButton-brown-minor" @click="() => {confirmation.result = false; isConfirmation = false;}">Cancel</button>
+                        <button class="styledButton-red" @click="() => {confirmation.result = true; isConfirmation = false;}">Ok</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
         <div class="admin-content">
             <div id="user-admin">
                 <div class="admin-title">
@@ -148,7 +163,13 @@ export default {
             alert : {
                 title: '',
                 body: ''
-            }
+            },
+            isConfirmation: false,
+            confirmation: {
+                body: '',
+                title: '',
+                result: null
+            },
         }
     },
     mounted() {
@@ -283,6 +304,14 @@ export default {
         },
         async toggleAdmin(user) {
             try {
+                if (user.id === this.userId) {
+                    let adminCount = this.users.reduce((total, x) => (total + x.isAdmin));
+                    if (adminCount === 1) {
+                        this.confirmation.title = "Last Admin";
+                        this.confirmation.body = "You are the last admin, there will be no admin left after this. Do you still want to proceed ?";
+                        this.isConfirmation = 1;
+                    }
+                }
                 await axios.post('http://localhost:3000/toggle-admin', {
                     user: user,
                 }, {
