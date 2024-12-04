@@ -51,51 +51,59 @@ const query = util.promisify(db.query).bind(db);
 // ADMIN
 
 app.post('/admin/toggle', async (req, res) => {
-    const token = req.headers['authorization'].split(' ')[1];
-    if (token === undefined) {
-        return res.sendStatus(401);
-    }
-    let resVerifyToken = verifyToken(token, secretKey);
-    if (resVerifyToken.status === 200) {
-        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-        if (isAdmin[0].isAdmin) {
-            if (req.body.user && req.body.user.id) {
-                let results = await query('SELECT * FROM users WHERE id = ?', [req.body.user.id]);
-                if (results) {
-                    await query('UPDATE users SET isAdmin = ? WHERE id = ?', [results[0].isAdmin ? 0 : 1, results[0].id])
-                    res.sendStatus(204);
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200) {
+            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+            if (isAdmin[0].isAdmin) {
+                if (req.body.user && req.body.user.id) {
+                    let results = await query('SELECT * FROM users WHERE id = ?', [req.body.user.id]);
+                    if (results) {
+                        await query('UPDATE users SET isAdmin = ? WHERE id = ?', [results[0].isAdmin ? 0 : 1, results[0].id])
+                        res.sendStatus(204);
+                    } else {
+                        res.sendStatus(404);
+                    }
                 } else {
-                    res.sendStatus(404);
+                    res.sendStatus(400)
                 }
             } else {
-                res.sendStatus(400)
+                res.sendStatus(403);
             }
         } else {
-            res.sendStatus(403);
+            res.sendStatus(401);
         }
     } else {
-        res.sendStatus(401);
+        res.sendStatus(401)
     }
 });
 
 // AUTH
 
 app.get('/auth/check', async (req, res) => {
-    const token = req.header('Authorization').split(' ')[1];
-    if (token === undefined || token === null) {
-        return res.sendStatus(400);
-    }
-    const { status, message, payload } = verifyToken(token, secretKey);
-    if (status === 200) {
-        let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
-        if (userData && userData[0]) {
-            let data = userData[0];
-            res.status(200).json({data});
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined || token === null) {
+            return res.sendStatus(400);
+        }
+        const { status, message, payload } = verifyToken(token, secretKey);
+        if (status === 200) {
+            let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
+            if (userData && userData[0]) {
+                let data = userData[0];
+                res.status(200).json({data});
+            } else {
+                res.sendStatus(404);
+            }
         } else {
-            res.sendStatus(404);
+            res.status(status).json({ message });
         }
     } else {
-        res.status(status).json({ message });
+        res.sendStatus(401);
     }
 
 });
@@ -261,19 +269,32 @@ app.get('/quizzes', async (req, res) => {
 });
 
 app.get('/quizzes/:quizId', async (req, res) => {
-    try {
-        const { quizId } = req.params;
-        if (quizId === undefined) {
-            return res.status(400).json({ message: "Invalid format" });
+    if (req.headers['authorization']) {
+        let token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
         }
-        let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
-        if (result.length === 0) {
-            return res.status(404).json({ message: "Quiz not found" });
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200) {
+            try {
+                const {quizId} = req.params;
+                if (quizId === undefined) {
+                    return res.status(400).json({message: "Invalid format"});
+                }
+                let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
+                if (result.length === 0) {
+                    return res.status(404).json({message: "Quiz not found"});
+                }
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error fetching quizzes:', error);
+                res.status(500).json({error: 'Error fetching quizzes'});
+            }
+        } else {
+            res.sendStatus(401)
         }
-        res.status(200).json(result);
-    } catch (error) {
-        console.error('Error fetching quizzes:', error);
-        res.status(500).json({ error: 'Error fetching quizzes' });
+    } else {
+        res.sendStatus(401);
     }
 });
 // SEARCH
