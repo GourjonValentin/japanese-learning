@@ -193,7 +193,7 @@ export default {
             }
 
             try {
-                const response = await axios.post('http://localhost:3000/change-password', {
+                const response = await axios.post('http://localhost:3000/users/change-password', {
                     userId: this.userId,
                     currentPassword: this.currentPassword,
                     newPassword: this.password,
@@ -286,7 +286,7 @@ export default {
         async deleteQuiz(quiz){
             if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){
                 try {
-                    let res = await axios.delete('http://localhost:3000/delete-quiz',{
+                    let res = await axios.delete('http://localhost:3000/quizzes/delete',{
                         params : {'quizId' : quiz.id},
                         headers: {'Authorization': `Bearer ${this.sessionToken}`}
                     });
@@ -322,7 +322,7 @@ export default {
                     }
 
                 }
-                await axios.post('http://localhost:3000/toggle-admin', {
+                await axios.post('http://localhost:3000/admin/toggle', {
                     user: user,
                 }, {
                     headers: {'Authorization': `Bearer ${this.sessionToken}`}

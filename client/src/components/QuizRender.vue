@@ -161,7 +161,7 @@ export default {
 
         },
         async saveScore() {
-            await axios.post('http://localhost:3000/save-score', {
+            await axios.post('http://localhost:3000/scores/save', {
                 userId: this.userId,
                 quizId: this.quiz.id,
                 score: this.score

@@ -152,7 +152,7 @@
         mounted() {
             const getUserQuizzes = async () => {
                 try {
-                    const res = await axios.get('http://localhost:3000/user-quizzes', {
+                    const res = await axios.get('http://localhost:3000/quizzes/attempts', {
                         params: {
                             userId: this.userId,
                         },
@@ -211,7 +211,7 @@
                 }
 
                 try {
-                    const response = await axios.post('http://localhost:3000/change-password', {
+                    const response = await axios.post('http://localhost:3000/users/change-password', {
                         userId: this.userId,
                         currentPassword: this.currentPassword,
                         newPassword: this.password,
@@ -289,7 +289,7 @@
                 }
 
                 try {
-                    const response = await axios.post('http://localhost:3000/change-username', {
+                    const response = await axios.post('http://localhost:3000/users/change-username', {
                         userId: this.userId,
                         newUsername: this.newUsername,
                     });
