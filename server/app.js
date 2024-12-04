@@ -396,6 +396,7 @@ app.get('/scores/:quizId', async (req, res) => {
             '         JOIN quiz q ON q.id = s.quizid\n' +
             'WHERE s.quizid = ?\n' +
             'ORDER BY s.score\n' +
+            'DESC\n' +
             'LIMIT 10;', [quizId]);
         if (results.length === 0) {
             return res.sendStatus(204);
@@ -426,6 +427,7 @@ app.post('/scores/save', async (req, res) => {
 });
 
 // USERS
+
 app.get('/users', async (req, res) => {
     const token = req.headers['authorization'].split(' ')[1];
     if (token == undefined) {
