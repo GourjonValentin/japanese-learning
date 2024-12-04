@@ -2,12 +2,26 @@
 <template>
     <div id="header">
         <nav>
+            <div class="logo-page-links">
+                <div class="navbar-logo">
+                    <router-link to="/"><img src="@/assets/logo-website-red-cropped.png" alt="logo"></router-link>
+                </div>
+                <div class="pages-links">
+                    <router-link to="/">Home</router-link>
+                    <router-link to="/quiz">Quiz</router-link>
+                    <router-link to="/jisho">Jisho</router-link>
+                    <router-link to="/alphabet">Alphabet</router-link>
+                </div>
+            </div>
+            <!-- <div class="navbar-logo">
+                <router-link to="/"><img src="@/assets/logo-website-red.png" alt="logo"></router-link>
+            </div>
             <div class="pages-links">
                 <router-link to="/">Home</router-link>
                 <router-link to="/quiz">Quiz</router-link>
                 <router-link to="/jisho">Jisho</router-link>
                 <router-link to="/alphabet">Alphabet</router-link>
-            </div>
+            </div> -->
             <div v-if="sessionToken" id="avatar-dropdown">
                 <img :src="avatarPath"
                 alt="avatar"
@@ -87,6 +101,24 @@
         font-size: 16px;
         text-decoration: none;
         color: v-bind('globalColors.darkColor');
+    }
+
+    .logo-page-links {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 50px;
+    }
+
+    .navbar-logo {
+        display: flex;
+        width: 60px;
+        height: 60px;
+    }
+
+    .navbar-logo img {
+        width: 60px;
+        height: 60px;
     }
 
     .pages-links {
