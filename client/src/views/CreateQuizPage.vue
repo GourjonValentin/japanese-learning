@@ -295,7 +295,7 @@ export default {
             return true
         },
         async createQuiz(questions) {
-            await axios.post('http://localhost:3000/create', { quizName: this.quizName, quizDifficulty: this.quizDifficulty, quizType: this.quizType, quizQuestions: JSON.stringify(questions), ownerId: this.userId })
+            await axios.post('http://localhost:3000/quizzes/create', { quizName: this.quizName, quizDifficulty: this.quizDifficulty, quizType: this.quizType, quizQuestions: JSON.stringify(questions), ownerId: this.userId })
                 .then(response => {
                     if (response.status === 201) {
                         this.alert.title = "Success!"

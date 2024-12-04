@@ -274,7 +274,7 @@
         methods : {
             async isOwner(quizId){
                 try {
-                    let res = await axios.get('http://localhost:3000/is-quiz-owner', {
+                    let res = await axios.get('http://localhost:3000/quizzes/is-owner', {
                         params: {'quizId': quizId},
                         headers: {'Authorization': `Bearer ${this.sessionToken}`} 
                     });
@@ -429,7 +429,7 @@
                 }
                 try {
                     let res = await axios.post(
-                        `http://localhost:3000/edit-quiz/${this.quiz.id}`,
+                        `http://localhost:3000/quizzes/edit/${this.quiz.id}`,
                         {'editedQuiz': this.quiz},
                         {
                             headers: {

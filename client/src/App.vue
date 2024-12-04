@@ -73,7 +73,7 @@ import {ref, provide, watch} from 'vue';
             };
 
             const loginUser = async (username, password) => {
-                return await axios.post('http://localhost:3000/login', {
+                return await axios.post('http://localhost:3000/auth/login', {
                     username,
                     password
                 })

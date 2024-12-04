@@ -199,7 +199,7 @@
             async deleteQuiz(quiz){
                 if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){
                     try {
-                        let res = await axios.delete('http://localhost:3000/delete-quiz',{
+                        let res = await axios.delete('http://localhost:3000/quizzes/delete',{
                             params : {'quizId' : quiz.id},
                             headers: {'Authorization': `Bearer ${this.sessionToken}`}
                         });

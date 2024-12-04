@@ -48,8 +48,59 @@ const util = require('util');
 
 const query = util.promisify(db.query).bind(db);
 
+// ADMIN
+
+app.post('/admin/toggle', async (req, res) => {
+    const token = req.headers['authorization'].split(' ')[1];
+    if (token === undefined) {
+        return res.sendStatus(401);
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+    if (resVerifyToken.status === 200) {
+        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+        if (isAdmin[0].isAdmin) {
+            if (req.body.user && req.body.user.id) {
+                let results = await query('SELECT * FROM users WHERE id = ?', [req.body.user.id]);
+                if (results) {
+                    await query('UPDATE users SET isAdmin = ? WHERE id = ?', [results[0].isAdmin ? 0 : 1, results[0].id])
+                    res.sendStatus(204);
+                } else {
+                    res.sendStatus(404);
+                }
+            } else {
+                res.sendStatus(400)
+            }
+        } else {
+            res.sendStatus(403);
+        }
+    } else {
+        res.sendStatus(401);
+    }
+});
+
 // AUTH
-app.post('/signup', async (req, res) => {
+
+app.get('/auth/check', async (req, res) => {
+    const token = req.header('Authorization').split(' ')[1];
+    if (token === undefined || token === null) {
+        return res.sendStatus(400);
+    }
+    const { status, message, payload } = verifyToken(token, secretKey);
+    if (status === 200) {
+        let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
+        if (userData && userData[0]) {
+            let data = userData[0];
+            res.status(200).json({ data });
+        } else {
+            res.sendStatus(404);
+        }
+    } else {
+        res.status(status).json({ message });
+    }
+
+});
+
+app.post('/auth/signup', async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -102,7 +153,7 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/auth/login', async (req, res) => {
     const { password, username } = req.body;
 
     if (!username || !password) {
@@ -135,26 +186,272 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/change-username', async (req, res) => {
-    const { userId, newUsername } = req.body;
+// DICTIONARY
 
+app.get('/jisho', async (req, res) => {
     try {
-        const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
-
-        if (existingUser.length > 0) {
-            return res.status(409).json({ message: "This username is already taken." });
-        }
-
-        await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
-
-        res.status(200).json({ message: 'Username updated successfully!' });
+        const response = await fetch(`https://jisho.org/api/v1/search/words?keyword=${req.query.keyword}`);
+        const data = await response.json();
+        res.json(data);
     } catch (error) {
-        console.error('Error updating username:', error);
-        res.status(500).json({ message: 'An error occurred while updating the username.' });
+        console.error('Error fetching data:', error);
+        if (error.response) {
+            res.status(error.response.status).json({ error: error.response.statusText });
+        } else {
+            res.status(500).json({ error: 'Error fetching data' });
+        }
     }
 });
 
-app.post('/change-password', async (req, res) => {
+// QUIZZES
+
+app.get('/quizzes', async (req, res) => {
+    try {
+        const { difficulty, type, favourites, name } = req.query;
+        let results = await query('SELECT * FROM quiz');
+
+        if (difficulty && difficulty !== "Difficulty") {
+            results = results.filter(quiz => quiz.difficultylevel.toString() === difficulty.toString());
+        }
+        if (type) {
+            results = results.filter(quiz => quiz.type === type);
+        }
+        if (favourites) {
+            results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
+        }
+        if (name) {
+            results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
+        }
+        if (results.length === 0) {
+            console.log(results);
+            return res.status(404).json({ message: "No quizzes found" });
+        }
+        results = await Promise.all(
+            results.map(async quiz => {
+                const ownerName = await query('SELECT username FROM users WHERE id=?', [quiz.ownerid]);
+                quiz.ownername = ownerName[0].username;
+                return quiz
+            })
+        );
+        return res.status(200).json(results);
+    } catch (error) {
+        console.error('Error fetching quizzes:', error);
+        res.status(500).json({ error: 'Error fetching quizzes' });
+    }
+});
+
+app.get('/quizzes/:quizId', async (req, res) => {
+    try {
+        const { quizId } = req.params;
+        if (quizId === undefined) {
+            return res.status(400).json({ message: "Invalid format" });
+        }
+        let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
+        if (result.length === 0) {
+            return res.status(404).json({ message: "Quiz not found" });
+        }
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error fetching quizzes:', error);
+        res.status(500).json({ error: 'Error fetching quizzes' });
+    }
+});
+// SEARCH
+
+app.get('/quizzes/attempts', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        const results = await query('SELECT quiz.*, scores.score FROM scores JOIN quiz ON scores.quizid = quiz.id WHERE scores.userid = ?', [userId]);
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No quizzes found" });
+        }
+
+        return res.status(200).json(results);
+    } catch (error) {
+        console.error('Error fetching quizzes:', error);
+        res.status(500).json({ error: 'Error fetching quizzes' });
+    }
+
+})
+
+// url below is unclear .... can be renamed ???
+app.post('/quizzes/create', async (req, res) => {
+    const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
+    try {
+        await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
+        return res.sendStatus(201);
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err });
+    }
+
+});
+
+app.delete('/quizzes/delete', async (req, res) => {
+    try {
+        const token = req.headers['authorization'].split(' ')[1];
+        const quizId = req.query.quizId;
+        if (token == undefined) {
+            return res.status(400).send();
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200) {
+            if (quizId == undefined) {
+                return res.status(401).json({ message: "Invalid format" });
+            }
+            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+            let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
+            if (result.length === 0) {
+                return res.status(404).json({ message: "Quiz not found" });
+            } else if (isAdmin[0] || result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+                result = await query('DELETE FROM scores WHERE quizid = ?', [quizId]);
+                result = await query('DELETE FROM quiz WHERE id = ?', [quizId]);
+                result = await query('SELECT * FROM quiz');
+                return res.status(200).json(result)
+            } else {
+                return res.status(403).json({ message: "You are not the owner of this quiz" });
+            }
+        } else {
+            return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
+        }
+    } catch (err) {
+        return res.status(500).json({ err: err });
+    }
+});
+
+app.post('/quizzes/edit/:quizId', async (req, res) => {
+    if (req.header('Authorization') === undefined) {
+        return res.status(401).json({ message: "Invalid format" });
+    }
+    const token = req.header('Authorization').split(' ')[1];
+    const { quizId } = req.params;
+    const { editedQuiz } = req.body;
+
+    if (token == undefined) {
+        return res.status(400);
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+
+    if (resVerifyToken.status === 200) {
+        if (quizId === undefined || editedQuiz === undefined) {
+            return res.status(401).json({ message: "Invalid format" });
+        }
+        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
+        if (result.length === 0) {
+            return res.status(404).json({ message: "Quiz not found" });
+        } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+            if (result[0].name === editedQuiz.name && result[0].type === editedQuiz.type && JSON.stringify(result[0].content) === JSON.stringify(editedQuiz.content) && result[0].difficultylevel === parseInt(editedQuiz.difficultylevel)) {
+                return res.sendStatus(200);
+            } else {
+                result = await query('UPDATE quiz SET name=?, type=?, content=?, difficultylevel=? WHERE id = ?',
+                    [editedQuiz.name, editedQuiz.type, JSON.stringify(editedQuiz.content), parseInt(editedQuiz.difficultylevel), quizId]);
+                result = await query('DELETE FROM scores WHERE quizid=?', [quizId]);
+                return res.sendStatus(200);
+            }
+        } else {
+            return res.status(403).json({ message: "You are not the owner of this quiz" });
+        }
+    } else {
+        return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
+    }
+});
+
+app.get('/quizzes/is-owner', async (req, res) => {
+    if (req.header('Authorization') === undefined) {
+        return res.status(401).json({ message: "Invalid format" });
+    }
+    const token = req.header('Authorization').split(' ')[1];
+    const quizId = req.query.quizId;
+    if (token == undefined) {
+        return res.status(400);
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+
+    if (resVerifyToken.status === 200) {
+        if (quizId == undefined) {
+            return res.status(401).json({ message: "Invalid format" });
+        }
+        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
+        if (result.length === 0) {
+            return res.status(404).json({ message: "Quiz not found" });
+        } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+            return res.status(200).send();
+
+        } else {
+            return res.status(403).json({ message: "You are not the owner of this quiz" });
+        }
+    } else {
+        return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
+    }
+});
+
+// QUIZZES
+app.get('/scores/:quizId', async (req, res) => {
+    const { quizId } = req.params;
+    try {
+        let results = await query('SELECT u.username, s.score\n' +
+            'FROM scores s\n' +
+            '         JOIN users u ON u.id = s.userid\n' +
+            '         JOIN quiz q ON q.id = s.quizid\n' +
+            'WHERE s.quizid = ?\n' +
+            'ORDER BY s.score\n' +
+            'DESC\n' +
+            'LIMIT 10;', [quizId]);
+        if (results.length === 0) {
+            return res.sendStatus(204);
+        }
+        return res.status(200).json(results);
+    } catch (err) {
+        res.status(500).json("err : " + err)
+    }
+});
+
+app.post('/scores/save', async (req, res) => {
+    const { userId, quizId, score } = req.body;
+    try {
+        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
+        if (results.length === 0) {
+            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
+            res.status(201).json({ message: 'Score saved successfully.' });
+        } else {
+            if (results[0].score < score) {
+                await query('UPDATE scores SET score = ? WHERE id = ?', [score, results[0].id]);
+            }
+            res.status(200).json({ message: 'Score updated successfully.' });
+        }
+    } catch (error) {
+        console.error('Error saving score:', error);
+        res.status(500).json({ error: 'An error occurred while saving the score.' });
+    }
+});
+
+// USERS
+
+app.get('/users', async (req, res) => {
+    const token = req.headers['authorization'].split(' ')[1];
+    if (token == undefined) {
+        return res.sendStatus(400);
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+    if (resVerifyToken.status === 200) {
+        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+        if (isAdmin) {
+            let results = await query('SELECT * FROM users');
+            if (results) {
+                res.status(200).json(results);
+            } else {
+                res.sendStatus(404);
+            }
+        } else {
+            res.sendStatus(403);
+        }
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.post('/users/change-password', async (req, res) => {
     const { userId, currentPassword, newPassword } = req.body;
 
     // Array that will store the errors
@@ -200,124 +497,57 @@ app.post('/change-password', async (req, res) => {
     }
 });
 
-app.get('/auth/check', async (req, res) => {
-    const token = req.header('Authorization').split(' ')[1];
-    if (token === undefined || token === null) {
-        return res.sendStatus(400);
+app.post('/users/change-username', async (req, res) => {
+    const { userId, newUsername } = req.body;
+
+    try {
+        const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
+
+        if (existingUser.length > 0) {
+            return res.status(409).json({ message: "This username is already taken." });
+        }
+
+        await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
+
+        res.status(200).json({ message: 'Username updated successfully!' });
+    } catch (error) {
+        console.error('Error updating username:', error);
+        res.status(500).json({ message: 'An error occurred while updating the username.' });
     }
-    const { status, message, payload } = verifyToken(token, secretKey);
-    if (status === 200) {
-        let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
-        if (userData && userData[0]) {
-            let data = userData[0];
-            res.status(200).json({ data });
+});
+
+app.delete('/users/delete', async (req, res) => {
+    try {
+        const token = req.headers['authorization'].split(' ')[1];
+        const userId = req.query.user.id;
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        console.log("resr", resVerifyToken);
+
+        if (resVerifyToken.status === 200) {
+            if (userId === undefined) {
+                return res.status(400).json({ message: "Invalid format" });
+            }
+            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+            let result = await query('SELECT * FROM users WHERE id = ?', [userId]);
+            if (result.length === 0) {
+                return res.status(404).json({ message: "User not found" });
+            } else if (isAdmin[0] || result[0].id === parseInt(resVerifyToken.payload.id)) {
+                await query('DELETE FROM scores WHERE userid = ?', [userId]);
+                await query('DELETE FROM quiz WHERE ownerid = ?', [userId]);
+                await query('DELETE FROM users WHERE id = ?', [userId]);
+                return res.sendStatus(204)
+            } else {
+                return res.status(403).json({ message: "Not permitted to delete this user" });
+            }
         } else {
-            res.sendStatus(404);
+            return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
         }
-    } else {
-        res.status(status).json({ message });
-    }
-
-});
-
-// DICTIONARY
-
-app.get('/jisho', async (req, res) => {
-    try {
-        const response = await fetch(`https://jisho.org/api/v1/search/words?keyword=${req.query.keyword}`);
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        if (error.response) {
-            res.status(error.response.status).json({ error: error.response.statusText });
-        } else {
-            res.status(500).json({ error: 'Error fetching data' });
-        }
-    }
-});
-
-app.get('/quizzes/:quizId', async (req, res) => {
-    try {
-        const { quizId } = req.params;
-        if (quizId === undefined) {
-            return res.status(400).json({ message: "Invalid format" });
-        }
-        let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
-        if (result.length === 0) {
-            return res.status(404).json({ message: "Quiz not found" });
-        }
-        res.status(200).json(result);
-    } catch (error) {
-        console.error('Error fetching quizzes:', error);
-        res.status(500).json({ error: 'Error fetching quizzes' });
-    }
-});
-
-// SEARCH
-app.get('/quizzes', async (req, res) => {
-    try {
-        const { difficulty, type, favourites, name } = req.query;
-        let results = await query('SELECT * FROM quiz');
-
-        if (difficulty && difficulty !== "Difficulty") {
-            results = results.filter(quiz => quiz.difficultylevel.toString() === difficulty.toString());
-        }
-        if (type) {
-            results = results.filter(quiz => quiz.type === type);
-        }
-        if (favourites) {
-            results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
-        }
-        if (name) {
-            results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
-        }
-        if (results.length === 0) {
-            console.log(results);
-            return res.status(404).json({ message: "No quizzes found" });
-        }
-        results = await Promise.all(
-            results.map(async quiz => {
-                const ownerName = await query('SELECT username FROM users WHERE id=?', [quiz.ownerid]);
-                quiz.ownername = ownerName[0].username;
-                return quiz
-            })
-        );
-        return res.status(200).json(results);
-    } catch (error) {
-        console.error('Error fetching quizzes:', error);
-        res.status(500).json({ error: 'Error fetching quizzes' });
-    }
-});
-
-app.get('/user-quizzes', async (req, res) => {
-    try {
-        const { userId } = req.query;
-        const results = await query('SELECT quiz.*, scores.score FROM scores JOIN quiz ON scores.quizid = quiz.id WHERE scores.userid = ?', [userId]);
-
-        if (results.length === 0) {
-            return res.status(404).json({ message: "No quizzes found" });
-        }
-
-        return res.status(200).json(results);
-    } catch (error) {
-        console.error('Error fetching quizzes:', error);
-        res.status(500).json({ error: 'Error fetching quizzes' });
-    }
-
-})
-
-// url below is unclear .... can be renamed ???
-app.post('/create', async (req, res) => {
-    const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
-    try {
-        await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
-        return res.sendStatus(201);
     } catch (err) {
-        console.log(err)
-        res.status(500).send({ error: err });
+        return res.status(500).json({ err: err });
     }
-
 });
 
 app.post('/users/edit-favourite', async (req, res) => {
@@ -358,227 +588,6 @@ app.post('/users/edit-favourite', async (req, res) => {
     } catch (err) {
         console.error("Error: ", err.message);
         return res.status(500).json({ message: "Server error", error: err.message });
-    }
-});
-
-app.post('/save-score', async (req, res) => {
-    const { userId, quizId, score } = req.body;
-    try {
-        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
-        if (results.length === 0) {
-            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
-            res.status(201).json({ message: 'Score saved successfully.' });
-        } else {
-            if (results[0].score < score) {
-                await query('UPDATE scores SET score = ? WHERE id = ?', [score, results[0].id]);
-            }
-            res.status(200).json({ message: 'Score updated successfully.' });
-        }
-    } catch (error) {
-        console.error('Error saving score:', error);
-        res.status(500).json({ error: 'An error occurred while saving the score.' });
-    }
-});
-
-app.get('/is-quiz-owner', async (req, res) => {
-    if (req.header('Authorization') === undefined) {
-        return res.status(401).json({ message: "Invalid format" });
-    }
-    const token = req.header('Authorization').split(' ')[1];
-    const quizId = req.query.quizId;
-    if (token == undefined) {
-        return res.status(400);
-    }
-    let resVerifyToken = verifyToken(token, secretKey);
-
-    if (resVerifyToken.status === 200) {
-        if (quizId == undefined) {
-            return res.status(401).json({ message: "Invalid format" });
-        }
-        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
-        if (result.length === 0) {
-            return res.status(404).json({ message: "Quiz not found" });
-        } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
-            return res.status(200).send();
-
-        } else {
-            return res.status(403).json({ message: "You are not the owner of this quiz" });
-        }
-    } else {
-        return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
-    }
-});
-
-app.delete('/delete-quiz', async (req, res) => {
-    try {
-        const token = req.headers['authorization'].split(' ')[1];
-        const quizId = req.query.quizId;
-        if (token == undefined) {
-            return res.status(400).send();
-        }
-        let resVerifyToken = verifyToken(token, secretKey);
-        if (resVerifyToken.status === 200) {
-            if (quizId == undefined) {
-                return res.status(401).json({ message: "Invalid format" });
-            }
-            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-            let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
-            if (result.length === 0) {
-                return res.status(404).json({ message: "Quiz not found" });
-            } else if (isAdmin[0] || result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
-                result = await query('DELETE FROM scores WHERE quizid = ?', [quizId]);
-                result = await query('DELETE FROM quiz WHERE id = ?', [quizId]);
-                result = await query('SELECT * FROM quiz');
-                return res.status(200).json(result)
-            } else {
-                return res.status(403).json({ message: "You are not the owner of this quiz" });
-            }
-        } else {
-            return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
-        }
-    } catch (err) {
-        return res.status(500).json({ err: err });
-    }
-});
-
-app.post('/edit-quiz/:quizId', async (req, res) => {
-    if (req.header('Authorization') === undefined) {
-        return res.status(401).json({ message: "Invalid format" });
-    }
-    const token = req.header('Authorization').split(' ')[1];
-    const { quizId } = req.params;
-    const { editedQuiz } = req.body;
-
-    if (token == undefined) {
-        return res.status(400);
-    }
-    let resVerifyToken = verifyToken(token, secretKey);
-
-    if (resVerifyToken.status === 200) {
-        if (quizId === undefined || editedQuiz === undefined) {
-            return res.status(401).json({ message: "Invalid format" });
-        }
-        let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
-        if (result.length === 0) {
-            return res.status(404).json({ message: "Quiz not found" });
-        } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
-            if (result[0].name === editedQuiz.name && result[0].type === editedQuiz.type && JSON.stringify(result[0].content) === JSON.stringify(editedQuiz.content) && result[0].difficultylevel === parseInt(editedQuiz.difficultylevel)) {
-                return res.sendStatus(200);
-            } else {
-                result = await query('UPDATE quiz SET name=?, type=?, content=?, difficultylevel=? WHERE id = ?',
-                    [editedQuiz.name, editedQuiz.type, JSON.stringify(editedQuiz.content), parseInt(editedQuiz.difficultylevel), quizId]);
-                result = await query('DELETE FROM scores WHERE quizid=?', [quizId]);
-                return res.sendStatus(200);
-            }
-        } else {
-            return res.status(403).json({ message: "You are not the owner of this quiz" });
-        }
-    } else {
-        return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
-    }
-});
-
-app.get('/scores/:quizId', async (req, res) => {
-    const { quizId } = req.params;
-    try {
-        let results = await query('SELECT u.username, s.score\n' +
-            'FROM scores s\n' +
-            '         JOIN users u ON u.id = s.userid\n' +
-            '         JOIN quiz q ON q.id = s.quizid\n' +
-            'WHERE s.quizid = ?\n' +
-            'ORDER BY s.score\n' +
-            'LIMIT 10;', [quizId]);
-        if (results.length === 0) {
-            return res.sendStatus(204);
-        }
-        return res.status(200).json(results);
-    } catch (err) {
-        res.status(500).json("err : " + err)
-    }
-});
-
-app.get('/users', async (req, res) => {
-    const token = req.headers['authorization'].split(' ')[1];
-    if (token == undefined) {
-        return res.sendStatus(400);
-    }
-    let resVerifyToken = verifyToken(token, secretKey);
-    if (resVerifyToken.status === 200) {
-        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-        if (isAdmin) {
-            let results = await query('SELECT * FROM users');
-            if (results) {
-                res.status(200).json(results);
-            } else {
-                res.sendStatus(404);
-            }
-        } else {
-            res.sendStatus(403);
-        }
-    } else {
-        res.sendStatus(401);
-    }
-});
-
-app.post('/toggle-admin', async (req, res) => {
-    const token = req.headers['authorization'].split(' ')[1];
-    if (token === undefined) {
-        return res.sendStatus(401);
-    }
-    let resVerifyToken = verifyToken(token, secretKey);
-    if (resVerifyToken.status === 200) {
-        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-        if (isAdmin[0].isAdmin) {
-            if (req.body.user && req.body.user.id) {
-                let results = await query('SELECT * FROM users WHERE id = ?', [req.body.user.id]);
-                if (results) {
-                    await query('UPDATE users SET isAdmin = ? WHERE id = ?', [results[0].isAdmin ? 0 : 1, results[0].id])
-                    res.sendStatus(204);
-                } else {
-                    res.sendStatus(404);
-                }
-            } else {
-                res.sendStatus(400)
-            }
-        } else {
-            res.sendStatus(403);
-        }
-    } else {
-        res.sendStatus(401);
-    }
-});
-
-app.delete('/users/delete', async (req, res) => {
-    try {
-        const token = req.headers['authorization'].split(' ')[1];
-        const userId = req.query.user.id;
-        if (token === undefined) {
-            return res.sendStatus(401);
-        }
-        let resVerifyToken = verifyToken(token, secretKey);
-        console.log("resr", resVerifyToken);
-
-        if (resVerifyToken.status === 200) {
-            if (userId === undefined) {
-                return res.status(400).json({ message: "Invalid format" });
-            }
-            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-            let result = await query('SELECT * FROM users WHERE id = ?', [userId]);
-            if (result.length === 0) {
-                return res.status(404).json({ message: "User not found" });
-            } else if (isAdmin[0] || result[0].id === parseInt(resVerifyToken.payload.id)) {
-                await query('DELETE FROM scores WHERE userid = ?', [userId]);
-                await query('DELETE FROM quiz WHERE ownerid = ?', [userId]);
-                await query('DELETE FROM users WHERE id = ?', [userId]);
-                return res.sendStatus(204)
-            } else {
-                return res.status(403).json({ message: "Not permitted to delete this user" });
-            }
-        } else {
-            return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
-        }
-    } catch (err) {
-        return res.status(500).json({ err: err });
     }
 });
 
