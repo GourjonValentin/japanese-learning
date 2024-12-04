@@ -337,7 +337,8 @@ export default {
 
 .confirmation-div-button {
     display: flex;
-    gap: 10px
+    gap: 10px;
+    justify-content: center;
 }
 
 /*  INIT FORM */
