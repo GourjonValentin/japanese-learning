@@ -200,11 +200,20 @@ app.post('/change-password', async (req, res) => {
     }
 });
 
-app.post('/auth/check', async (req, res) => {
-    const token = req.body.sessionToken;
+app.get('/auth/check', async (req, res) => {
+    const token = req.header('Authorization').split(' ')[1];
+    if (token === undefined || token === null) {
+        return res.sendStatus(400);
+    }
     const { status, message, payload } = verifyToken(token, secretKey);
     if (status === 200) {
-        res.status(200).json({ payload });
+        let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
+        if (userData && userData[0]) {
+            let data = userData[0];
+            res.status(200).json({data});
+        } else {
+            res.sendStatus(404);
+        }
     } else {
         res.status(status).json({ message });
     }
@@ -402,7 +411,7 @@ app.get('/is-quiz-owner', async (req, res) => {
 
 app.delete('/delete-quiz', async (req, res) => {
     try {
-        const token = req.header('Authorization').split(' ')[1];
+        const token = req.headers['authorization'].split(' ')[1];
         const quizId = req.query.quizId;
         if (token == undefined) {
             return res.status(400).send();
@@ -412,10 +421,11 @@ app.delete('/delete-quiz', async (req, res) => {
             if (quizId == undefined) {
                 return res.status(401).json({ message: "Invalid format" });
             }
+            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
             let result = await query('SELECT * FROM quiz WHERE id = ?', [quizId]);
             if (result.length === 0) {
                 return res.status(404).json({ message: "Quiz not found" });
-            } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
+            } else if (isAdmin[0] || result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
                 result = await query('DELETE FROM scores WHERE quizid = ?', [quizId]);
                 result = await query('DELETE FROM quiz WHERE id = ?', [quizId]);
                 result = await query('SELECT * FROM quiz');
@@ -484,6 +494,91 @@ app.get('/scores/:quizId', async (req, res) => {
         return res.status(200).json(results);
     } catch (err) {
         res.status(500).json("err : " + err)
+    }
+});
+
+app.get('/users', async (req, res) => {
+    const token = req.headers['authorization'].split(' ')[1];
+    if (token == undefined) {
+        return res.sendStatus(400);
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+    if (resVerifyToken.status === 200) {
+        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+        if (isAdmin) {
+            let results = await query('SELECT * FROM users');
+            if (results) {
+                res.status(200).json(results);
+            } else {
+                res.sendStatus(404);
+            }
+        } else {
+            res.sendStatus(403);
+        }
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.post('/toggle-admin', async (req, res) => {
+    const token = req.headers['authorization'].split(' ')[1];
+    if (token === undefined) {
+        return res.sendStatus(401); 
+    }
+    let resVerifyToken = verifyToken(token, secretKey);
+    if (resVerifyToken.status === 200) {
+        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+        if (isAdmin[0].isAdmin) {
+            if (req.body.user && req.body.user.id) {
+                let results = await query('SELECT * FROM users WHERE id = ?', [req.body.user.id]);
+                if (results) {
+                    await query('UPDATE users SET isAdmin = ? WHERE id = ?', [results[0].isAdmin ? 0 : 1, results[0].id])
+                    res.sendStatus(204);
+                } else {
+                    res.sendStatus(404);
+                }
+            } else {
+                res.sendStatus(400)
+            }
+        } else {
+            res.sendStatus(403);
+        }
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+app.delete('/users/delete', async (req, res) => {
+    try {
+        const token = req.headers['authorization'].split(' ')[1];
+        const userId = req.query.user.id;
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        console.log("resr", resVerifyToken);
+
+        if (resVerifyToken.status === 200) {
+            if (userId === undefined) {
+                return res.status(400).json({ message: "Invalid format" });
+            }
+            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+            let result = await query('SELECT * FROM users WHERE id = ?', [userId]);
+            if (result.length === 0) {
+                return res.status(404).json({ message: "User not found" });
+            } else if (isAdmin[0] || result[0].id === parseInt(resVerifyToken.payload.id)) {
+                await query('DELETE FROM scores WHERE userid = ?', [userId]);
+                await query('DELETE FROM quiz WHERE ownerid = ?', [userId]);
+                await query('DELETE FROM users WHERE id = ?', [userId]);
+                return res.sendStatus(204)
+            } else {
+                return res.status(403).json({ message: "Not permitted to delete this user" });
+            }
+        } else {
+            return res.status(resVerifyToken.status).json({ message: resVerifyToken.message });
+        }
+    } catch (err) {
+        return res.status(500).json({ err: err });
     }
 });
 
