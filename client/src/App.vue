@@ -1,7 +1,15 @@
 <template>
     <div id="app" class="s">
-        <HeaderComp/>
-        <router-view/>
+        <div v-if="this.isLoaded">
+            <HeaderComp/>
+            <router-view/>
+        </div>
+        <div v-else>
+            Loading
+            <div class="loading">
+                <img src="@/assets/chop-spedup.gif" alt="Loading ..." width="200" height="150">
+            </div>
+        </div>
     </div>
 </template>
 
@@ -20,16 +28,18 @@ import {ref, provide, watch} from 'vue';
         data(){
             return {
                 globalColors,
-                refresh: 0
+                refresh: 0,
+                isLoaded: false
             };
         },
         setup() {
-            const userId = ref('');
-            const username = ref('');
-            const sessionToken = ref('');
-            const favourites = ref([]);
-            const isAdmin = ref('');
-            const avatarPath = ref('');
+            // Creation of a reactive variables => (allows child to change it)
+            let userId = ref('');
+            let username = ref('');
+            let sessionToken = ref('');
+            let favourites = ref([]);
+            let isAdmin = ref(''); // 0?
+            let avatarPath = ref('');
 
             provide('userId', userId);
             provide('username', username);
@@ -78,7 +88,7 @@ import {ref, provide, watch} from 'vue';
                             setUserId(response.data.userId);
                             setFavourites(response.data.favourites);
                             setIsAdmin(response.data.isAdmin);
-                            setAvatarPath(response.data.avatarPath);                            
+                            setAvatarPath(response.data.avatarPath);
                             return { success: true, message: ""};
                         } else {
                             throw new Error("Status server error");
@@ -98,8 +108,8 @@ import {ref, provide, watch} from 'vue';
             provide('setSessionToken', setSessionToken);
             provide('setFavourites', setFavourites);
             provide('setIsAdmin', setIsAdmin);
-            provide('loginUser', loginUser);
             provide('setAvatarPath', setAvatarPath);
+            provide('loginUser', loginUser);
 
             const resetUser = () => {
                 userId.value = '';
@@ -126,9 +136,22 @@ import {ref, provide, watch} from 'vue';
                 }
             }, {deep: true});
 
+            watch(avatarPath, (newAvatar) => {
+                if (newAvatar) {
+                    console.log("avatarPath changed to", newAvatar);
+                }
+            });
+
+
+            // return necessary ????
             return {
                 setSessionToken,
-                setUsername
+                setUsername,
+                setFavourites,
+                setAvatarPath,
+                setIsAdmin,
+                setUserId,
+                avatarPath
             };
         },
         methods: {
@@ -137,18 +160,26 @@ import {ref, provide, watch} from 'vue';
                 if (sessionToken) {
                     // Check if the session token is still valid
                     try {
-                        const response = await axios.post('http://localhost:3000/auth/check', {
-                            sessionToken: sessionToken
+                        const response = await axios.get('http://localhost:3000/auth/check', {
+                            headers : {'Authorization' : `Bearer ${sessionToken}`}
                         }).catch(error => {
                             if (error.status === 401) {
                                 console.log('Invalid token');
                             }
                         });
+                        console.log('checked user token : response = ')
+                        console.log(response)
                         if (response && response.data && response.status === 200) {
                             // The session token is still valid
                             this.setSessionToken(sessionToken);
-                            this.setUsername(response.data.username);
-                            this.setAvatarPath(response.data.avatarPath);
+                            this.setUsername(response.data.data.username);
+                            this.setAvatarPath(response.data.data.avatarPath);
+                            this.setUserId(response.data.data.id);
+                            this.setFavourites(response.data.data.favourites);
+                            this.setIsAdmin(response.data.data.isAdmin)
+                            console.log('Changing data (logging user)')
+
+
                         }
                     } catch (error) {
                         console.error('There was an error!', error);
@@ -156,8 +187,9 @@ import {ref, provide, watch} from 'vue';
                 }
             }
         },
-        mounted() {
-            this.checkUser();
+        async mounted() {
+            await this.checkUser();
+            this.isLoaded = true;
         }
     }
 </script>

@@ -10,6 +10,7 @@ import EditQuizPage from "../views/EditQuizPage";
 import ProfilePage from '../views/ProfilePage';
 import RoutingError from "../views/RoutingError";
 import AboutUsPage from "../views/AboutUsPage";
+import AdminPage from "@/views/AdminPage.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -51,9 +52,13 @@ const router = createRouter({
             component: AboutUsPage
         },
         {
+            path: '/admin-settings',
+            component: AdminPage
+        },
+        {
             path: '/:notFound',
             component: RoutingError
-        }
+        },
     ]
 })
 

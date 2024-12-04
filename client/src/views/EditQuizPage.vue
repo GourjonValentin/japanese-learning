@@ -87,7 +87,7 @@
                     </form>
                 </div>
             </div>
-            
+
 
         </div>
 
@@ -122,7 +122,7 @@
                     </form>
                 </div>
             </div>
-            
+
 
         </div>
 
@@ -151,7 +151,7 @@
                             <button class="styledButton-brown-minor" @click="() => {confirmation.result = false; isConfirmation = false;}">Cancel</button>
                             <button class="styledButton-red" @click="() => {confirmation.result = true; isConfirmation = false;}">Ok</button>
                         </div>
-                        
+
                     </div>
             </div>
         </div>
@@ -191,8 +191,8 @@
                         <img class="logo" src="@/assets/icons/delete-red.webp" alt="delete_btn"/>
                     </div>
                 </div>
-                
-                
+
+
                 <div class="question-header">
                     <h2>{{ question.title }}</h2>
                     <p v-if="quiz.type === 'anime'">Picture link : {{ question.picture }}</p>
@@ -232,8 +232,10 @@
     export default {
         setup(){
             const sessionToken = inject('sessionToken');
+            const isAdmin = inject('isAdmin');
             return {
                 sessionToken,
+                isAdmin
             };
         },
         data() {
@@ -257,7 +259,7 @@
                 editedMainAttributes : null,
                 editedTitle : '',
                 isAlert : false,
-                alert: { 
+                alert: {
                     title: '',
                     body: ''
                 },
@@ -324,7 +326,7 @@
                         unwatchConfirmation();
                     }
                 );
-                
+
             },
             deleteAnswer(answerId){
                 this.editedQuestion.answers = this.editedQuestion.answers.filter(elt => elt.id !== answerId);
@@ -381,7 +383,7 @@
                         "correct_answers": []
                     };
                 }
-                
+
                 this.isAddingQuestionForm = true;
             },
             saveQuestion(){
@@ -406,7 +408,7 @@
                     this.quiz.content.push(this.editedQuestion);
                     this.isAddingQuestionForm = false;
                 }
-                
+
             },
             async saveQuiz(){
                 if (this.quiz.type === 'anime'){
@@ -491,6 +493,10 @@
                 }
             };
             getQuiz().then(async () => {
+                if (this.isAdmin) {
+                    this.permitted = true
+                    return
+                }
                 this.permitted = await this.isOwner(this.quiz.id);
             }
             ).catch((err) => {
