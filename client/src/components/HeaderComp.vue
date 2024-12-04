@@ -37,6 +37,7 @@
             const sessionToken = inject('sessionToken');
             const avatarPath = inject('avatarPath');
             const isAdmin = inject('isAdmin');
+            console.log(avatarPath);
             return {
                 sessionToken,
                 avatarPath,

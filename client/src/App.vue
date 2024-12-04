@@ -1,7 +1,15 @@
 <template>
     <div id="app" class="s">
-        <HeaderComp/>
-        <router-view/>
+        <div v-if="this.isLoaded">
+            <HeaderComp/>
+            <router-view/>
+        </div>
+        <div v-else>
+            Loading
+            <div class="loading">
+                <img src="@/assets/chop-spedup.gif" alt="Loading ..." width="200" height="150">
+            </div>
+        </div>
     </div>
 </template>
 
@@ -20,7 +28,8 @@ import {ref, provide, watch} from 'vue';
         data(){
             return {
                 globalColors,
-                refresh: 0
+                refresh: 0,
+                isLoaded: false
             };
         },
         setup() {
@@ -104,8 +113,8 @@ import {ref, provide, watch} from 'vue';
             provide('setSessionToken', setSessionToken);
             provide('setFavourites', setFavourites);
             provide('setIsAdmin', setIsAdmin);
-            provide('loginUser', loginUser);
             provide('setAvatarPath', setAvatarPath);
+            provide('loginUser', loginUser);
 
             const resetUser = () => {
                 userId.value = '';
@@ -137,7 +146,11 @@ import {ref, provide, watch} from 'vue';
             // return necessary ????
             return {
                 setSessionToken,
-                setUsername
+                setUsername,
+                setFavourites,
+                setAvatarPath,
+                setIsAdmin,
+                setUserId
             }
         },
         methods: {
@@ -147,8 +160,8 @@ import {ref, provide, watch} from 'vue';
                     // Check if the session token is still valid
                     try {
 
-                        const response = await axios.post('http://localhost:3000/auth/check', {
-                            sessionToken: sessionToken
+                        const response = await axios.get('http://localhost:3000/auth/check', {
+                            headers : {'Authorization' : `Bearer ${sessionToken}`}
                         }).catch(error => {
                             if (error.status === 401) {
                                 console.log('Invalid token');
@@ -161,6 +174,9 @@ import {ref, provide, watch} from 'vue';
                             this.setSessionToken(sessionToken);
                             this.setUsername(response.data.username);
                             this.setAvatarPath(response.data.avatarPath);
+                            this.setUserId(response.data.id);
+                            this.setFavourites(response.data.favourites);
+                            this.setIsAdmin(response.data.isAdmin)
                             console.log('checking user token')
 
                         }
@@ -171,9 +187,9 @@ import {ref, provide, watch} from 'vue';
                 }
             }
         },
-        mounted() {
-            console.log("mounted")
-            this.checkUser()
+        async mounted() {
+            await this.checkUser();
+            this.isLoaded = true;
         }
     }
 </script>

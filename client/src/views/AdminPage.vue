@@ -6,13 +6,43 @@
                 <li><a href="#quiz-admin">Quiz administration</a></li>
             </ul>
         </div>
+        <div class="dialog-overlay" id="alertDialog" v-if="isAlert">
+            <div class="dialog">
+                <div class="dialog-header">
+                    <h2>{{ alert.title }}</h2>
+                </div>
+                <div class="dialog-body">
+                    <p v-html="alert.body"></p>
+                    <form @submit.prevent="() => {isAlert = false}">
+                        <button class="styledButton-red" type="submit">Ok</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="admin-content">
             <div id="user-admin">
+                <div class="admin-title">
+                    <h2>Users Administration</h2>
+                </div>
+                <div class="users">
+                    <div class="styledDiv-pretty" v-for="user in users" :key="user.id">
+                        <div class="quiz-header">
+                            <div @click="deleteUser(user)" class="delete">
+                                <img class="logo" src="@/assets/delete.webp" />
+                            </div>
+                        </div>
+                        <h3> {{ user.username }} </h3>
+                        <button class="styledButton" v-if="user.isAdmin" @click="toggleAdmin(user)">Remove Admin</button>
+                        <button class="styledButton" v-else @click="toggleAdmin(user)">Make Admin</button>
 
+
+                    </div>
+
+                </div>
             </div>
             <div id="quiz-admin">
-                <div class="quiz-admin-title">
-                    <h2>Quiz Administration</h2>
+                <div class="admin-title">
+                    <h2>Quizzes Administration</h2>
                 </div>
                 <div class="search styledDiv-pretty">
                     <form class="search-form" @submit.prevent="handleSearchSubmit()">
@@ -112,13 +142,29 @@ export default {
             updateUsernameMessage: '',
             isEditingUsername: false,
             searchFilterType: '',
-            searchFilterDifficulty: "all"
+            searchFilterDifficulty: "all",
+            users: [],
+            isAlert: false,
+            alert : {
+                title: '',
+                body: ''
+            }
         }
     },
     mounted() {
-        this.getAllquizzes()
+        this.getAllquizzes();
+        this.getAllUsers()
     },
     methods: {
+        async getAllUsers() {
+            const res = await axios.get("http://localhost:3000/users", {
+                headers: {'Authorization': `Bearer ${this.sessionToken}`}
+            });
+            if (res.status === 200) {
+                this.users = res.data;
+            }
+
+        },
         async updatePassword() {
             if (this.password !== this.confirmPassword) {
                 this.updatePasswordMessage = "Passwords do not match.";
@@ -234,6 +280,51 @@ export default {
             } else {
                 return;
             }
+        },
+        async toggleAdmin(user) {
+            try {
+                await axios.post('http://localhost:3000/toggle-admin', {
+                    user: user,
+                }, {
+                    headers: {'Authorization': `Bearer ${this.sessionToken}`}
+                });
+                this.setIsAdmin(this.isAdmin ? 0 : 1);
+                this.getAllUsers()
+            } catch (err) {
+                if (err.status === 400) {
+                    console.error('Invalid user format');
+                } else if (err.status === 401) {
+                    console.error('Invalid Token');
+                } else if (err.status === 403) {
+                    console.error('Access Forbidden, must be admin to access');
+                    this.$router.push({path: '/auth', query: {form: 'login/signup'}});
+                } else if (err.status === 404) {
+                    console.log('No result found for given user');
+                }
+            }
+        },
+        async deleteUser(user) {
+            try {
+                await axios.delete('http://localhost:3000/users/delete', {
+                    headers: {'Authorization': `Bearer ${this.sessionToken}`},
+                    params: {'user': user}
+                });
+                this.getAllUsers();
+            } catch (err) {
+                if (err.status === 400) {
+                    console.error("Invalid User Format");
+                } else if (err.status === 401) {
+                    console.error("Invalid or no Token");
+                } else if (err.status === 403) {
+                    console.error("Access Forbidden, not permitted to delete this user");
+                } else if (err.status === 404) {
+                    console.error("User not found");
+                } else if (err.status === 500) {
+                    console.error("Internal Server Error : " + err);
+                }
+            }
+
+
         }
     },
 };
@@ -426,10 +517,11 @@ export default {
     outline: none;
 }
 
-.quizzes {
+.quizzes, .users {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 #confidentialty-settings, #quizzes-history {
