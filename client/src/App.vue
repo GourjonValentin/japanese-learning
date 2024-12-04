@@ -34,12 +34,12 @@ import {ref, provide, watch} from 'vue';
         },
         setup() {
             // Creation of a reactive variables => (allows child to change it)
-            const userId = ref('');
-            const username = ref('');
-            const sessionToken = ref('');
-            const favourites = ref([]);
-            const isAdmin = ref(''); // 0?
-            const avatarPath = ref('');
+            let userId = ref('');
+            let username = ref('');
+            let sessionToken = ref('');
+            let favourites = ref([]);
+            let isAdmin = ref(''); // 0?
+            let avatarPath = ref('');
 
 
             // Creation of the providers
@@ -142,6 +142,12 @@ import {ref, provide, watch} from 'vue';
                 }
             }, {deep: true});
 
+            watch(avatarPath, (newAvatar) => {
+                if (newAvatar) {
+                    console.log("avatarPath changed to", newAvatar);
+                }
+            });
+
 
             // return necessary ????
             return {
@@ -150,7 +156,8 @@ import {ref, provide, watch} from 'vue';
                 setFavourites,
                 setAvatarPath,
                 setIsAdmin,
-                setUserId
+                setUserId,
+                avatarPath
             }
         },
         methods: {
@@ -167,17 +174,18 @@ import {ref, provide, watch} from 'vue';
                                 console.log('Invalid token');
                             }
                         });
-                        console.log('checking user token')
+                        console.log('checked user token : response = ')
                         console.log(response)
                         if (response && response.data && response.status === 200) {
                             // The session token is still valid
                             this.setSessionToken(sessionToken);
-                            this.setUsername(response.data.username);
-                            this.setAvatarPath(response.data.avatarPath);
-                            this.setUserId(response.data.id);
-                            this.setFavourites(response.data.favourites);
-                            this.setIsAdmin(response.data.isAdmin)
-                            console.log('checking user token')
+                            this.setUsername(response.data.data.username);
+                            this.setAvatarPath(response.data.data.avatarPath);
+                            this.setUserId(response.data.data.id);
+                            this.setFavourites(response.data.data.favourites);
+                            this.setIsAdmin(response.data.data.isAdmin)
+                            console.log('Changing data (logging user)')
+
 
                         }
                     } catch (error) {
