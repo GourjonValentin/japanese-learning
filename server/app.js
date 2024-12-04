@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+
 // Load environment variables from .env file
 require('dotenv').config();
 const verifyToken = require('./middleware');
@@ -22,7 +23,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json())
 app.use(cors())
 
-// Change values to connect to DB
+// Please change values to connect to DB
 const db = mysql.createConnection({
     host: 'localhost',
     user: process.env.DB_USER,
@@ -45,11 +46,9 @@ app.get('/', (req, res) => {
 
 const util = require('util');
 
-// Promisify db.query
 const query = util.promisify(db.query).bind(db);
 
 // AUTH
-
 app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
 
@@ -84,7 +83,6 @@ app.post('/signup', async (req, res) => {
             return res.status(409).json({ message: "This username is already taken." });
         }
 
-        // Print the list of errors to rectify in order to sign up
         if (passwordErrors.length > 0) {
             return res.status(400).json({ message: passwordErrors });
         }
@@ -118,10 +116,7 @@ app.post('/login', async (req, res) => {
             return res.status(203).json({ message: "This username is not registered." });
         }
 
-        // Assuming results[0] holds the user information
         const user = results[0];
-
-        // Validate password
         const isValid = await bcrypt.compare(password, user.password);
 
         if (isValid) {
@@ -190,7 +185,6 @@ app.post('/change-password', async (req, res) => {
             return res.status(401).json({ message: 'Current password is incorrect.' });
         }
 
-        // Print the list of errors to rectify in order to sign up
         if (passwordErrors.length > 0) {
             return res.status(400).json({ message: passwordErrors });
         }
@@ -235,7 +229,6 @@ app.get('/jisho', async (req, res) => {
 });
 
 app.get('/quizzes/:quizId', async (req, res) => {
-    // est ce que la personne doit etre co ???
     try {
         const { quizId } = req.params;
         if (quizId === undefined) {
@@ -245,7 +238,6 @@ app.get('/quizzes/:quizId', async (req, res) => {
         if (result.length === 0) {
             return res.status(404).json({ message: "Quiz not found" });
         }
-        console.log(result)
         res.status(200).json(result);
     } catch (error) {
         console.error('Error fetching quizzes:', error);
@@ -253,13 +245,13 @@ app.get('/quizzes/:quizId', async (req, res) => {
     }
 });
 
-//search
+// SEARCH
 app.get('/quizzes', async (req, res) => {
     try {
         const { difficulty, type, favourites, name } = req.query;
         let results = await query('SELECT * FROM quiz');
-        if (difficulty && difficulty !== "all") {
-            console.log(typeof difficulty, typeof results[2].difficultylevel)
+
+        if (difficulty && difficulty !== "Difficulty") {
             results = results.filter(quiz => quiz.difficultylevel.toString() === difficulty.toString());
         }
         if (type) {
@@ -269,13 +261,12 @@ app.get('/quizzes', async (req, res) => {
             results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
         }
         if (name) {
-            // not sure....
             results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
         }
         if (results.length === 0) {
+            console.log(results);
             return res.status(404).json({ message: "No quizzes found" });
         }
-        //console.log(results);
         results = await Promise.all(
             results.map(async quiz => {
                 const ownerName = await query('SELECT username FROM users WHERE id=?', [quiz.ownerid]);
@@ -310,11 +301,8 @@ app.get('/user-quizzes', async (req, res) => {
 // url below is unclear .... can be renamed ???
 app.post('/create', async (req, res) => {
     const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
-    console.log(quizQuestions);
     try {
         await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
-
-        //await query(`INSERT INTO quiz(name, type, content, ownerid) VALUES (${quizName}, ${quizType}, [{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}][{"title":"zedgf","picture":"","answers":[{"id":"0","content":"zed"},{"id":"1","content":"edfg"}],"correct_answers":["0"]}]${JSON.stringify(JSON.parse(quizQuestions))}, ${parseInt(ownerId)}`)
         return res.sendStatus(201);
     } catch (err) {
         console.log(err)
@@ -327,9 +315,7 @@ app.post('/users/edit-favourite', async (req, res) => {
     try {
         const { mode, quizId, userId, sessionToken } = req.body;
 
-        // check if the user login is matching its id
         const { payload } = verifyToken(sessionToken, secretKey);
-        console.log(payload);
         if (payload.id !== userId) {
             return res.status(403).json({ message: "your are not this user owner" });
         }
@@ -345,29 +331,23 @@ app.post('/users/edit-favourite', async (req, res) => {
         if (newFavourites === null || newFavourites === undefined) {
             newFavourites = [];
         }
-        if (mode === 'delete') { // ca marche ???
+        if (mode === 'delete') {
             newFavourites = newFavourites.filter((el) => {
                 return el !== quizId;
             })
         }
         else if (mode === 'add') {
             if (newFavourites.includes(quizId)) {
-                console.log("already in the list");
                 return res.status(409).json({ message: "quiz already in the user favourite quiz" })
             }
             newFavourites.push(quizId);
         }
-        console.log(newFavourites);
-        // try catch the following query ???
         const result = await query('UPDATE users SET favourites=? WHERE id=?', [JSON.stringify(newFavourites), userId]);
         if (result) {
-            console.log("update done");
-            console.log(typeof newFavourites);
             return res.status(200).json({ favourites: newFavourites });
         }
     } catch (err) {
         console.error("Error: ", err.message);
-        console.log(err);
         return res.status(500).json({ message: "Server error", error: err.message });
     }
 });
@@ -397,12 +377,10 @@ app.get('/is-quiz-owner', async (req, res) => {
     }
     const token = req.header('Authorization').split(' ')[1];
     const quizId = req.query.quizId;
-    console.log(req.query);
     if (token == undefined) {
         return res.status(400);
     }
     let resVerifyToken = verifyToken(token, secretKey);
-    console.log(resVerifyToken)
 
     if (resVerifyToken.status === 200) {
         if (quizId == undefined) {
@@ -430,8 +408,6 @@ app.delete('/delete-quiz', async (req, res) => {
             return res.status(400).send();
         }
         let resVerifyToken = verifyToken(token, secretKey);
-        console.log("resr", resVerifyToken);
-
         if (resVerifyToken.status === 200) {
             if (quizId == undefined) {
                 return res.status(401).json({ message: "Invalid format" });
@@ -498,7 +474,6 @@ app.get('/scores/:quizId', async (req, res) => {
             'WHERE s.quizid = ?\n' +
             'ORDER BY s.score\n' +
             'LIMIT 10;', [quizId]);
-        console.log(results)
         if (results.length === 0) {
             return res.sendStatus(204);
         }

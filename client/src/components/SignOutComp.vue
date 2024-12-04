@@ -8,7 +8,7 @@
 </template>
 
 <script>
-    import { inject } from 'vue'; // to change user variable and send it to the provider
+    import { inject } from 'vue';
 
     export default {
         setup(){

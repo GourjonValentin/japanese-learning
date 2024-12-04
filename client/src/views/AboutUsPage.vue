@@ -29,7 +29,7 @@ export default {
       teamMembers: [
         {
           name: 'Fares DARGHOUTH',
-          image: require('@/assets/team/fares.png'), // Replace with the actual image path
+          image: require('@/assets/team/fares.png'),
           description: 'Authentication page and backend functions associated to it including passwords requirements, avatar generation, interactive Alphabet page, Landing page, and Profile page to track progress, and modify personal information',
           number: '330695518031',
           tp_nb: 'tp083561',
@@ -37,7 +37,7 @@ export default {
         },
         {
           name: 'Louise MONCIERO',
-          image: require('@/assets/team/louise.png'), // Replace with the actual image path
+          image: require('@/assets/team/louise.png'),
           description: 'Functionalities to edit a created quiz, the quiz page including UI & UX, management of routing links to allow fluid navigation between pages.',
           number: '330772262418',
           tp_nb: 'tp083380',
@@ -45,7 +45,7 @@ export default {
         },
         {
           name: 'Valentin GOURJON',
-          image: require('@/assets/team/valentin.png'), // Replace with the actual image path
+          image: require('@/assets/team/valentin.png'),
           description: "Functionalities to create a quiz, fetch Jisho (dictionnary) API and display the results, locally store user's creditential, displaying quizzes with leaderboard, and administrative panel",
           number: '330627660541',
           tp_nb: 'tp083370',
@@ -117,7 +117,6 @@ export default {
         align-items: center;
         opacity: 0;
         transition: opacity 0.3s ease;
-        /* font-size: 15px; */
     }
 
     .member-image:hover .hover-description {

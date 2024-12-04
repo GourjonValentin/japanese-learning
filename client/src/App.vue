@@ -24,16 +24,13 @@ import {ref, provide, watch} from 'vue';
             };
         },
         setup() {
-            // Creation of a reactive variables => (allows child to change it)
             const userId = ref('');
             const username = ref('');
             const sessionToken = ref('');
             const favourites = ref([]);
-            const isAdmin = ref(''); // 0?
+            const isAdmin = ref('');
             const avatarPath = ref('');
 
-
-            // Creation of the providers
             provide('userId', userId);
             provide('username', username);
             provide('sessionToken', sessionToken);
@@ -81,20 +78,17 @@ import {ref, provide, watch} from 'vue';
                             setUserId(response.data.userId);
                             setFavourites(response.data.favourites);
                             setIsAdmin(response.data.isAdmin);
-                            setAvatarPath(response.data.avatarPath);
-                            console.log(response.data.avatarPath);
-                            
-                            // alert(`You are now connected.\nYou will be redirected in Home Page\n`);
-                            return { success: true, message: ""}
+                            setAvatarPath(response.data.avatarPath);                            
+                            return { success: true, message: ""};
                         } else {
                             throw new Error("Status server error");
                         }
                     }).catch(error => {
                         if (error.status === 401){
-                            return { success: false, message: "Invalid username or password"}
+                            return { success: false, message: "Invalid username or password"};
                         }
                         else {
-                            return { success: false, message: "A server error occured...\nPlease try later"}
+                            return { success: false, message: "A server error occured...\nPlease try later"};
                         }
                     });
             }
@@ -112,10 +106,9 @@ import {ref, provide, watch} from 'vue';
                 username.value = '';
                 sessionToken.value = '';
                 favourites.value = [];
-                isAdmin.value = ''; // 0 ?
+                isAdmin.value = '';
             };
             provide('resetUser', resetUser);
-
 
             watch(sessionToken, (newSessionToken) => {
                 if (newSessionToken) {
@@ -133,12 +126,10 @@ import {ref, provide, watch} from 'vue';
                 }
             }, {deep: true});
 
-
-            // return necessary ????
             return {
                 setSessionToken,
                 setUsername
-            }
+            };
         },
         methods: {
             async checkUser() {
@@ -146,7 +137,6 @@ import {ref, provide, watch} from 'vue';
                 if (sessionToken) {
                     // Check if the session token is still valid
                     try {
-
                         const response = await axios.post('http://localhost:3000/auth/check', {
                             sessionToken: sessionToken
                         }).catch(error => {
@@ -154,26 +144,20 @@ import {ref, provide, watch} from 'vue';
                                 console.log('Invalid token');
                             }
                         });
-                        console.log('checking user token')
-                        console.log(response)
                         if (response && response.data && response.status === 200) {
                             // The session token is still valid
                             this.setSessionToken(sessionToken);
                             this.setUsername(response.data.username);
                             this.setAvatarPath(response.data.avatarPath);
-                            console.log('checking user token')
-
                         }
                     } catch (error) {
                         console.error('There was an error!', error);
-
                     }
                 }
             }
         },
         mounted() {
-            console.log("mounted")
-            this.checkUser()
+            this.checkUser();
         }
     }
 </script>

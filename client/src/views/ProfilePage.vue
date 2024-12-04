@@ -112,7 +112,7 @@
 
 <script>
     import router from '@/router';
-    import { inject } from 'vue'; // to access user variable
+    import { inject } from 'vue';
     import { globalColors } from '../utils/GlobalVariable';
     import axios from 'axios';
 
@@ -161,9 +161,8 @@
                         this.userQuizzes = res.data;
                     }
                 } catch (err) {
-                    console.log(err)
+                    console.error(err)
                     if (err.response) {
-                        console.log(err.response.data)
                         if (err.response.status === 404){
                             this.userQuizzesMessage = err.response.data.message;
                         } else if (err.response.status === 500){
@@ -188,7 +187,7 @@
                         this.userFavQuizzes = res.data;
                     }
                 } catch (err) {
-                    console.log(err)
+                    console.error(err);
                     if (err.reponse) {
                         if (err.response.status === 404){
                             this.userFavQuizzesMessage = err.response.data.message;
@@ -248,8 +247,6 @@
             },
             async changeFavourites(quizId){
                 let mode = 'add';
-                console.log("quizId", quizId);
-                console.log("this.favourites", this.favourites);
                 if (this.favourites.includes(quizId)){
                     mode = 'delete';
                 }
@@ -265,13 +262,13 @@
                             if (err.response.status === 409) {
                                 alert("You have already added this quiz to your favourites");
                             }
-                            console.log("err", err);
+                            console.error(err);
                         });
 
 
                     this.setFavourites(res.data.favourites);
                 } catch (err){
-                    console.log("err", err);
+                    console.error(err);
                 }
             },
             toggleUsernameEdit() {

@@ -77,25 +77,21 @@ export default {
     },
     methods: {
         toggleEngToJap() {
-            // Switch to English to Japanese
             this.englishToJapanese = true;
             this.japaneseToEnglish = false;
         },
         toggleJapToEng() {
-            // Switch to Japanese to English
             this.englishToJapanese = false;
             this.japaneseToEnglish = true;
         },
         toggleLoading() {
-            // Toggle the loading state
             this.loading = !this.loading;
         },
         async translate() {
             this.submitedSearchWord = this.searchWord;
             this.toggleLoading();
+            
             // Search for the word in the dictionnary
-
-            // Preprocess the word
             let searchWord = this.searchWord;
             if (searchWord === "") {
                 this.translation = "";

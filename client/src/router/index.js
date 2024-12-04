@@ -13,7 +13,7 @@ import AboutUsPage from "../views/AboutUsPage";
 
 const router = createRouter({
     history: createWebHistory(),
-    routes: [ //a route has at least two properties, 
+    routes: [
         {
             path: '/',
             component: HomePage

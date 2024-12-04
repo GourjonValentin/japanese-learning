@@ -310,7 +310,6 @@
                 this.isQuestionForm = true;
             },
             deleteQuestionQuiz(question){
-                // faire un confirm stylisé ??
                 this.isConfirmation = true;
                 this.confirmation.result = null;
                 this.confirmation.title = 'Cautious !';
@@ -450,7 +449,7 @@
                         );
                     }
                 } catch (err) {
-                    console.log(err)
+                    console.error(err);
                     this.alert.title = 'Error';
                     if (err.response.status === 404) {
                         this.alert.body = "Oops... The quiz you try to edit does not exist... ";
@@ -479,7 +478,7 @@
                         }
                     }
                 } catch (err) {
-                    console.log(err)
+                    console.error(err);
                     if (err.response.status === 404) {
                         this.quizzesMessage = "Oops... The quiz could not be found... ";
                     } else if (err.response.status === 500) {
@@ -535,7 +534,6 @@
 .main-attributes-body{
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
     align-items: center;
 }
 

@@ -94,16 +94,6 @@
 
 /* STYLED INPUT */
 
-
-/*
-.styledInput {
-    flex: 1;
-    padding: 8px 15px;
-    border: 2px solid var(--dark-color);
-    border-radius: 25px;
-    outline: none;
-    transition: border-color 0.3s;
-}*/
 .styledInput {
     padding: 10px;
     border: 1px solid #a8a7a7;
@@ -125,6 +115,7 @@
 .search-input:focus {
     border-color: var(--brown-color);
 }
+
 .styledSelectInput {
     display: inline-block;
     padding: 10px 20px;
@@ -138,13 +129,13 @@
 }
 
 .styledSelectInput select {
-appearance: auto;
-border: none;
-background: transparent;
-font-size: 14px;
-color: #fff;
-padding: 0;
-outline: none;
+    appearance: auto;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #fff;
+    padding: 0;
+    outline: none;
 }
 
 .styledSelectInput:hover {
@@ -176,7 +167,6 @@ styledSelectInput.active {
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
 }
-
 
 /* DIALOG */
 
@@ -225,18 +215,19 @@ styledSelectInput.active {
 
 /* ICONS */
 
+.logo {
+    height: 35px;
+    width: 35px;
+}
+
 .edit:hover {
     cursor: pointer;
     transform: scale(1.05);
 }
+
 .delete:hover {
     cursor: pointer;
     transform: scale(1.05);
-}
-
-.logo {
-    height: 35px;
-    width: 35px;
 }
 
 .back-arrow {
