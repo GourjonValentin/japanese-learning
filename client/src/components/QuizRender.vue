@@ -7,6 +7,19 @@
             <LeaderboardComp :quizId="quiz.id"/>
         </div>
         <div class="render-content">
+            <div class="dialog-overlay" id="alertDialog" v-if="isAlert">
+                <div class="dialog">
+                    <div class="dialog-header">
+                        <h2>{{ alert.title }}</h2>
+                    </div>
+                    <div class="dialog-body">
+                        <p v-html="alert.body"></p>
+                        <form @submit.prevent="() => {isAlert = false}">
+                            <button class="styledButton-red" type="submit">Ok</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <h2>{{ quiz.name }}</h2>
             <div id="results" v-if="this.questionNumber === quiz.content.length">
                 <p>Here is your score :</p>
@@ -100,7 +113,12 @@ export default {
             globalColors: globalColors,
             userAnswers: [],
             score: 0,
-            serverMessage: ''
+            serverMessage: '',
+            isAlert: false,
+            alert: {
+                body: '',
+                title: ''
+            }
         }
     },
     components: {
@@ -123,11 +141,11 @@ export default {
                     }
                     this.userAnswers[this.questionNumber].push(answerNumber);
                 } else {
-                    alert("Too much options selected");
+                    this.alert.body = "You have selected too many options";
+                    this.alert.title = "Halt !";
+                    this.isAlert = true;
                 }
             }
-
-
         },
         calculateScore() {
             this.userAnswers.forEach((value, index) => {

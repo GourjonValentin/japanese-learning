@@ -116,6 +116,7 @@ app.post('/login', async (req, res) => {
             return res.status(203).json({ message: "This username is not registered." });
         }
 
+        const user = results[0];
         const isValid = await bcrypt.compare(password, user.password);
 
         if (isValid) {
