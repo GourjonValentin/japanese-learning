@@ -294,6 +294,8 @@
                     const response = await axios.post('http://localhost:3000/users/change-username', {
                         userId: this.userId,
                         newUsername: this.newUsername,
+                    }, {
+                        'headers' : {'Authorization': `Bearer ${this.sessionToken}`}
                     });
 
                     if (response.status === 200) {

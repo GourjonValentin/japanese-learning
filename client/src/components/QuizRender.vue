@@ -170,6 +170,8 @@ export default {
                 userId: this.userId,
                 quizId: this.quiz.id,
                 score: this.score
+            }, {
+                headers: {'Authorization': `Bearer ${this.sessionToken}`}
             })
                 .then((res) => {
                     if (res.status === 200 || res.status === 304) {
@@ -177,8 +179,13 @@ export default {
                     }
                 })
                 .catch((err) => {
-                    console.error(err);
-                    this.quizzesMessage = "error";
+                    if (err.response.status === 401) {
+                        console.error("Not authentified, cannot save score")
+                        this.quizzesMessage = "Not logged in";
+                    } else {
+                        console.error(err);
+                        this.quizzesMessage = "error";
+                    }
                 })
         },
         finishQuiz() {

@@ -449,6 +449,17 @@ app.get('/quizzes/:quizId', async (req, res) => {
 
 // SCORES
 app.post('/scores/save', async (req, res) => {
+    let token;
+    if (req.headers['authorization']) {
+        token = req.headers['authorization'].split(' ')[1];
+    }
+    let loggedIn = !(token === undefined || token === null)
+    if (loggedIn) {
+        const { status, message, payload } = verifyToken(token, secretKey);
+        if (status !== 200) {
+            return res.sendStatus(401);
+        }
+    }
     const { userId, quizId, score } = req.body;
     try {
         let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
@@ -559,21 +570,35 @@ app.post('/users/change-password', async (req, res) => {
 });
 
 app.post('/users/change-username', async (req, res) => {
-    const { userId, newUsername } = req.body;
-
-    try {
-        const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
-
-        if (existingUser.length > 0) {
-            return res.status(409).json({ message: "This username is already taken." });
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
         }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200 && req.body.userId == resVerifyToken.payload.id) {
 
-        await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
+            const {userId, newUsername} = req.body;
 
-        res.status(200).json({ message: 'Username updated successfully!' });
-    } catch (error) {
-        console.error('Error updating username:', error);
-        res.status(500).json({ message: 'An error occurred while updating the username.' });
+            try {
+                const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
+
+                if (existingUser.length > 0) {
+                    return res.status(409).json({message: "This username is already taken."});
+                }
+
+                await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
+
+                res.status(200).json({message: 'Username updated successfully!'});
+            } catch (error) {
+                console.error('Error updating username:', error);
+                res.status(500).json({message: 'An error occurred while updating the username.'});
+            }
+        } else {
+            res.sendStatus(403);
+        }
+    } else {
+        res.sendStatus(401)
     }
 });
 
