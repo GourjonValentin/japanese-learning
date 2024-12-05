@@ -271,12 +271,12 @@ styledSelectInput.active {
     display: flex;
 }
 
-.favourites.edit {
+.favorites.edit {
     display: flex;
     margin-left: 10px;
     margin-top: 10px;
 }
-.favourites:hover {
+.favorites:hover {
     cursor: pointer;
     transform: scale(1.05);
 }

@@ -143,7 +143,7 @@ app.post('/auth/signup', async (req, res) => {
         const avatarSeed = () => Math.random().toString(36).substring(2, 18);
         const avatarPath = `https://api.multiavatar.com/${avatarSeed()}.svg`;
 
-        await query('INSERT INTO users (username, isAdmin, password, favourites, avatarPath) VALUES(?, 0, ?, "[]", ?)', [username, hashedPassword, avatarPath]);
+        await query('INSERT INTO users (username, isAdmin, password, favorites, avatarPath) VALUES(?, 0, ?, "[]", ?)', [username, hashedPassword, avatarPath]);
 
         res.status(201).json({ message: "User registered successfully." });
 
@@ -176,7 +176,7 @@ app.post('/auth/login', async (req, res) => {
                 secretKey,
                 { expiresIn: '1h' }
             )
-            res.status(200).json({ username: user.username, favourites: user.favourites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token, avatarPath: user.avatarPath, message: "Succesful login" });
+            res.status(200).json({ username: user.username, favorites: user.favorites, userId: user.id, isAdmin: user.isAdmin, sessionToken: token, avatarPath: user.avatarPath, message: "Succesful login" });
         } else {
             res.status(401).json({ message: "Invalid username or password." });
         }
@@ -207,7 +207,7 @@ app.get('/jisho', async (req, res) => {
 
 app.get('/quizzes', async (req, res) => {
     try {
-        const { difficulty, type, favourites, name } = req.query;
+        const { difficulty, type, favorites, name } = req.query;
         let results = await query('SELECT * FROM quiz');
 
         if (difficulty && difficulty !== "Difficulty") {
@@ -216,8 +216,8 @@ app.get('/quizzes', async (req, res) => {
         if (type) {
             results = results.filter(quiz => quiz.type === type);
         }
-        if (favourites) {
-            results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
+        if (favorites) {
+            results = results.filter(quiz => favorites.includes(quiz.id) || favorites.includes(quiz.id.toString()));
         }
         if (name) {
             results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
@@ -550,7 +550,7 @@ app.delete('/users/delete', async (req, res) => {
     }
 });
 
-app.post('/users/edit-favourite', async (req, res) => {
+app.post('/users/edit-favorite', async (req, res) => {
     try {
         const { mode, quizId, userId, sessionToken } = req.body;
 
@@ -563,9 +563,9 @@ app.post('/users/edit-favourite', async (req, res) => {
             return res.status(404).json({ message: 'user not found' });
         }
         user = user[0];
-        let newFavourites = user.favourites;
-        if (!(user.favourites instanceof Array)) {
-            newFavourites = JSON.parse(user.favourites);
+        let newFavourites = user.favorites;
+        if (!(user.favorites instanceof Array)) {
+            newFavourites = JSON.parse(user.favorites);
         }
         if (newFavourites === null || newFavourites === undefined) {
             newFavourites = [];
@@ -577,13 +577,13 @@ app.post('/users/edit-favourite', async (req, res) => {
         }
         else if (mode === 'add') {
             if (newFavourites.includes(quizId)) {
-                return res.status(409).json({ message: "quiz already in the user favourite quiz" })
+                return res.status(409).json({ message: "quiz already in the user favorite quiz" })
             }
             newFavourites.push(quizId);
         }
-        const result = await query('UPDATE users SET favourites=? WHERE id=?', [JSON.stringify(newFavourites), userId]);
+        const result = await query('UPDATE users SET favorites=? WHERE id=?', [JSON.stringify(newFavourites), userId]);
         if (result) {
-            return res.status(200).json({ favourites: newFavourites });
+            return res.status(200).json({ favorites: newFavourites });
         }
     } catch (err) {
         console.error("Error: ", err.message);

@@ -56,8 +56,8 @@
                 <div class="quizzes-profil-page">
                     <div class="styledDiv-pretty" v-for="quiz in userQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                            <div class="favorites" @click="changeFavourites(quiz.id)">
+                                <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favorites.indexOf(quiz.id) === -1)"/>
                                 <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                             </div>
                             <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
@@ -85,8 +85,8 @@
                 <div class="quizzes-profil-page">
                     <div class="styledDiv-pretty" v-for="quiz in userFavQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favourites" @click="changeFavourites(quiz.id)">
-                                <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                            <div class="favorites" @click="changeFavourites(quiz.id)">
+                                <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favorites.indexOf(quiz.id) === -1)"/>
                                 <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                             </div>
                             <div class="edit" @click="editQuiz(quiz.id)" v-if="isQuizOwner(quiz) == 1">
@@ -121,14 +121,14 @@
             const username = inject('username');
             const avatarPath = inject('avatarPath');
             const userId = inject('userId');
-            const favourites = inject('favourites');
+            const favorites = inject('favorites');
             const sessionToken = inject('sessionToken');
             const setFavourites = inject('setFavourites');
             return {
                 username,
                 avatarPath,
                 userId,
-                favourites,
+                favorites,
                 sessionToken,
                 setFavourites,
             };
@@ -180,7 +180,7 @@
                     const res = await axios.get('http://localhost:3000/quizzes', {
                         params: {
                             userId: this.userId,
-                            favourites: this.favourites,
+                            favorites: this.favorites,
                         },
                     });
                     if (res.status === 200){
@@ -247,12 +247,12 @@
             },
             async changeFavourites(quizId){
                 let mode = 'add';
-                if (this.favourites.includes(quizId)){
+                if (this.favorites.includes(quizId)){
                     mode = 'delete';
                 }
 
                 try {
-                    const res = await axios.post('http://localhost:3000/users/edit-favourite', 
+                    const res = await axios.post('http://localhost:3000/users/edit-favorite', 
                         {
                             mode : mode, 
                             quizId : quizId,
@@ -260,13 +260,13 @@
                             sessionToken : this.sessionToken
                         }).catch(err => {
                             if (err.response.status === 409) {
-                                alert("You have already added this quiz to your favourites");
+                                alert("You have already added this quiz to your favorites");
                             }
                             console.error(err);
                         });
 
 
-                    this.setFavourites(res.data.favourites);
+                    this.setFavourites(res.data.favorites);
                 } catch (err){
                     console.error(err);
                 }

@@ -37,7 +37,7 @@
         <div class="admin-content">
             <div id="user-admin">
                 <div class="admin-title">
-                    <h2>Users Administration</h2>
+                    <h2>Users Management</h2>
                 </div>
                 <div class="users">
                     <div class="styledDiv-pretty" v-for="user in users" :key="user.id">
@@ -57,7 +57,7 @@
             </div>
             <div id="quiz-admin">
                 <div class="admin-title">
-                    <h2>Quizzes Administration</h2>
+                    <h2>Quizzes Management</h2>
                 </div>
                 <div class="search">
                     <form class="search-form" @submit.prevent="handleSearchSubmit()">
@@ -91,7 +91,7 @@
                 <div class="quizzes-admin-page">
                     <div class="quiz styledDiv-pretty" v-for="quiz in quizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favourites" >
+                            <div class="favorites" >
                                 <img class="logo" src="@/assets/icons/heart-unfilled.png"/>
                             </div>
                             <div class="tools">
@@ -131,7 +131,7 @@ export default {
         const username = inject('username');
         const avatarPath = inject('avatarPath');
         const userId = inject('userId');
-        const favourites = inject('favourites');
+        const favorites = inject('favorites');
         const sessionToken = inject('sessionToken');
         const setFavourites = inject('setFavourites');
         const isAdmin = inject('isAdmin');
@@ -140,7 +140,7 @@ export default {
             username,
             avatarPath,
             userId,
-            favourites,
+            favorites,
             sessionToken,
             setFavourites,
             isAdmin,
@@ -258,7 +258,7 @@ export default {
                 { params : {
                         difficulty : this.searchFilterDifficulty,
                         type: (this.searchFilterType === '' ? null : this.searchFilterType),
-                        favourites : JSON.stringify(this.searchFilterFavourites) ? this.favourites : [],
+                        favorites : JSON.stringify(this.searchFilterFavourites) ? this.favorites : [],
                         name: this.searchName
                     }}
             )
