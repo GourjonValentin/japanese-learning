@@ -89,7 +89,7 @@
                     </div>
                 </div>
                 <div class="quizzes-admin-page">
-                    <div class="quiz styledDiv-pretty" v-for="quiz in quizzes" :key="quiz.id">
+                    <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
                             <div class="favorites" >
                                 <img class="logo" src="@/assets/icons/heart-unfilled.png"/>
