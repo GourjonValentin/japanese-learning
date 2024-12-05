@@ -637,43 +637,55 @@ app.delete('/users/delete', async (req, res) => {
 });
 
 app.post('/users/edit-favourite', async (req, res) => {
-    try {
-        const { mode, quizId, userId, sessionToken } = req.body;
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200 && req.body.userId == resVerifyToken.payload.id) {
+            try {
+                const {mode, quizId, userId, sessionToken} = req.body;
 
-        const { payload } = verifyToken(sessionToken, secretKey);
-        if (payload.id !== userId) {
-            return res.status(403).json({ message: "your are not this user owner" });
-        }
-        let user = await query('SELECT * FROM users WHERE id=?', [userId]);
-        if (user === undefined) {
-            return res.status(404).json({ message: 'user not found' });
-        }
-        user = user[0];
-        let newFavourites = user.favourites;
-        if (!(user.favourites instanceof Array)) {
-            newFavourites = JSON.parse(user.favourites);
-        }
-        if (newFavourites === null || newFavourites === undefined) {
-            newFavourites = [];
-        }
-        if (mode === 'delete') {
-            newFavourites = newFavourites.filter((el) => {
-                return el !== quizId;
-            })
-        }
-        else if (mode === 'add') {
-            if (newFavourites.includes(quizId)) {
-                return res.status(409).json({ message: "quiz already in the user favourite quiz" })
+                const {payload} = verifyToken(sessionToken, secretKey);
+                if (payload.id !== userId) {
+                    return res.status(403).json({message: "your are not this user owner"});
+                }
+                let user = await query('SELECT * FROM users WHERE id=?', [userId]);
+                if (user === undefined) {
+                    return res.status(404).json({message: 'user not found'});
+                }
+                user = user[0];
+                let newFavourites = user.favourites;
+                if (!(user.favourites instanceof Array)) {
+                    newFavourites = JSON.parse(user.favourites);
+                }
+                if (newFavourites === null || newFavourites === undefined) {
+                    newFavourites = [];
+                }
+                if (mode === 'delete') {
+                    newFavourites = newFavourites.filter((el) => {
+                        return el !== quizId;
+                    })
+                } else if (mode === 'add') {
+                    if (newFavourites.includes(quizId)) {
+                        return res.status(409).json({message: "quiz already in the user favourite quiz"})
+                    }
+                    newFavourites.push(quizId);
+                }
+                const result = await query('UPDATE users SET favourites=? WHERE id=?', [JSON.stringify(newFavourites), userId]);
+                if (result) {
+                    return res.status(200).json({favourites: newFavourites});
+                }
+            } catch (err) {
+                console.error("Error: ", err.message);
+                return res.status(500).json({message: "Server error", error: err.message});
             }
-            newFavourites.push(quizId);
+        } else {
+            return res.sendStatus(403);
         }
-        const result = await query('UPDATE users SET favourites=? WHERE id=?', [JSON.stringify(newFavourites), userId]);
-        if (result) {
-            return res.status(200).json({ favourites: newFavourites });
-        }
-    } catch (err) {
-        console.error("Error: ", err.message);
-        return res.status(500).json({ message: "Server error", error: err.message });
+    } else {
+        return res.sendStatus(401);
     }
 });
 

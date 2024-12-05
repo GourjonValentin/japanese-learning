@@ -259,6 +259,8 @@
                             quizId : quizId,
                             userId : this.userId,
                             sessionToken : this.sessionToken
+                        }, {
+                            'headers': {'Authorization': `Bearer ${this.sessionToken}`}
                         }).catch(err => {
                             if (err.response.status === 409) {
                                 alert("You have already added this quiz to your favourites");
