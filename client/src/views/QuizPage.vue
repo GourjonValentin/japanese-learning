@@ -319,51 +319,6 @@
         align-items: center;
     }
 
-    .quiz {
-        min-width: 200px;
-        flex-direction: column;
-        margin:  20px;
-        padding: 40px 20px;
-        background-color: #f8e3cd;
-        text-align: center;
-        border-radius: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-        min-width: 180px;
-    }
-    .quiz-header {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .quiz-header .tools {
-        display: flex;
-    }
-
-    .favourites.edit {
-        display: flex;
-        margin-left: 10px;
-        margin-top: 10px;
-    }
-    .favourites:hover {
-        cursor: pointer;
-        transform: scale(1.05);
-    }
-
-    .quiz-caption {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 20px;
-        margin-right: 20px;
-
-    }
-
-    .quiz-caption img {
-        width: 20px;
-        height: 20px;
-        margin: 5px;
-    }
-
     .dialog-body{
         background-color: v-bind('globalColors.lightColor');
         display: flex;
