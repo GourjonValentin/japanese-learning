@@ -447,7 +447,7 @@ app.get('/quizzes/:quizId', async (req, res) => {
     }
 });
 
-// QUIZZES
+// SCORES
 app.post('/scores/save', async (req, res) => {
     const { userId, quizId, score } = req.body;
     try {

@@ -341,7 +341,12 @@ export default {
                 if (Date.now() > oldQuiz.timestamp + expiryTime) {
                     localStorage.removeItem('quizCreation')
                 } else {
-                    await this.pushQuiz(JSON.parse(oldQuiz.quizData));
+                    let quizData = JSON.parse(oldQuiz.quizData);
+                    if (quizData.ownerId != this.userId) {
+                        localStorage.removeItem('quizCreation')
+                        return
+                    }
+                    await this.pushQuiz(quizData);
                     localStorage.removeItem('quizCreation')
                 }
             } else {
