@@ -37,14 +37,14 @@ import {ref, provide, watch} from 'vue';
             let userId = ref('');
             let username = ref('');
             let sessionToken = ref('');
-            let favourites = ref([]);
+            let favorites = ref([]);
             let isAdmin = ref(''); // 0?
             let avatarPath = ref('');
 
             provide('userId', userId);
             provide('username', username);
             provide('sessionToken', sessionToken);
-            provide('favourites', favourites);
+            provide('favorites', favorites);
             provide('isAdmin', isAdmin);
             provide('avatarPath', avatarPath);
 
@@ -61,7 +61,7 @@ import {ref, provide, watch} from 'vue';
             };
 
             const setFavourites = (newFavourites) => {
-                favourites.value = newFavourites;
+                favorites.value = newFavourites;
             };
 
             const setIsAdmin = (newIsAdmin) => {
@@ -86,7 +86,7 @@ import {ref, provide, watch} from 'vue';
                             setSessionToken(response.data.sessionToken);
                             localStorage.setItem('sessionToken', response.data.sessionToken);
                             setUserId(response.data.userId);
-                            setFavourites(response.data.favourites);
+                            setFavourites(response.data.favorites);
                             setIsAdmin(response.data.isAdmin);
                             setAvatarPath(response.data.avatarPath);
                             return { success: true, message: ""};
@@ -115,7 +115,7 @@ import {ref, provide, watch} from 'vue';
                 userId.value = '';
                 username.value = '';
                 sessionToken.value = '';
-                favourites.value = [];
+                favorites.value = [];
                 isAdmin.value = '';
             };
             provide('resetUser', resetUser);
@@ -130,7 +130,7 @@ import {ref, provide, watch} from 'vue';
                 }
             });
 
-            watch(favourites, (newFavourites) => {
+            watch(favorites, (newFavourites) => {
                 if (newFavourites) {
                     console.log("newFavourites changed to", newFavourites);
                 }
@@ -175,7 +175,7 @@ import {ref, provide, watch} from 'vue';
                             this.setUsername(response.data.data.username);
                             this.setAvatarPath(response.data.data.avatarPath);
                             this.setUserId(response.data.data.id);
-                            this.setFavourites(response.data.data.favourites);
+                            this.setFavourites(response.data.data.favorites);
                             this.setIsAdmin(response.data.data.isAdmin)
                             console.log('Changing data (logging user)')
 

@@ -2,8 +2,8 @@
     <div class="admin">
         <div class="nav-bar">
             <ul>
-                <li><a href="#user-admin">User administration</a></li>
-                <li><a href="#quiz-admin">Quiz administration</a></li>
+                <li><a href="#user-admin">User management</a></li>
+                <li><a href="#quiz-admin">Quiz management</a></li>
             </ul>
         </div>
         <div class="dialog-overlay" id="alertDialog" v-if="isAlert">
@@ -37,13 +37,13 @@
         <div class="admin-content">
             <div id="user-admin">
                 <div class="admin-title">
-                    <h2>Users Administration</h2>
+                    <h2>Users Management</h2>
                 </div>
                 <div class="users">
                     <div class="styledDiv-pretty" v-for="user in users" :key="user.id">
-                        <div class="quiz-header">
+                        <div class="user-header">
                             <div @click="deleteUser(user)" class="delete">
-                                <img class="logo" src="@/assets/icons/delete.webp" />
+                                <img class="logo" src="@/assets/icons/delete-red.webp" />
                             </div>
                         </div>
                         <h3> {{ user.username }} </h3>
@@ -57,13 +57,13 @@
             </div>
             <div id="quiz-admin">
                 <div class="admin-title">
-                    <h2>Quizzes Administration</h2>
+                    <h2>Quizzes Management</h2>
                 </div>
-                <div class="search styledDiv-pretty">
+                <div class="search">
                     <form class="search-form" @submit.prevent="handleSearchSubmit()">
                         <img src="../assets/icons/search-logo.png" alt="search_logo.png"/>
-                        <input class="styledInput" type="text" name="searchName" v-model="searchName" placeholder="search"/>
-                        <button  class="styledButton" style="
+                        <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="search"/>
+                        <button  class="search-button" style="
                          padding: 8px 20px; font-size: 13px;"
                                  type="submit">Search</button>
                     </form>
@@ -88,23 +88,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="quizzes">
-                    <div class="styledDiv-pretty" v-for="quiz in quizzes" :key="quiz.id">
+                <div class="quizzes-admin-page">
+                    <div class="quiz styledDiv-pretty" v-for="quiz in quizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favourites" >
+                            <div class="favorites" >
                                 <img class="logo" src="@/assets/icons/heart-unfilled.png"/>
                             </div>
-                            <div class="edit" @click="editQuiz(quiz.id)">
-                                <img class="logo" src="@/assets/icons/pencil-icon-colored.png" />
-                            </div>
-                            <div @click="deleteQuiz(quiz)" class="delete">
-                                <img class="logo" src="@/assets/icons/delete.webp" />
+                            <div class="tools">
+                                <div class="edit" @click="editQuiz(quiz.id)">
+                                    <img class="logo" src="@/assets/icons/pencil-icon-colored.png" />
+                                </div>
+                                <div @click="deleteQuiz(quiz)" class="delete">
+                                    <img class="logo" src="@/assets/icons/delete-red.webp" />
+                                </div>
                             </div>
                         </div>
 
                         <h3>{{ quiz.name }}</h3>
                         <button class="styledButton" @click="startQuiz(quiz)">Start Quiz</button>
-                        <div class="quizz-caption">
+                        <div class="quiz-caption">
                             <p>Difficulty : </p>
                             <div v-for="i in quiz.difficultylevel" :key="i">
                                 <img src="@/assets/icons/torii.png"/>
@@ -129,7 +131,7 @@ export default {
         const username = inject('username');
         const avatarPath = inject('avatarPath');
         const userId = inject('userId');
-        const favourites = inject('favourites');
+        const favorites = inject('favorites');
         const sessionToken = inject('sessionToken');
         const setFavourites = inject('setFavourites');
         const isAdmin = inject('isAdmin');
@@ -138,7 +140,7 @@ export default {
             username,
             avatarPath,
             userId,
-            favourites,
+            favorites,
             sessionToken,
             setFavourites,
             isAdmin,
@@ -256,7 +258,7 @@ export default {
                 { params : {
                         difficulty : this.searchFilterDifficulty,
                         type: (this.searchFilterType === '' ? null : this.searchFilterType),
-                        favourites : JSON.stringify(this.searchFilterFavourites) ? this.favourites : [],
+                        favorites : JSON.stringify(this.searchFilterFavourites) ? this.favorites : [],
                         name: this.searchName
                     }}
             )
@@ -293,7 +295,9 @@ export default {
                     if (res.status === 200){
                         this.quizzes = res.data;
                     } else {
-                        alert(`Sorry the quiz ${quiz.name} couldn't be removed`);
+                        this.alert.header = "Oops...";
+                        this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
+                        this.isAlert = true;
                     }
                 } catch (err) {
                     console.error(err);
@@ -421,117 +425,7 @@ export default {
     color: v-bind('globalColors.darkColor')
 }
 
-.avatar-username {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 15px;
-}
-
-.avatar {
-    width: 60px;
-    height: 60px;
-}
-
-.avatar img {
-    width: 60px;
-    height: 60px;
-}
-
-.username h1 {
-    margin: 0;
-    font-size: 75px;
-    font-weight: 900;
-    color: v-bind('globalColors.darkColor');
-    line-height: 60px;
-}
-
-.edit-icon {
-    cursor: pointer;
-    width: 45px;
-    height: 45px;
-}
-
-.edit-icon img {
-    width: 45px;
-    height: 45px;
-}
-
-.dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.dialog {
-    background: v-bind('globalColors.lightColor');
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.close-icon {
-    display: flex;
-    cursor: pointer;
-}
-
-.close-icon img {
-    width: 20px;
-    height: 20px;
-    transition: color 0.3s ease;
-}
-
-.close-icon img:hover {
-    transform: scale(1.3);
-    background-color: #613b151d;
-    border-radius: 8px;
-}
-
-.dialog-body {
-    background-color: v-bind('globalColors.lightColor');
-    display: flex;
-    flex-direction: column;
-}
-
-.dialog-body form {
-    display: flex;
-    flex-direction: column;
-}
-
-.dialog-body input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: v-bind('globalColors.backgroundColor');
-}
-
-#password-settings {
-    display: flex;
-}
-
-#password-settings form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-}
-
-#password-settings button, .dialog-body button {
+.dialog-body button {
     background-color: v-bind('globalColors.redColor');
     color: #fff;
     font-size: 12px;
@@ -546,30 +440,19 @@ export default {
     align-self: center;
 }
 
-#password-settings input {
-    background-color: #eee;
-    border: none;
-    margin: 8px 0;
-    padding: 10px 15px;
-    font-size: 13px;
-    border-radius: 8px;
-    outline: none;
-}
-
-.quizzes, .users {
+.quizzes-admin-page, .users {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
+}
+
+.users h3 {
+    margin-top: 0px;
 }
 
 #confidentialty-settings, #quizzes-history {
     display: flex;
     flex-direction: column;
-}
-
-.title-settings {
-    display: flex;
 }
 
 .search > * {
@@ -603,13 +486,15 @@ export default {
     background-color: v-bind('globalColors.lightColor');
 }
 
-.light-color {
-   filter: brightness(0) saturate(100%) invert(76%) sepia(32%) saturate(462%) hue-rotate(346deg) brightness(95%) contrast(88%);;
+.user-header .delete{
+    margin: 0px;
+    padding: 0px;
 }
-
-.delete:hover {
-    cursor: pointer;
-    transform: scale(1.05);
+.user-header {
+    display: flex;
+    flex-direction: row-reverse;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
 }
 
 </style>

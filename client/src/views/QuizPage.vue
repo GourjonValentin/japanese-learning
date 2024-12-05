@@ -38,8 +38,8 @@
         <div class="quizzes">
             <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                    <div class="favourites" @click="changeFavourites(quiz.id) ">
-                        <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
+                    <div class="favorites" @click="changeFavourites(quiz.id) ">
+                        <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favorites.indexOf(quiz.id) === -1)"/>
                         <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                     </div>
                     <div  class="tools" v-if="isQuizOwner(quiz) == 1">
@@ -94,11 +94,11 @@
 
     export default {
         setup() {
-            const favourites = inject('favourites');
+            const favorites = inject('favorites');
             const sessionToken = inject('sessionToken');
             const userId = inject('userId');
             const setFavourites = inject('setFavourites');
-            return { favourites, sessionToken, userId, setFavourites };
+            return { favorites, sessionToken, userId, setFavourites };
         },
         data() {
             return {
@@ -133,7 +133,7 @@
                     { params : {
                         difficulty : this.searchFilterDifficulty,
                         type: (this.searchFilterType === '' ? null : this.searchFilterType),
-                        favourites : JSON.stringify(this.searchFilterFavourites ? this.favourites : null),
+                        favorites : JSON.stringify(this.searchFilterFavourites ? this.favorites : null),
                         name: this.searchName
                     }}
                 )
@@ -163,12 +163,12 @@
             },
             async changeFavourites(quizId){
                 let mode = 'add';
-                if (this.favourites.includes(quizId)){
+                if (this.favorites.includes(quizId)){
                     mode = 'delete';
                 }
 
                 try {
-                    const res = await axios.post('http://localhost:3000/users/edit-favourite', 
+                    const res = await axios.post('http://localhost:3000/users/edit-favorite',
                         {
                             mode : mode, 
                             quizId : quizId,
@@ -178,13 +178,13 @@
                             'headers': {'Authorization': `Bearer ${this.sessionToken}`}
                         }).catch(err => {
                             if (err.response.status === 409) {
-                                alert("You have already added this quiz to your favourites");
+                                alert("You have already added this quiz to your favorites");
                             }
                             console.error("err", err);
                         });
 
 
-                    this.setFavourites(res.data.favourites);
+                    this.setFavourites(res.data.favorites);
                 } catch (err){
                     console.error("err", err);
                 }
@@ -208,7 +208,9 @@
                         if (res.status === 200){
                             this.quizzes = res.data;
                         } else {
-                            alert(`Sorry the quiz ${quiz.name} couldn't be removed`);
+                            this.alert.header = "Oops...";
+                            this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
+                            this.isAlert = true;
                         }
                     } catch (err) {
                         console.error(err);
@@ -321,51 +323,6 @@
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
-    }
-
-    .quiz {
-        min-width: 200px;
-        flex-direction: column;
-        margin:  20px;
-        padding: 40px 20px;
-        background-color: #f8e3cd;
-        text-align: center;
-        border-radius: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-        min-width: 180px;
-    }
-    .quiz-header {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .quiz-header .tools {
-        display: flex;
-    }
-
-    .favourites.edit {
-        display: flex;
-        margin-left: 10px;
-        margin-top: 10px;
-    }
-    .favourites:hover {
-        cursor: pointer;
-        transform: scale(1.05);
-    }
-
-    .quiz-caption {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 20px;
-        margin-right: 20px;
-
-    }
-
-    .quiz-caption img {
-        width: 20px;
-        height: 20px;
-        margin: 5px;
     }
 
     .dialog-body{
