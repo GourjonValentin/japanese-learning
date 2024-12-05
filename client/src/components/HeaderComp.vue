@@ -11,9 +11,9 @@
                     <router-link to="/jisho">Jisho</router-link>
                     <router-link to="/alphabet">Alphabet</router-link>
                     <router-link :to="{ path: '/auth', query: { form: 'login/signup' } }" v-if="!sessionToken">Log in</router-link>
-                    <router-link to="/profile" v-if="sessionToken && isMenuOpen">My Profile</router-link>
-                    <router-link to="/profile#password-settings" v-if="sessionToken && isMenuOpen">Settings</router-link>
-                    <router-link to="/admin-settings" v-if="isAdmin && sessionToken && isMenuOpen">Admin settings</router-link>
+                    <router-link to="/settings/profile" v-if="sessionToken && isMenuOpen">My Profile</router-link>
+                    <router-link to="/settings/profile#password-settings" v-if="sessionToken && isMenuOpen">Settings</router-link>
+                    <router-link to="/settings/admin" v-if="isAdmin && sessionToken && isMenuOpen">Admin settings</router-link>
                     <router-link :to="{path :'/auth', query : { form : 'signout'}}" v-if="sessionToken && isMenuOpen">Sign Out</router-link>
                 </div>
             </div>
