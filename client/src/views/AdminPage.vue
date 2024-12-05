@@ -2,8 +2,8 @@
     <div class="admin">
         <div class="nav-bar">
             <ul>
-                <li><a href="#user-admin">User administration</a></li>
-                <li><a href="#quiz-admin">Quiz administration</a></li>
+                <li><a href="#user-admin">User management</a></li>
+                <li><a href="#quiz-admin">Quiz management</a></li>
             </ul>
         </div>
         <div class="dialog-overlay" id="alertDialog" v-if="isAlert">
@@ -295,7 +295,9 @@ export default {
                     if (res.status === 200){
                         this.quizzes = res.data;
                     } else {
-                        alert(`Sorry the quiz ${quiz.name} couldn't be removed`);
+                        this.alert.header = "Oops...";
+                        this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
+                        this.isAlert = true;
                     }
                 } catch (err) {
                     console.error(err);

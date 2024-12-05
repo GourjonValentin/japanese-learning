@@ -206,7 +206,9 @@
                         if (res.status === 200){
                             this.quizzes = res.data;
                         } else {
-                            alert(`Sorry the quiz ${quiz.name} couldn't be removed`);
+                            this.alert.header = "Oops...";
+                            this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
+                            this.isAlert = true;
                         }
                     } catch (err) {
                         console.error(err);
