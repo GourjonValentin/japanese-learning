@@ -245,7 +245,7 @@ export default {
             router.push({path: '/quiz', query: {quizId: quiz.id}});
         },
         editQuiz(quizId) {
-            this.$router.push({path: '/edit', query: {quizId: quizId}});
+            this.$router.push({path: '/quiz/edit', query: {quizId: quizId}});
         },
         toggleUsernameEdit() {
             this.isEditingUsername = !this.isEditingUsername;

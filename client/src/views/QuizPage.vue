@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
+        <button class="styledButton" @click="$router.push('/quiz/create')" v-if="sessionToken">Create Quiz</button>
         <div class="quizzes">
             <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
@@ -196,7 +196,7 @@
                 return 0;
             },
             editQuiz(quiz){
-                this.$router.push({path:'/edit', query : {'quizId': quiz.id}});
+                this.$router.push({path:'/quiz/edit', query : {'quizId': quiz.id}});
             },
             async deleteQuiz(quiz){
                 if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){

@@ -244,7 +244,7 @@
                 return 0;
             },
             editQuiz(quizId){
-                this.$router.push({path:'/edit', query : {quizId: quizId}});
+                this.$router.push({path:'/quiz/edit', query : {quizId: quizId}});
             },
             async changeFavourites(quizId){
                 let mode = 'add';

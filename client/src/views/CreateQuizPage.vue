@@ -327,7 +327,7 @@ export default {
                             quizData: JSON.stringify(quizData),
                             timestamp: Date.now()
                         }))
-                        this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/create'}});
+                        this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz/create'}});
                     } else {
                         console.error('There was an error!', error);
                     }

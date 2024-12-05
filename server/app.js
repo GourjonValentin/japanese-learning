@@ -234,7 +234,7 @@ app.get('/quizzes', async (req, res) => {
             results = results.filter(quiz => quiz.type === type);
         }
         if (favorites && favorites !== "null") {
-            results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
+            results = results.filter(quiz => favorites.includes(quiz.id) || favorites.includes(quiz.id.toString()));
         }
         if (name) {
             results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));

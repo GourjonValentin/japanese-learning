@@ -36,23 +36,23 @@ const router = createRouter({
             component: AlphabetPage
         },
         {
-            path: '/create',
+            path: '/quiz/create',
             component: CreateQuizPage
         },
         {
-            path: '/edit',
+            path: '/quiz/edit',
             component: EditQuizPage
-        },
-        {
-            path: '/profile',
-            component: ProfilePage
         },
         {
             path: '/AboutUs',
             component: AboutUsPage
         },
         {
-            path: '/admin-settings',
+            path: '/settings/profile',
+            component: ProfilePage
+        },
+        {
+            path: '/settings/admin',
             component: AdminPage
         },
         {
