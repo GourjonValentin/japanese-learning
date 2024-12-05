@@ -226,7 +226,7 @@
                     const res = await axios.get('http://localhost:3000/quizzes', {
                         headers: {'Authorization': `Bearer ${this.sessionToken}`}
                     });
-                    if (res.status === 200 || res.status === 304){
+                    if (res.status === 200 || res.status === 206 || res.status === 304){
                         this.quizzes = res.data;
                     }
                 } catch (err) {

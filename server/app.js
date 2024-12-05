@@ -251,7 +251,7 @@ app.get('/quizzes', async (req, res) => {
             })
         );
         if (loggedIn) return res.status(200).json(results);
-        return res.json(results.map(quiz => {
+        return res.status(206).json(results.map(quiz => {
             return {
                 id: quiz.id,
                 ownername: quiz.ownername,
