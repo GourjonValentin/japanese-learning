@@ -73,7 +73,7 @@
                                 <img src="@/assets/icons/torii.png"/>
                             </div>
                         </div>
-                        <p>Best score : {{ quiz.score }} / {{ quiz.content.length }}</p>
+                        <p>Best score : {{ quiz.score }} / {{ quiz.length }}</p>
                     </div>
                     <p id="userQuizzesMessage">{{ userQuizzesMessage }}</p>
                 </div>
@@ -115,6 +115,7 @@
     import { inject } from 'vue';
     import { globalColors } from '../utils/GlobalVariable';
     import axios from 'axios';
+    import {checkAuth} from "@/utils/utils";
 
     export default {
         setup() {
@@ -150,12 +151,20 @@
             }
         },
         mounted() {
-            const getUserQuizzes = async () => {
+            this.getUserQuizzes();
+            this.getUserFavQuizzes();
+            checkAuth(this.sessionToken).catch(() => {
+                this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/settings/profile'}});
+            })
+        },
+        methods: {
+            async getUserQuizzes() {
                 try {
                     const res = await axios.get('http://localhost:3000/quizzes/attempts', {
                         params: {
                             userId: this.userId,
                         },
+                        headers: {'Authorization': `Bearer ${this.sessionToken}`}
                     });
                     if (res.status === 200){
                         this.userQuizzes = res.data;
@@ -174,13 +183,12 @@
                         this.userQuizzesMessage = "Oops... Something went wrong while fetching quizzes.";
                     }
                 }
-            };
-            const getUserFavQuizzes = async () => {
+            },
+            async getUserFavQuizzes () {
                 try {
                     const res = await axios.get('http://localhost:3000/quizzes', {
                         params: {
-                            userId: this.userId,
-                            favorites: this.favorites,
+                            favorites: this.favorites ? this.favorites : [],
                         },
                     });
                     if (res.status === 200){
@@ -188,7 +196,7 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    if (err.reponse) {
+                    if (err.response) {
                         if (err.response.status === 404){
                             this.userFavQuizzesMessage = err.response.data.message;
                         } else if (err.response.status === 500){
@@ -198,12 +206,7 @@
                         this.userFavQuizzesMessage = "Oops... Something went wrong while fetching quizzes.";
                     }
                 }
-            }
-
-            getUserQuizzes();
-            getUserFavQuizzes();
-        },
-        methods: {
+            },
             async updatePassword() {
                 if (this.password !== this.confirmPassword) {
                     this.updatePasswordMessage = "Passwords do not match.";
@@ -243,7 +246,7 @@
                 return 0;
             },
             editQuiz(quizId){
-                this.$router.push({path:'/edit', query : {quizId: quizId}});
+                this.$router.push({path:'/quiz/edit', query : {quizId: quizId}});
             },
             async changeFavourites(quizId){
                 let mode = 'add';
@@ -252,12 +255,14 @@
                 }
 
                 try {
-                    const res = await axios.post('http://localhost:3000/users/edit-favorite', 
+                    const res = await axios.post('http://localhost:3000/users/edit-favorite',
                         {
                             mode : mode, 
                             quizId : quizId,
                             userId : this.userId,
                             sessionToken : this.sessionToken
+                        }, {
+                            'headers': {'Authorization': `Bearer ${this.sessionToken}`}
                         }).catch(err => {
                             if (err.response.status === 409) {
                                 alert("You have already added this quiz to your favorites");
@@ -267,6 +272,7 @@
 
 
                     this.setFavourites(res.data.favorites);
+                    this.getUserFavQuizzes()
                 } catch (err){
                     console.error(err);
                 }
@@ -292,6 +298,8 @@
                     const response = await axios.post('http://localhost:3000/users/change-username', {
                         userId: this.userId,
                         newUsername: this.newUsername,
+                    }, {
+                        'headers' : {'Authorization': `Bearer ${this.sessionToken}`}
                     });
 
                     if (response.status === 200) {

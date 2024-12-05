@@ -51,51 +51,59 @@ const query = util.promisify(db.query).bind(db);
 // ADMIN
 
 app.post('/admin/toggle', async (req, res) => {
-    const token = req.headers['authorization'].split(' ')[1];
-    if (token === undefined) {
-        return res.sendStatus(401);
-    }
-    let resVerifyToken = verifyToken(token, secretKey);
-    if (resVerifyToken.status === 200) {
-        let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-        if (isAdmin[0].isAdmin) {
-            if (req.body.user && req.body.user.id) {
-                let results = await query('SELECT * FROM users WHERE id = ?', [req.body.user.id]);
-                if (results) {
-                    await query('UPDATE users SET isAdmin = ? WHERE id = ?', [results[0].isAdmin ? 0 : 1, results[0].id])
-                    res.sendStatus(204);
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200) {
+            let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
+            if (isAdmin[0].isAdmin) {
+                if (req.body.user && req.body.user.id) {
+                    let results = await query('SELECT * FROM users WHERE id = ?', [req.body.user.id]);
+                    if (results) {
+                        await query('UPDATE users SET isAdmin = ? WHERE id = ?', [results[0].isAdmin ? 0 : 1, results[0].id])
+                        res.sendStatus(204);
+                    } else {
+                        res.sendStatus(404);
+                    }
                 } else {
-                    res.sendStatus(404);
+                    res.sendStatus(400)
                 }
             } else {
-                res.sendStatus(400)
+                res.sendStatus(403);
             }
         } else {
-            res.sendStatus(403);
+            res.sendStatus(401);
         }
     } else {
-        res.sendStatus(401);
+        res.sendStatus(401)
     }
 });
 
 // AUTH
 
 app.get('/auth/check', async (req, res) => {
-    const token = req.header('Authorization').split(' ')[1];
-    if (token === undefined || token === null) {
-        return res.sendStatus(400);
-    }
-    const { status, message, payload } = verifyToken(token, secretKey);
-    if (status === 200) {
-        let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
-        if (userData && userData[0]) {
-            let data = userData[0];
-            res.status(200).json({ data });
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined || token === null) {
+            return res.sendStatus(400);
+        }
+        const { status, message, payload } = verifyToken(token, secretKey);
+        if (status === 200) {
+            let userData = await query("SELECT * FROM users WHERE id = ?", [payload.id]);
+            if (userData && userData[0]) {
+                let data = userData[0];
+                res.status(200).json({ data });
+            } else {
+                res.sendStatus(404);
+            }
         } else {
-            res.sendStatus(404);
+            res.status(status).json({ message });
         }
     } else {
-        res.status(status).json({ message });
+        res.sendStatus(401);
     }
 
 });
@@ -206,6 +214,15 @@ app.get('/jisho', async (req, res) => {
 // QUIZZES
 
 app.get('/quizzes', async (req, res) => {
+    let token;
+    if (req.headers['authorization']) {
+        token = req.headers['authorization'].split(' ')[1];
+    }
+    let loggedIn = !(token === undefined || token === null)
+    if (loggedIn) {
+        const { status, message, payload } = verifyToken(token, secretKey);
+        loggedIn = status === 200;
+    }
     try {
         const { difficulty, type, favorites, name } = req.query;
         let results = await query('SELECT * FROM quiz');
@@ -216,7 +233,7 @@ app.get('/quizzes', async (req, res) => {
         if (type) {
             results = results.filter(quiz => quiz.type === type);
         }
-        if (favorites) {
+        if (favorites && favorites !== "null") {
             results = results.filter(quiz => favorites.includes(quiz.id) || favorites.includes(quiz.id.toString()));
         }
         if (name) {
@@ -233,30 +250,23 @@ app.get('/quizzes', async (req, res) => {
                 return quiz
             })
         );
-        return res.status(200).json(results);
-    } catch (error) {
-        console.error('Error fetching quizzes:', error);
-        res.status(500).json({ error: 'Error fetching quizzes' });
-    }
-});
+        if (loggedIn) return res.status(200).json(results);
+        return res.status(206).json(results.map(quiz => {
+            return {
+                id: quiz.id,
+                ownername: quiz.ownername,
+                name: quiz.name,
+                type: quiz.type,
+                ownerid: quiz.ownerid,
+                difficultylevel: quiz.difficultylevel
+            }
+        }));
 
-app.get('/quizzes/:quizId', async (req, res) => {
-    try {
-        const { quizId } = req.params;
-        if (quizId === undefined) {
-            return res.status(400).json({ message: "Invalid format" });
-        }
-        let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
-        if (result.length === 0) {
-            return res.status(404).json({ message: "Quiz not found" });
-        }
-        res.status(200).json(result);
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
     }
 });
-// SEARCH
 
 app.get('/quizzes/attempts', async (req, res) => {
     try {
@@ -267,7 +277,17 @@ app.get('/quizzes/attempts', async (req, res) => {
             return res.status(404).json({ message: "No quizzes found" });
         }
 
-        return res.status(200).json(results);
+        return res.status(200).json(results.map(quiz => {
+            return {
+                id: quiz.id,
+                name: quiz.name,
+                type: quiz.type,
+                ownerid: quiz.ownerid,
+                difficultylevel: quiz.difficultylevel,
+                score: quiz.score,
+                length: JSON.parse(quiz.content).length
+            }
+        }));
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
@@ -275,9 +295,20 @@ app.get('/quizzes/attempts', async (req, res) => {
 
 })
 
-// url below is unclear .... can be renamed ???
 app.post('/quizzes/create', async (req, res) => {
+    let token;
+    if (req.headers['authorization']) {
+        token = req.headers['authorization'].split(' ')[1];
+    }
+    let loggedIn = !(token === undefined || token === null)
+    if (loggedIn) {
+        const { status, message, payload } = verifyToken(token, secretKey);
+        if (status !== 200) {
+            return res.sendStatus(401);
+        }
+    }
     const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
+    console.log(req.body);
     try {
         await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
         return res.sendStatus(201);
@@ -386,7 +417,67 @@ app.get('/quizzes/is-owner', async (req, res) => {
     }
 });
 
-// QUIZZES
+app.get('/quizzes/:quizId', async (req, res) => {
+    if (req.headers['authorization']) {
+        let token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200) {
+            try {
+                const {quizId} = req.params;
+                if (quizId === undefined) {
+                    return res.status(400).json({message: "Invalid format"});
+                }
+                let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
+                if (result.length === 0) {
+                    return res.status(404).json({message: "Quiz not found"});
+                }
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error fetching quizzes:', error);
+                res.status(500).json({error: 'Error fetching quizzes'});
+            }
+        } else {
+            res.sendStatus(401)
+        }
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+// SCORES
+app.post('/scores/save', async (req, res) => {
+    let token;
+    if (req.headers['authorization']) {
+        token = req.headers['authorization'].split(' ')[1];
+    }
+    let loggedIn = !(token === undefined || token === null)
+    if (loggedIn) {
+        const { status, message, payload } = verifyToken(token, secretKey);
+        if (status !== 200) {
+            return res.sendStatus(401);
+        }
+    }
+    const { userId, quizId, score } = req.body;
+    try {
+        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
+        if (results.length === 0) {
+            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
+            res.status(201).json({ message: 'Score saved successfully.' });
+        } else {
+            if (results[0].score < score) {
+                await query('UPDATE scores SET score = ? WHERE id = ?', [score, results[0].id]);
+            }
+            res.status(200).json({ message: 'Score updated successfully.' });
+        }
+    } catch (error) {
+        console.error('Error saving score:', error);
+        res.status(500).json({ error: 'An error occurred while saving the score.' });
+    }
+});
+
 app.get('/scores/:quizId', async (req, res) => {
     const { quizId } = req.params;
     try {
@@ -407,25 +498,6 @@ app.get('/scores/:quizId', async (req, res) => {
     }
 });
 
-app.post('/scores/save', async (req, res) => {
-    const { userId, quizId, score } = req.body;
-    try {
-        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
-        if (results.length === 0) {
-            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
-            res.status(201).json({ message: 'Score saved successfully.' });
-        } else {
-            if (results[0].score < score) {
-                await query('UPDATE scores SET score = ? WHERE id = ?', [score, results[0].id]);
-            }
-            res.status(200).json({ message: 'Score updated successfully.' });
-        }
-    } catch (error) {
-        console.error('Error saving score:', error);
-        res.status(500).json({ error: 'An error occurred while saving the score.' });
-    }
-});
-
 // USERS
 
 app.get('/users', async (req, res) => {
@@ -436,7 +508,7 @@ app.get('/users', async (req, res) => {
     let resVerifyToken = verifyToken(token, secretKey);
     if (resVerifyToken.status === 200) {
         let isAdmin = await query('SELECT isAdmin FROM users WHERE id = ?', [resVerifyToken.payload.id])
-        if (isAdmin) {
+        if (isAdmin[0].isAdmin) {
             let results = await query('SELECT * FROM users');
             if (results) {
                 res.status(200).json(results);
@@ -498,21 +570,35 @@ app.post('/users/change-password', async (req, res) => {
 });
 
 app.post('/users/change-username', async (req, res) => {
-    const { userId, newUsername } = req.body;
-
-    try {
-        const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
-
-        if (existingUser.length > 0) {
-            return res.status(409).json({ message: "This username is already taken." });
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
         }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200 && req.body.userId == resVerifyToken.payload.id) {
 
-        await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
+            const {userId, newUsername} = req.body;
 
-        res.status(200).json({ message: 'Username updated successfully!' });
-    } catch (error) {
-        console.error('Error updating username:', error);
-        res.status(500).json({ message: 'An error occurred while updating the username.' });
+            try {
+                const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
+
+                if (existingUser.length > 0) {
+                    return res.status(409).json({message: "This username is already taken."});
+                }
+
+                await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
+
+                res.status(200).json({message: 'Username updated successfully!'});
+            } catch (error) {
+                console.error('Error updating username:', error);
+                res.status(500).json({message: 'An error occurred while updating the username.'});
+            }
+        } else {
+            res.sendStatus(403);
+        }
+    } else {
+        res.sendStatus(401)
     }
 });
 
@@ -551,43 +637,55 @@ app.delete('/users/delete', async (req, res) => {
 });
 
 app.post('/users/edit-favorite', async (req, res) => {
-    try {
-        const { mode, quizId, userId, sessionToken } = req.body;
+    if (req.headers['authorization']) {
+        const token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200 && req.body.userId == resVerifyToken.payload.id) {
+            try {
+                const {mode, quizId, userId, sessionToken} = req.body;
 
-        const { payload } = verifyToken(sessionToken, secretKey);
-        if (payload.id !== userId) {
-            return res.status(403).json({ message: "your are not this user owner" });
-        }
-        let user = await query('SELECT * FROM users WHERE id=?', [userId]);
-        if (user === undefined) {
-            return res.status(404).json({ message: 'user not found' });
-        }
-        user = user[0];
-        let newFavourites = user.favorites;
-        if (!(user.favorites instanceof Array)) {
-            newFavourites = JSON.parse(user.favorites);
-        }
-        if (newFavourites === null || newFavourites === undefined) {
-            newFavourites = [];
-        }
-        if (mode === 'delete') {
-            newFavourites = newFavourites.filter((el) => {
-                return el !== quizId;
-            })
-        }
-        else if (mode === 'add') {
-            if (newFavourites.includes(quizId)) {
-                return res.status(409).json({ message: "quiz already in the user favorite quiz" })
+                const {payload} = verifyToken(sessionToken, secretKey);
+                if (payload.id !== userId) {
+                    return res.status(403).json({message: "your are not this user owner"});
+                }
+                let user = await query('SELECT * FROM users WHERE id=?', [userId]);
+                if (user === undefined) {
+                    return res.status(404).json({message: 'user not found'});
+                }
+                user = user[0];
+                let newFavorites = user.favorites;
+                if (!(user.favorites instanceof Array)) {
+                    newFavorites = JSON.parse(user.favorites);
+                }
+                if (newFavorites === null || newFavorites === undefined) {
+                    newFavorites = [];
+                }
+                if (mode === 'delete') {
+                    newFavorites = newFavorites.filter((el) => {
+                        return el !== quizId;
+                    })
+                } else if (mode === 'add') {
+                    if (newFavorites.includes(quizId)) {
+                        return res.status(409).json({message: "quiz already in the user favorite quiz"})
+                    }
+                    newFavorites.push(quizId);
+                }
+                const result = await query('UPDATE users SET favorites=? WHERE id=?', [JSON.stringify(newFavorites), userId]);
+                if (result) {
+                    return res.status(200).json({favorites: newFavorites});
+                }
+            } catch (err) {
+                console.error("Error: ", err.message);
+                return res.status(500).json({message: "Server error", error: err.message});
             }
-            newFavourites.push(quizId);
+        } else {
+            return res.sendStatus(403);
         }
-        const result = await query('UPDATE users SET favorites=? WHERE id=?', [JSON.stringify(newFavourites), userId]);
-        if (result) {
-            return res.status(200).json({ favorites: newFavourites });
-        }
-    } catch (err) {
-        console.error("Error: ", err.message);
-        return res.status(500).json({ message: "Server error", error: err.message });
+    } else {
+        return res.sendStatus(401);
     }
 });
 

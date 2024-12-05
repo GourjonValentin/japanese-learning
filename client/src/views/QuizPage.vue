@@ -34,11 +34,11 @@
                 </div>
             </div>
         </div>
-        <button class="styledButton" @click="$router.push('/create')" v-if="sessionToken">Create Quiz</button>
+        <button class="styledButton" @click="$router.push('/quiz/create')" v-if="sessionToken">Create Quiz</button>
         <div class="quizzes">
             <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                    <div class="favorites" @click="changeFavourites(quiz.id)">
+                    <div class="favorites" @click="changeFavourites(quiz.id) ">
                         <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favorites.indexOf(quiz.id) === -1)"/>
                         <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                     </div>
@@ -107,7 +107,7 @@
                 quizzes : [],
                 quizzesMessage: "",
                 searchFilterType: "",
-                searchFilterFavourites: 0,
+                searchFilterFavourites: false,
                 searchFilterDifficulty: "Difficulty",
                 isAttemptingQuiz: false,
             };
@@ -133,7 +133,7 @@
                     { params : {
                         difficulty : this.searchFilterDifficulty,
                         type: (this.searchFilterType === '' ? null : this.searchFilterType),
-                        favorites : JSON.stringify(this.searchFilterFavourites) ? this.favorites : [],
+                        favorites : JSON.stringify(this.searchFilterFavourites ? this.favorites : null),
                         name: this.searchName
                     }}
                 )
@@ -168,12 +168,14 @@
                 }
 
                 try {
-                    const res = await axios.post('http://localhost:3000/users/edit-favorite', 
+                    const res = await axios.post('http://localhost:3000/users/edit-favorite',
                         {
                             mode : mode, 
                             quizId : quizId,
                             userId : this.userId,
                             sessionToken : this.sessionToken
+                        }, {
+                            'headers': {'Authorization': `Bearer ${this.sessionToken}`}
                         }).catch(err => {
                             if (err.response.status === 409) {
                                 alert("You have already added this quiz to your favorites");
@@ -194,7 +196,7 @@
                 return 0;
             },
             editQuiz(quiz){
-                this.$router.push({path:'/edit', query : {'quizId': quiz.id}});
+                this.$router.push({path:'/quiz/edit', query : {'quizId': quiz.id}});
             },
             async deleteQuiz(quiz){
                 if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){
@@ -221,8 +223,10 @@
         mounted() {
             const getAllquizzes = async () => {
                 try {
-                    const res = await axios.get('http://localhost:3000/quizzes');
-                    if (res.status === 200 || res.status === 304){
+                    const res = await axios.get('http://localhost:3000/quizzes', {
+                        headers: {'Authorization': `Bearer ${this.sessionToken}`}
+                    });
+                    if (res.status === 200 || res.status === 206 || res.status === 304){
                         this.quizzes = res.data;
                     }
                 } catch (err) {

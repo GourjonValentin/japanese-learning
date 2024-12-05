@@ -1,5 +1,11 @@
 <template>
-    <div class="render">
+    <div v-if="loading">
+        Loading
+        <div class="loading">
+            <img src="@/assets/chop-spedup.gif" alt="Loading ..." width="200" height="150">
+        </div>
+    </div>
+    <div class="render" v-else>
         <div class="side-bar">
             <router-link to="/quiz">
                 <img class="back-arrow" src="@/assets/icons/back-arrow.png" alt="Go Back"/>
@@ -50,6 +56,28 @@
                 </details>
             </div>
             <div v-else id="quiz">
+
+                <div class="styledDiv-pretty questionQuiz" v-if="quiz.content.length > 0">
+                    <h3>{{ this.quiz.content[questionNumber].title }}</h3>
+                    <div id="img">
+
+                    </div>
+
+
+                    <div class="answers">
+                        <div
+                        :class="{answer: true, active: (userAnswers[questionNumber].includes(answer.id))}"
+                        @click="changeUserAnswers(answer.id)"
+                        v-for="answer in quiz.content[questionNumber].answers"
+                        :key="answer.id"
+                        >
+                            <p>{{ answer.content }}</p>
+                        </div>
+                    </div>
+
+
+                    {{ questionNumber + 1 }}/{{ quiz.content.length }}
+                </div>
                 <nav class="nav-render">
                     <div>
                         <button class="styledButton-red-minor" @click="this.questionNumber -=1" v-if="this.questionNumber !== 0">Previous
@@ -64,25 +92,6 @@
                         </button>
                     </div>
                 </nav>
-                <div class="styledDiv-pretty questionQuiz" v-if="quiz.content.length > 0">
-                    <h3>{{ this.quiz.content[questionNumber].title }}</h3>
-                    <img v-if="quiz.content[questionNumber].picture !==''" :src="quiz.content[questionNumber].picture"
-                        :alt="quiz.content[questionNumber].picture"/>
-                    
-                    <div class="answers">
-                        <div
-                            :class="{answer: true, active: (userAnswers[questionNumber].includes(answer.id))}"
-                            @click="changeUserAnswers(answer.id)"
-                            v-for="answer in quiz.content[questionNumber].answers"
-                            :key="answer.id"
-                        >
-                            <p>{{ answer.content }}</p>
-                        </div>
-                    </div>
-                    
-
-                    {{ questionNumber + 1 }}/{{ quiz.content.length }}
-                </div>
             </div>
             <p>{{ quizzesMessage }}</p>
         </div>
@@ -99,7 +108,11 @@ import LeaderboardComp from "@/components/LeaderboardComp.vue";
 export default {
     setup() {
         const userId = inject('userId');
-        return {userId};
+        const sessionToken = inject('sessionToken')
+        return {
+            userId,
+            sessionToken
+        };
     },
     data() {
         return {
@@ -109,7 +122,7 @@ export default {
                 id: this.$route.query.quizId
             },
             quizzesMessage: '',
-            questionNumber: 0,
+            questionNumber: -1,
             globalColors: globalColors,
             userAnswers: [],
             score: 0,
@@ -118,7 +131,8 @@ export default {
             alert: {
                 body: '',
                 title: ''
-            }
+            },
+            loading: false
         }
     },
     components: {
@@ -165,6 +179,8 @@ export default {
                 userId: this.userId,
                 quizId: this.quiz.id,
                 score: this.score
+            }, {
+                headers: {'Authorization': `Bearer ${this.sessionToken}`}
             })
                 .then((res) => {
                     if (res.status === 200 || res.status === 304) {
@@ -172,8 +188,13 @@ export default {
                     }
                 })
                 .catch((err) => {
-                    console.error(err);
-                    this.quizzesMessage = "error";
+                    if (err.response.status === 401) {
+                        console.error("Not authentified, cannot save score")
+                        this.quizzesMessage = "Not logged in";
+                    } else {
+                        console.error(err);
+                        this.quizzesMessage = "error";
+                    }
                 })
         },
         finishQuiz() {
@@ -196,9 +217,12 @@ export default {
     },
     mounted() {
         const getQuiz = async () => {
+            this.loading = true;
             try {
                 let quizId = this.$route.query.quizId;
-                let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`);
+                let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`, {
+                    headers: {'Authorization': `Bearer ${this.sessionToken}`}
+                });
                 if (res.status === 200 || res.status === 304) {
                     this.quiz = res.data[0];
                     if (!(this.quiz.content instanceof Array)) {
@@ -209,7 +233,9 @@ export default {
                 this.initAnswers()
             } catch (err) {
                 console.log(err)
-                if (err.response.status === 404) {
+                if (err.response.status === 401) {
+                    this.quizzesMessage = "Oops... Unauthorized to fetch quiz"
+                } else if (err.response.status === 404) {
                     this.quizzesMessage = "Oops... The quiz could not be found... ";
                 } else if (err.response.status === 500) {
                     this.quizzesMessage = "Oops... The server is currently unavalable...";
@@ -219,8 +245,29 @@ export default {
                     this.quizzesMessage = "Oops... The quizzes could not be loaded... ";
                 }
             }
+            this.loading = false;
+            this.questionNumber = 0
         };
         getQuiz();
+
+        this.$watch('questionNumber', (newVal) => {
+            if (newVal !== this.quiz.content.length) {
+                if (this.quiz.content[newVal].picture) {
+                    this.loading = true
+                    const img = new Image();
+                    img.src = this.quiz.content[newVal].picture;
+                    img.alt = this.quiz.content[newVal].picture;
+                    img.style = "max-width: 450px; max-height: 450px;"
+                    img
+                        .decode()
+                        .then(() => {
+                            document.getElementById('img').replaceChildren(img);
+                        })
+                        .catch(encodingError => console.error(encodingError));
+                    this.loading = false
+                }
+            }
+        })
     }
 }
 </script>
@@ -266,10 +313,7 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.questionQuiz > img {
-    max-width: 450px;
-    max-height: 450px;
-}
+
 .answers {
     margin: 10px;
     display: grid;

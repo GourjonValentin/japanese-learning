@@ -125,6 +125,7 @@ import router from '@/router';
 import {inject} from 'vue'; // to access user variable
 import {globalColors} from '../utils/GlobalVariable';
 import axios from 'axios';
+import {checkAuth} from "@/utils/utils";
 
 export default {
     setup() {
@@ -177,6 +178,13 @@ export default {
     mounted() {
         this.getAllquizzes();
         this.getAllUsers()
+        checkAuth(this.sessionToken).then(res => {
+            if (!res.data.data.isAdmin) {
+                this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/settings/admin'}});
+            }
+        }).catch(() => {
+            this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/settings/admin'}});
+        })
     },
     methods: {
         async getAllUsers() {
@@ -245,7 +253,7 @@ export default {
             router.push({path: '/quiz', query: {quizId: quiz.id}});
         },
         editQuiz(quizId) {
-            this.$router.push({path: '/edit', query: {quizId: quizId}});
+            this.$router.push({path: '/quiz/edit', query: {quizId: quizId}});
         },
         toggleUsernameEdit() {
             this.isEditingUsername = !this.isEditingUsername;
@@ -269,7 +277,7 @@ export default {
                     }
                 })
                 .catch((err) => {
-                    if(err.status === 404){
+                    if (err.status === 404){
                         this.quizzesMessage = "No quizzes found...";
                         this.quizzes = [];
                     }
@@ -334,14 +342,14 @@ export default {
                 this.setIsAdmin(this.isAdmin ? 0 : 1);
                 this.getAllUsers()
             } catch (err) {
-                if (err.status === 400) {
+                if (err.response.status === 400) {
                     console.error('Invalid user format');
-                } else if (err.status === 401) {
+                } else if (err.response.status === 401) {
                     console.error('Invalid Token');
-                } else if (err.status === 403) {
+                } else if (err.response.status === 403) {
                     console.error('Access Forbidden, must be admin to access');
                     this.$router.push({path: '/auth', query: {form: 'login/signup'}});
-                } else if (err.status === 404) {
+                } else if (err.response.status === 404) {
                     console.log('No result found for given user');
                 }
             }
@@ -354,15 +362,15 @@ export default {
                 });
                 this.getAllUsers();
             } catch (err) {
-                if (err.status === 400) {
+                if (err.response.status === 400) {
                     console.error("Invalid User Format");
-                } else if (err.status === 401) {
+                } else if (err.response.status === 401) {
                     console.error("Invalid or no Token");
-                } else if (err.status === 403) {
+                } else if (err.response.status === 403) {
                     console.error("Access Forbidden, not permitted to delete this user");
-                } else if (err.status === 404) {
+                } else if (err.response.status === 404) {
                     console.error("User not found");
-                } else if (err.status === 500) {
+                } else if (err.response.status === 500) {
                     console.error("Internal Server Error : " + err);
                 }
             }

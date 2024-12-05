@@ -228,6 +228,7 @@
     import axios from 'axios';
     import { globalColors } from '@/utils/GlobalVariable';
     import { inject } from 'vue';
+    import {checkAuth} from "@/utils/utils";
 
     export default {
         setup(){
@@ -471,7 +472,9 @@
             const getQuiz = async () => {
                 try {
                     let quizId = this.$route.query.quizId;
-                    let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`);
+                    let res = await axios.get(`http://localhost:3000/quizzes/${quizId}`, {
+                        headers: {'Authorization': `Bearer ${this.sessionToken}`}
+                    });
 
                     if (res.status === 200 || res.status === 304) {
                         this.quiz = res.data[0];
@@ -481,7 +484,9 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    if (err.response.status === 404) {
+                    if (err.response.status === 401) {
+                        this.quizzesMessage = "Oops... Unauthorized to fetch quiz"
+                    } else if (err.response.status === 404) {
                         this.quizzesMessage = "Oops... The quiz could not be found... ";
                     } else if (err.response.status === 500) {
                         this.quizzesMessage = "Oops... The server is currently unavalable...";
@@ -504,6 +509,14 @@
                     console.error(err);
                 }
             )
+
+            checkAuth(this.sessionToken).then(res => {
+                if (!res.data.data.ownerId == this.quiz.id) {
+                    this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz'}});
+                }
+            }).catch(() => {
+                this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz'}});
+            })
         }
     }
 </script>

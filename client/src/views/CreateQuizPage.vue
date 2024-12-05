@@ -101,9 +101,10 @@
 </template>
 
 <script>
-import { inject } from "vue";
+import {inject} from "vue";
 import axios from "axios";
 import {globalColors} from "@/utils/GlobalVariable";
+import { checkAuth } from "@/utils/utils"
 
 
 
@@ -295,7 +296,21 @@ export default {
             return true
         },
         async createQuiz(questions) {
-            await axios.post('http://localhost:3000/quizzes/create', { quizName: this.quizName, quizDifficulty: this.quizDifficulty, quizType: this.quizType, quizQuestions: JSON.stringify(questions), ownerId: this.userId })
+            let quizData = {
+                quizName: this.quizName,
+                quizDifficulty: this.quizDifficulty,
+                quizType: this.quizType,
+                quizQuestions: JSON.stringify(questions),
+                ownerId: this.userId
+            }
+            await this.pushQuiz(quizData)
+        },
+        async pushQuiz(quizData) {
+            await axios.post('http://localhost:3000/quizzes/create',
+                quizData,
+                {
+                    headers: { 'Authorization': `Bearer ${this.sessionToken}`}
+                })
                 .then(response => {
                     if (response.status === 201) {
                         this.alert.title = "Success!"
@@ -307,9 +322,44 @@ export default {
                         throw new Error('Status server error');
                     }
                 }).catch(error => {
-                    console.error('There was an error!', error);
+                    if (error.response.status === 401) {
+                        console.error("Not logged in, cannot push quiz")
+                        localStorage.setItem('quizCreation', JSON.stringify({
+                            quizData: JSON.stringify(quizData),
+                            timestamp: Date.now()
+                        }))
+                        this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz/create'}});
+                    } else {
+                        console.error('There was an error!', error);
+                    }
                 });
+        },
+        async pushOldQuiz() {
+            let oldQuiz = localStorage.getItem('quizCreation');
+            if (oldQuiz) {
+                oldQuiz = JSON.parse(oldQuiz);
+                let expiryTime = 600000;
+                if (Date.now() > oldQuiz.timestamp + expiryTime) {
+                    localStorage.removeItem('quizCreation')
+                } else {
+                    let quizData = JSON.parse(oldQuiz.quizData);
+                    if (quizData.ownerId != this.userId) {
+                        localStorage.removeItem('quizCreation')
+                        return
+                    }
+                    await this.pushQuiz(quizData);
+                    localStorage.removeItem('quizCreation')
+                }
+            } else {
+                localStorage.removeItem('quizCreation')
+            }
         }
+    },
+    mounted() {
+        this.pushOldQuiz()
+        checkAuth(this.sessionToken).catch(() => {
+            this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz/create'}});
+        })
     }
 };
 

@@ -1,3 +1,4 @@
+import axios from "axios";
 
 
 export function parseTranslation(jishoResponse) {
@@ -15,6 +16,12 @@ export function parseTranslation(jishoResponse) {
         });
         return { id, japanese, english };
     });
+}
+
+export async function checkAuth(sessionToken) {
+    return await axios.get('http://localhost:3000/auth/check', {
+        headers: {'Authorization': `Bearer ${sessionToken}`}
+    })
 }
 
 export default parseTranslation;
