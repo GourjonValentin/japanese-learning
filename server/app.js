@@ -233,7 +233,7 @@ app.get('/quizzes', async (req, res) => {
         if (type) {
             results = results.filter(quiz => quiz.type === type);
         }
-        if (favourites) {
+        if (favourites && favourites !== "null") {
             results = results.filter(quiz => favourites.includes(quiz.id) || favourites.includes(quiz.id.toString()));
         }
         if (name) {
@@ -268,37 +268,6 @@ app.get('/quizzes', async (req, res) => {
     }
 });
 
-app.get('/quizzes/:quizId', async (req, res) => {
-    if (req.headers['authorization']) {
-        let token = req.headers['authorization'].split(' ')[1];
-        if (token === undefined) {
-            return res.sendStatus(401);
-        }
-        let resVerifyToken = verifyToken(token, secretKey);
-        if (resVerifyToken.status === 200) {
-            try {
-                const {quizId} = req.params;
-                if (quizId === undefined) {
-                    return res.status(400).json({message: "Invalid format"});
-                }
-                let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
-                if (result.length === 0) {
-                    return res.status(404).json({message: "Quiz not found"});
-                }
-                res.status(200).json(result);
-            } catch (error) {
-                console.error('Error fetching quizzes:', error);
-                res.status(500).json({error: 'Error fetching quizzes'});
-            }
-        } else {
-            res.sendStatus(401)
-        }
-    } else {
-        res.sendStatus(401);
-    }
-});
-// SEARCH
-
 app.get('/quizzes/attempts', async (req, res) => {
     try {
         const { userId } = req.query;
@@ -308,7 +277,17 @@ app.get('/quizzes/attempts', async (req, res) => {
             return res.status(404).json({ message: "No quizzes found" });
         }
 
-        return res.status(200).json(results);
+        return res.status(200).json(results.map(quiz => {
+            return {
+                id: quiz.id,
+                name: quiz.name,
+                type: quiz.type,
+                ownerid: quiz.ownerid,
+                difficultylevel: quiz.difficultylevel,
+                score: quiz.score,
+                length: JSON.parse(quiz.content).length
+            }
+        }));
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
@@ -316,7 +295,6 @@ app.get('/quizzes/attempts', async (req, res) => {
 
 })
 
-// url below is unclear .... can be renamed ???
 app.post('/quizzes/create', async (req, res) => {
     const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
     try {
@@ -427,7 +405,56 @@ app.get('/quizzes/is-owner', async (req, res) => {
     }
 });
 
+app.get('/quizzes/:quizId', async (req, res) => {
+    if (req.headers['authorization']) {
+        let token = req.headers['authorization'].split(' ')[1];
+        if (token === undefined) {
+            return res.sendStatus(401);
+        }
+        let resVerifyToken = verifyToken(token, secretKey);
+        if (resVerifyToken.status === 200) {
+            try {
+                const {quizId} = req.params;
+                if (quizId === undefined) {
+                    return res.status(400).json({message: "Invalid format"});
+                }
+                let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
+                if (result.length === 0) {
+                    return res.status(404).json({message: "Quiz not found"});
+                }
+                res.status(200).json(result);
+            } catch (error) {
+                console.error('Error fetching quizzes:', error);
+                res.status(500).json({error: 'Error fetching quizzes'});
+            }
+        } else {
+            res.sendStatus(401)
+        }
+    } else {
+        res.sendStatus(401);
+    }
+});
+
 // QUIZZES
+app.post('/scores/save', async (req, res) => {
+    const { userId, quizId, score } = req.body;
+    try {
+        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
+        if (results.length === 0) {
+            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
+            res.status(201).json({ message: 'Score saved successfully.' });
+        } else {
+            if (results[0].score < score) {
+                await query('UPDATE scores SET score = ? WHERE id = ?', [score, results[0].id]);
+            }
+            res.status(200).json({ message: 'Score updated successfully.' });
+        }
+    } catch (error) {
+        console.error('Error saving score:', error);
+        res.status(500).json({ error: 'An error occurred while saving the score.' });
+    }
+});
+
 app.get('/scores/:quizId', async (req, res) => {
     const { quizId } = req.params;
     try {
@@ -445,25 +472,6 @@ app.get('/scores/:quizId', async (req, res) => {
         return res.status(200).json(results);
     } catch (err) {
         res.status(500).json("err : " + err)
-    }
-});
-
-app.post('/scores/save', async (req, res) => {
-    const { userId, quizId, score } = req.body;
-    try {
-        let results = await query('SELECT * FROM scores WHERE userid = ? AND quizid = ?', [userId, quizId]);
-        if (results.length === 0) {
-            await query('INSERT INTO scores (userid, quizid, score) VALUES (?, ?, ?)', [userId, quizId, score]);
-            res.status(201).json({ message: 'Score saved successfully.' });
-        } else {
-            if (results[0].score < score) {
-                await query('UPDATE scores SET score = ? WHERE id = ?', [score, results[0].id]);
-            }
-            res.status(200).json({ message: 'Score updated successfully.' });
-        }
-    } catch (error) {
-        console.error('Error saving score:', error);
-        res.status(500).json({ error: 'An error occurred while saving the score.' });
     }
 });
 

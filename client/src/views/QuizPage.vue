@@ -38,7 +38,7 @@
         <div class="quizzes">
             <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                    <div class="favourites" @click="changeFavourites(quiz.id)">
+                    <div class="favourites" @click="changeFavourites(quiz.id) ">
                         <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favourites.indexOf(quiz.id) === -1)"/>
                         <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                     </div>
@@ -107,7 +107,7 @@
                 quizzes : [],
                 quizzesMessage: "",
                 searchFilterType: "",
-                searchFilterFavourites: 0,
+                searchFilterFavourites: false,
                 searchFilterDifficulty: "Difficulty",
                 isAttemptingQuiz: false,
             };
@@ -133,7 +133,7 @@
                     { params : {
                         difficulty : this.searchFilterDifficulty,
                         type: (this.searchFilterType === '' ? null : this.searchFilterType),
-                        favourites : JSON.stringify(this.searchFilterFavourites) ? this.favourites : [],
+                        favourites : JSON.stringify(this.searchFilterFavourites ? this.favourites : null),
                         name: this.searchName
                     }}
                 )

@@ -73,7 +73,7 @@
                                 <img src="@/assets/icons/torii.png"/>
                             </div>
                         </div>
-                        <p>Best score : {{ quiz.score }} / {{ quiz.content.length }}</p>
+                        <p>Best score : {{ quiz.score }} / {{ quiz.length }}</p>
                     </div>
                     <p id="userQuizzesMessage">{{ userQuizzesMessage }}</p>
                 </div>
@@ -150,12 +150,19 @@
             }
         },
         mounted() {
-            const getUserQuizzes = async () => {
+
+
+            this.getUserQuizzes();
+            this.getUserFavQuizzes();
+        },
+        methods: {
+            async getUserQuizzes() {
                 try {
                     const res = await axios.get('http://localhost:3000/quizzes/attempts', {
                         params: {
                             userId: this.userId,
                         },
+                        headers: {'Authorization': `Bearer ${this.sessionToken}`}
                     });
                     if (res.status === 200){
                         this.userQuizzes = res.data;
@@ -174,13 +181,12 @@
                         this.userQuizzesMessage = "Oops... Something went wrong while fetching quizzes.";
                     }
                 }
-            };
-            const getUserFavQuizzes = async () => {
+            },
+            async getUserFavQuizzes () {
                 try {
                     const res = await axios.get('http://localhost:3000/quizzes', {
                         params: {
-                            userId: this.userId,
-                            favourites: this.favourites,
+                            favourites: this.favourites ? this.favourites : [],
                         },
                     });
                     if (res.status === 200){
@@ -188,7 +194,7 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    if (err.reponse) {
+                    if (err.response) {
                         if (err.response.status === 404){
                             this.userFavQuizzesMessage = err.response.data.message;
                         } else if (err.response.status === 500){
@@ -198,12 +204,7 @@
                         this.userFavQuizzesMessage = "Oops... Something went wrong while fetching quizzes.";
                     }
                 }
-            }
-
-            getUserQuizzes();
-            getUserFavQuizzes();
-        },
-        methods: {
+            },
             async updatePassword() {
                 if (this.password !== this.confirmPassword) {
                     this.updatePasswordMessage = "Passwords do not match.";
@@ -267,6 +268,7 @@
 
 
                     this.setFavourites(res.data.favourites);
+                    this.getUserFavQuizzes()
                 } catch (err){
                     console.error(err);
                 }
