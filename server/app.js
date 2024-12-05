@@ -296,7 +296,19 @@ app.get('/quizzes/attempts', async (req, res) => {
 })
 
 app.post('/quizzes/create', async (req, res) => {
+    let token;
+    if (req.headers['authorization']) {
+        token = req.headers['authorization'].split(' ')[1];
+    }
+    let loggedIn = !(token === undefined || token === null)
+    if (loggedIn) {
+        const { status, message, payload } = verifyToken(token, secretKey);
+        if (status !== 200) {
+            return res.sendStatus(401);
+        }
+    }
     const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
+    console.log(req.body);
     try {
         await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
         return res.sendStatus(201);
