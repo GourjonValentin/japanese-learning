@@ -125,6 +125,7 @@ import router from '@/router';
 import {inject} from 'vue'; // to access user variable
 import {globalColors} from '../utils/GlobalVariable';
 import axios from 'axios';
+import {checkAuth} from "@/utils/utils";
 
 export default {
     setup() {
@@ -177,6 +178,13 @@ export default {
     mounted() {
         this.getAllquizzes();
         this.getAllUsers()
+        checkAuth(this.sessionToken).then(res => {
+            if (!res.data.data.isAdmin) {
+                this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/settings/admin'}});
+            }
+        }).catch(() => {
+            this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/settings/admin'}});
+        })
     },
     methods: {
         async getAllUsers() {

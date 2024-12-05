@@ -228,6 +228,7 @@
     import axios from 'axios';
     import { globalColors } from '@/utils/GlobalVariable';
     import { inject } from 'vue';
+    import {checkAuth} from "@/utils/utils";
 
     export default {
         setup(){
@@ -508,6 +509,14 @@
                     console.error(err);
                 }
             )
+
+            checkAuth(this.sessionToken).then(res => {
+                if (!res.data.data.ownerId == this.quiz.id) {
+                    this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz'}});
+                }
+            }).catch(() => {
+                this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz'}});
+            })
         }
     }
 </script>

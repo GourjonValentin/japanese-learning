@@ -104,6 +104,7 @@
 import {inject} from "vue";
 import axios from "axios";
 import {globalColors} from "@/utils/GlobalVariable";
+import { checkAuth } from "@/utils/utils"
 
 
 
@@ -356,6 +357,9 @@ export default {
     },
     mounted() {
         this.pushOldQuiz()
+        checkAuth(this.sessionToken).catch(() => {
+            this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz/create'}});
+        })
     }
 };
 

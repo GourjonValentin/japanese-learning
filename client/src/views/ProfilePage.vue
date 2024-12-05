@@ -115,6 +115,7 @@
     import { inject } from 'vue';
     import { globalColors } from '../utils/GlobalVariable';
     import axios from 'axios';
+    import {checkAuth} from "@/utils/utils";
 
     export default {
         setup() {
@@ -150,10 +151,11 @@
             }
         },
         mounted() {
-
-
             this.getUserQuizzes();
             this.getUserFavQuizzes();
+            checkAuth(this.sessionToken).catch(() => {
+                this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/settings/profile'}});
+            })
         },
         methods: {
             async getUserQuizzes() {
