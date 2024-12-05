@@ -191,7 +191,7 @@
                             favorites: this.favorites ? this.favorites : [],
                         },
                     });
-                    if (res.status === 200){
+                    if (res.status === 200 || res.status === 206){
                         this.userFavQuizzes = res.data;
                     }
                 } catch (err) {

@@ -227,8 +227,8 @@ export default {
         async getAllquizzes() {
             try {
                 const res = await axios.get('http://localhost:3000/quizzes');
-                if (res.status === 200 || res.status === 304){
-                    this.quizzes = res.data; // ???
+                if (res.status === 200 || res.status === 206 ||  res.status === 304){
+                    this.quizzes = res.data;
                 }
             } catch (err) {
                 console.log("erre", err)
@@ -271,7 +271,7 @@ export default {
                     }}
             )
                 .then( res => {
-                    if (res.status === 200){
+                    if (res.status === 200 || res.status === 206){
                         this.quizzes = res.data;
                         this.quizzesMessage = "";
                     }

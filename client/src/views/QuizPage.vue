@@ -138,7 +138,7 @@
                     }}
                 )
                 .then( res => {
-                    if (res.status === 200){
+                    if (res.status === 200 || res.status === 206){
                         this.quizzes = res.data;
                         this.quizzesMessage = "";
                     }
