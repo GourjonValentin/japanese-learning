@@ -56,7 +56,7 @@
                 <div class="quizzes-profile-page">
                     <div class="quiz" v-for="quiz in userQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favorites" @click="changeFavourites(quiz.id)">
+                            <div class="favorites" @click="changeFavorites(quiz.id)">
                                 <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favorites.indexOf(quiz.id) === -1)"/>
                                 <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                             </div>
@@ -85,7 +85,7 @@
                 <div class="quizzes-profile-page">
                     <div class="quiz" v-for="quiz in userFavQuizzes" :key="quiz.id">
                         <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                            <div class="favorites" @click="changeFavourites(quiz.id)">
+                            <div class="favorites" @click="changeFavorites(quiz.id)">
                                 <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favorites.indexOf(quiz.id) === -1)"/>
                                 <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                             </div>
@@ -124,14 +124,14 @@
             const userId = inject('userId');
             const favorites = inject('favorites');
             const sessionToken = inject('sessionToken');
-            const setFavourites = inject('setFavourites');
+            const setFavorites = inject('setFavorites');
             return {
                 username,
                 avatarPath,
                 userId,
                 favorites,
                 sessionToken,
-                setFavourites,
+                setFavorites,
             };
         },
         data() {
@@ -248,7 +248,7 @@
             editQuiz(quizId){
                 this.$router.push({path:'/quiz/edit', query : {quizId: quizId}});
             },
-            async changeFavourites(quizId){
+            async changeFavorites(quizId){
                 let mode = 'add';
                 if (this.favorites.includes(quizId)){
                     mode = 'delete';
@@ -271,7 +271,7 @@
                         });
 
 
-                    this.setFavourites(res.data.favorites);
+                    this.setFavorites(res.data.favorites);
                     this.getUserFavQuizzes()
                 } catch (err){
                     console.error(err);

@@ -33,12 +33,11 @@ import {ref, provide, watch} from 'vue';
             };
         },
         setup() {
-            // Creation of a reactive variables => (allows child to change it)
             let userId = ref('');
             let username = ref('');
             let sessionToken = ref('');
             let favorites = ref([]);
-            let isAdmin = ref(''); // 0?
+            let isAdmin = ref('');
             let avatarPath = ref('');
 
             provide('userId', userId);
@@ -60,8 +59,8 @@ import {ref, provide, watch} from 'vue';
                 sessionToken.value = newSessionToken;
             };
 
-            const setFavourites = (newFavourites) => {
-                favorites.value = newFavourites;
+            const setFavorites = (newFavorites) => {
+                favorites.value = newFavorites;
             };
 
             const setIsAdmin = (newIsAdmin) => {
@@ -86,7 +85,7 @@ import {ref, provide, watch} from 'vue';
                             setSessionToken(response.data.sessionToken);
                             localStorage.setItem('sessionToken', response.data.sessionToken);
                             setUserId(response.data.userId);
-                            setFavourites(response.data.favorites);
+                            setFavorites(response.data.favorites);
                             setIsAdmin(response.data.isAdmin);
                             setAvatarPath(response.data.avatarPath);
                             return { success: true, message: ""};
@@ -102,15 +101,13 @@ import {ref, provide, watch} from 'vue';
                         }
                     });
             }
-
             provide('setUserId', setUserId);
             provide('setUsername', setUsername);
             provide('setSessionToken', setSessionToken);
-            provide('setFavourites', setFavourites);
+            provide('setFavorites', setFavorites);
             provide('setIsAdmin', setIsAdmin);
             provide('setAvatarPath', setAvatarPath);
             provide('loginUser', loginUser);
-
             const resetUser = () => {
                 userId.value = '';
                 username.value = '';
@@ -124,30 +121,24 @@ import {ref, provide, watch} from 'vue';
                 if (newSessionToken) {
                     localStorage.setItem('sessionToken', newSessionToken);
                     console.log("newSessionToken changed to", newSessionToken);
-
                 } else {
                     localStorage.removeItem('sessionToken');
                 }
             });
-
-            watch(favorites, (newFavourites) => {
-                if (newFavourites) {
-                    console.log("newFavourites changed to", newFavourites);
+            watch(favorites, (newFavorites) => {
+                if (newFavorites) {
+                    console.log("newFavorites changed to", newFavorites);
                 }
             }, {deep: true});
-
             watch(avatarPath, (newAvatar) => {
                 if (newAvatar) {
                     console.log("avatarPath changed to", newAvatar);
                 }
             });
-
-
-            // return necessary ????
             return {
                 setSessionToken,
                 setUsername,
-                setFavourites,
+                setFavorites,
                 setAvatarPath,
                 setIsAdmin,
                 setUserId,
@@ -158,28 +149,21 @@ import {ref, provide, watch} from 'vue';
             async checkUser() {
                 const sessionToken = localStorage.getItem('sessionToken');
                 if (sessionToken) {
-                    // Check if the session token is still valid
                     try {
                         const response = await axios.get('http://localhost:3000/auth/check', {
                             headers : {'Authorization' : `Bearer ${sessionToken}`}
                         }).catch(error => {
                             if (error.status === 401) {
-                                console.log('Invalid token');
+                                console.error('Invalid token');
                             }
                         });
-                        console.log('checked user token : response = ')
-                        console.log(response)
                         if (response && response.data && response.status === 200) {
-                            // The session token is still valid
                             this.setSessionToken(sessionToken);
                             this.setUsername(response.data.data.username);
                             this.setAvatarPath(response.data.data.avatarPath);
                             this.setUserId(response.data.data.id);
-                            this.setFavourites(response.data.data.favorites);
+                            this.setFavorites(response.data.data.favorites);
                             this.setIsAdmin(response.data.data.isAdmin)
-                            console.log('Changing data (logging user)')
-
-
                         }
                     } catch (error) {
                         console.error('There was an error!', error);

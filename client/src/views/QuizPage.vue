@@ -19,10 +19,10 @@
                     Anime Quiz
                 </div>
                 <div class="filter" v-if="this.userId"
-                    @click="() => {this.searchFilterFavourites = !(this.searchFilterFavourites)}"
-                    :class="{active: this.searchFilterFavourites}"
+                    @click="() => {this.searchFilterFavorites = !(this.searchFilterFavorites)}"
+                    :class="{active: this.searchFilterFavorites}"
                 >
-                    Favourites
+                    Favorites
                 </div>
                 <div>
                     <select class="styledSelectInput" v-model="searchFilterDifficulty">
@@ -38,7 +38,7 @@
         <div class="quizzes">
             <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                 <div class="quiz-header" v-if="this.userId !== '' || this.sessionToken !== ''">
-                    <div class="favorites" @click="changeFavourites(quiz.id) ">
+                    <div class="favorites" @click="changeFavorites(quiz.id) ">
                         <img class="logo" src="@/assets/icons/heart-unfilled.png" v-if="(favorites.indexOf(quiz.id) === -1)"/>
                         <img class="logo" src="@/assets/icons/heart-filled.png" v-else/>
                     </div>
@@ -97,8 +97,8 @@
             const favorites = inject('favorites');
             const sessionToken = inject('sessionToken');
             const userId = inject('userId');
-            const setFavourites = inject('setFavourites');
-            return { favorites, sessionToken, userId, setFavourites };
+            const setFavorites = inject('setFavorites');
+            return { favorites, sessionToken, userId, setFavorites };
         },
         data() {
             return {
@@ -107,7 +107,7 @@
                 quizzes : [],
                 quizzesMessage: "",
                 searchFilterType: "",
-                searchFilterFavourites: false,
+                searchFilterFavorites: false,
                 searchFilterDifficulty: "Difficulty",
                 isAttemptingQuiz: false,
             };
@@ -133,7 +133,7 @@
                     { params : {
                         difficulty : this.searchFilterDifficulty,
                         type: (this.searchFilterType === '' ? null : this.searchFilterType),
-                        favorites : JSON.stringify(this.searchFilterFavourites ? this.favorites : null),
+                        favorites : JSON.stringify(this.searchFilterFavorites ? this.favorites : null),
                         name: this.searchName
                     }}
                 )
@@ -161,7 +161,7 @@
                     this.isAttemptingQuiz = true;
                 }
             },
-            async changeFavourites(quizId){
+            async changeFavorites(quizId){
                 let mode = 'add';
                 if (this.favorites.includes(quizId)){
                     mode = 'delete';
@@ -184,7 +184,7 @@
                         });
 
 
-                    this.setFavourites(res.data.favorites);
+                    this.setFavorites(res.data.favorites);
                 } catch (err){
                     console.error("err", err);
                 }

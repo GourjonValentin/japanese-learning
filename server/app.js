@@ -240,7 +240,6 @@ app.get('/quizzes', async (req, res) => {
             results = results.filter(quiz => quiz.name.toLowerCase().includes(name.toLowerCase()));
         }
         if (results.length === 0) {
-            console.log(results);
             return res.status(404).json({ message: "No quizzes found" });
         }
         results = await Promise.all(
@@ -308,12 +307,11 @@ app.post('/quizzes/create', async (req, res) => {
         }
     }
     const { quizName, quizDifficulty, quizType, quizQuestions, ownerId } = req.body;
-    console.log(req.body);
     try {
         await query('INSERT INTO quiz(name, type, difficultylevel, content, ownerid) VALUES (?, ?, ?, ?, ?)', [quizName, quizType, quizDifficulty, quizQuestions, ownerId]);
         return res.sendStatus(201);
     } catch (err) {
-        console.log(err)
+        console.error(err);
         res.status(500).send({ error: err });
     }
 
@@ -426,18 +424,18 @@ app.get('/quizzes/:quizId', async (req, res) => {
         let resVerifyToken = verifyToken(token, secretKey);
         if (resVerifyToken.status === 200) {
             try {
-                const {quizId} = req.params;
+                const { quizId } = req.params;
                 if (quizId === undefined) {
-                    return res.status(400).json({message: "Invalid format"});
+                    return res.status(400).json({ message: "Invalid format" });
                 }
                 let result = await query('SELECT * FROM quiz WHERE quiz.id=?', [quizId]);
                 if (result.length === 0) {
-                    return res.status(404).json({message: "Quiz not found"});
+                    return res.status(404).json({ message: "Quiz not found" });
                 }
                 res.status(200).json(result);
             } catch (error) {
                 console.error('Error fetching quizzes:', error);
-                res.status(500).json({error: 'Error fetching quizzes'});
+                res.status(500).json({ error: 'Error fetching quizzes' });
             }
         } else {
             res.sendStatus(401)
@@ -578,21 +576,21 @@ app.post('/users/change-username', async (req, res) => {
         let resVerifyToken = verifyToken(token, secretKey);
         if (resVerifyToken.status === 200 && req.body.userId == resVerifyToken.payload.id) {
 
-            const {userId, newUsername} = req.body;
+            const { userId, newUsername } = req.body;
 
             try {
                 const existingUser = await query('SELECT * FROM users WHERE username = ?', [newUsername]);
 
                 if (existingUser.length > 0) {
-                    return res.status(409).json({message: "This username is already taken."});
+                    return res.status(409).json({ message: "This username is already taken." });
                 }
 
                 await query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
 
-                res.status(200).json({message: 'Username updated successfully!'});
+                res.status(200).json({ message: 'Username updated successfully!' });
             } catch (error) {
                 console.error('Error updating username:', error);
-                res.status(500).json({message: 'An error occurred while updating the username.'});
+                res.status(500).json({ message: 'An error occurred while updating the username.' });
             }
         } else {
             res.sendStatus(403);
@@ -610,8 +608,6 @@ app.delete('/users/delete', async (req, res) => {
             return res.sendStatus(401);
         }
         let resVerifyToken = verifyToken(token, secretKey);
-        console.log("resr", resVerifyToken);
-
         if (resVerifyToken.status === 200) {
             if (userId === undefined) {
                 return res.status(400).json({ message: "Invalid format" });
@@ -645,15 +641,15 @@ app.post('/users/edit-favorite', async (req, res) => {
         let resVerifyToken = verifyToken(token, secretKey);
         if (resVerifyToken.status === 200 && req.body.userId == resVerifyToken.payload.id) {
             try {
-                const {mode, quizId, userId, sessionToken} = req.body;
+                const { mode, quizId, userId, sessionToken } = req.body;
 
-                const {payload} = verifyToken(sessionToken, secretKey);
+                const { payload } = verifyToken(sessionToken, secretKey);
                 if (payload.id !== userId) {
-                    return res.status(403).json({message: "your are not this user owner"});
+                    return res.status(403).json({ message: "your are not this user owner" });
                 }
                 let user = await query('SELECT * FROM users WHERE id=?', [userId]);
                 if (user === undefined) {
-                    return res.status(404).json({message: 'user not found'});
+                    return res.status(404).json({ message: 'user not found' });
                 }
                 user = user[0];
                 let newFavorites = user.favorites;
@@ -669,17 +665,17 @@ app.post('/users/edit-favorite', async (req, res) => {
                     })
                 } else if (mode === 'add') {
                     if (newFavorites.includes(quizId)) {
-                        return res.status(409).json({message: "quiz already in the user favorite quiz"})
+                        return res.status(409).json({ message: "quiz already in the user favorite quiz" })
                     }
                     newFavorites.push(quizId);
                 }
                 const result = await query('UPDATE users SET favorites=? WHERE id=?', [JSON.stringify(newFavorites), userId]);
                 if (result) {
-                    return res.status(200).json({favorites: newFavorites});
+                    return res.status(200).json({ favorites: newFavorites });
                 }
             } catch (err) {
                 console.error("Error: ", err.message);
-                return res.status(500).json({message: "Server error", error: err.message});
+                return res.status(500).json({ message: "Server error", error: err.message });
             }
         } else {
             return res.sendStatus(403);

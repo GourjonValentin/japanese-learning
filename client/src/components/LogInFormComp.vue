@@ -16,7 +16,7 @@
             const setUsername = inject('setUsername');
             const setSessionToken = inject('setSessionToken');
             const setUserId = inject('setUserId');
-            const setFavourites = inject('setFavourites');
+            const setFavorites = inject('setFavorites');
             const setIsAdmin = inject('setIsAdmin');
             const loginUser = inject('loginUser');
 
@@ -24,7 +24,7 @@
                 setUsername,
                 setSessionToken,
                 setUserId,
-                setFavourites,
+                setFavorites,
                 setIsAdmin,
                 loginUser,
             };

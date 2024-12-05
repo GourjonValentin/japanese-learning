@@ -232,7 +232,7 @@ export default {
                 }
                 this.initAnswers()
             } catch (err) {
-                console.log(err)
+                console.error(err);
                 if (err.response.status === 401) {
                     this.quizzesMessage = "Oops... Unauthorized to fetch quiz"
                 } else if (err.response.status === 404) {
