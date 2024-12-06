@@ -449,8 +449,6 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-}
-.side-bar a {
     text-decoration: none;
     color: v-bind("globalColors.darkColor");
 }
@@ -527,5 +525,31 @@ export default {
 .checkmark-icon {
     width: 30px;
     height: 30px;
+}
+
+@media (max-width: 768px) {
+    .render {
+        flex-direction: column;
+    }
+
+    .side-bar {
+        border: none;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .side-bar a {
+        align-items: center;
+    }
+
+    .back-arrow {
+        width: 55px;
+        height: 40%;
+    }
+
+    .leaderboard {
+        min-height: auto;
+    }
 }
 </style>
