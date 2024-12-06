@@ -71,7 +71,7 @@
                         <div class="filter" @click="toggleQuizFilterType('simple')"
                              :class="{active: this.searchFilterType === 'simple'}"
                         >
-                            Simple Quiz
+                            Normal Quiz
                         </div>
                         <div class="filter" @click="toggleQuizFilterType('anime')"
                              :class="{active: this.searchFilterType === 'anime'}"
@@ -112,7 +112,7 @@
                                 <img src="@/assets/icons/torii.png"/>
                             </div>
                         </div>
-                        <p>Owner : {{ quiz.ownername }}</p>
+                        <p>Creator : {{ quiz.ownername }}</p>
                     </div>
                 </div>
             </div>
@@ -294,25 +294,32 @@ export default {
             }
         },
         async deleteQuiz(quiz){
-            if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){
-                try {
-                    let res = await axios.delete('http://localhost:3000/quizzes/delete',{
-                        params : {'quizId' : quiz.id},
-                        headers: {'Authorization': `Bearer ${this.sessionToken}`}
-                    });
-                    if (res.status === 200){
-                        this.quizzes = res.data;
-                    } else {
-                        this.alert.header = "Oops...";
-                        this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
-                        this.isAlert = true;
+            this.confirmation.title = "Caution";
+            this.confirmation.body = `You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`;
+            this.isConfirmation = true;
+            const unwatchConfirmation = this.$watch(
+                    () => this.confirmation.result,
+                    async (newVal) => {
+                        if (newVal === true){
+                            try {
+                                let res = await axios.delete('http://localhost:3000/quizzes/delete',{
+                                    params : {'quizId' : quiz.id},
+                                    headers: {'Authorization': `Bearer ${this.sessionToken}`}
+                                });
+                                if (res.status === 200){
+                                    this.quizzes = res.data;
+                                } else {
+                                    this.alert.header = "Oops...";
+                                    this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
+                                    this.isAlert = true;
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                        unwatchConfirmation();
                     }
-                } catch (err) {
-                    console.error(err);
-                }
-            } else {
-                return;
-            }
+                );
         },
         async toggleAdmin(user) {
             try {
