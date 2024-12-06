@@ -168,7 +168,7 @@
                     <div class="title-settings">
                         <h2>Favorite quizzes</h2>
                     </div>
-                    <div :class="['arrow-down', { visible: visibleSections.history }]">
+                    <div :class="['arrow-down', { visible: visibleSections.favorites }]">
                         <img
                             src="@/assets/icons/down-arrow.png"
                             alt="Arrow"
