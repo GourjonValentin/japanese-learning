@@ -67,10 +67,19 @@
         </div>
         <div class="admin-content">
             <div id="user-admin">
-                <div class="admin-title">
-                    <h2>Users Management</h2>
+                <div class="arrow-admin-title" @click="toggleSection('users')">
+                    <div class="admin-title">
+                        <h1>Users Management</h1>
+                    </div>
+                    <div :class="['arrow-down', { visible: visibleSections.users }]">
+                        <img
+                            src="@/assets/icons/down-arrow.png"
+                            alt="Arrow"
+                        />
+                    </div>
                 </div>
-                <div class="users">
+
+                <div :class="['users', { visible: visibleSections.users }]">
                     <div
                         class="styledDiv-pretty"
                         v-for="user in users"
@@ -103,16 +112,24 @@
                 </div>
             </div>
             <div id="quiz-admin">
-                <div class="admin-title">
-                    <h2>Quizzes Management</h2>
+                <div class="arrow-admin-title" @click="toggleSection('quizzes')">
+                    <div class="admin-title">
+                        <h1>Quizzes Management</h1>
+                    </div>
+                    <div :class="['arrow-down', { visible: visibleSections.quizzes }]">
+                        <img
+                            src="@/assets/icons/down-arrow.png"
+                            alt="Arrow"
+                        />
+                    </div>
                 </div>
-                <div class="search">
+                <div :class="['search', { visible: visibleSections.quizzes }]">
                     <form
                         class="search-form"
                         @submit.prevent="handleSearchSubmit()"
                     >
                         <img
-                            src="../assets/icons/search-logo.png"
+                            src="@/assets/icons/search-logo.png"
                             alt="search_logo.png"
                         />
                         <input
@@ -162,7 +179,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="quizzes-admin-page">
+                <div :class="['quizzes-admin-page', { visible: visibleSections.quizzes }]">
                     <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                         <div
                             class="quiz-header"
@@ -241,14 +258,7 @@ export default {
     data() {
         return {
             globalColors: globalColors,
-            currentPassword: "",
-            password: "",
-            confirmPassword: "",
-            updatePasswordMessage: "",
             quizzes: [],
-            newUsername: "",
-            updateUsernameMessage: "",
-            isEditingUsername: false,
             searchFilterType: "",
             searchFilterDifficulty: "all",
             users: [],
@@ -262,6 +272,10 @@ export default {
                 body: "",
                 title: "",
                 result: null,
+            },
+            visibleSections: {
+                users: false,
+                quizzes: false,
             },
         };
     },
@@ -290,6 +304,9 @@ export default {
                 });
             });
     },
+    beforeUnmount() {
+        window.removeEventListener("resize", this.handleResize);
+    },
     methods: {
         async getAllUsers() {
             try {
@@ -301,40 +318,6 @@ export default {
                 }
             } catch (err) {
                 console.error(err);
-            }
-        },
-        async updatePassword() {
-            if (this.password !== this.confirmPassword) {
-                this.updatePasswordMessage = "Passwords do not match.";
-                return;
-            }
-
-            try {
-                const response = await axios.post(
-                    "http://localhost:3000/users/change-password",
-                    {
-                        userId: this.userId,
-                        currentPassword: this.currentPassword,
-                        newPassword: this.password,
-                    }
-                );
-
-                if (response.status === 200) {
-                    this.updatePasswordMessage = response.data.message;
-                }
-            } catch (error) {
-                if (error.response) {
-                    if (Array.isArray(error.response.data.message)) {
-                        this.updatePasswordMessage =
-                            error.response.data.message.join("\n");
-                    } else {
-                        this.updatePasswordMessage =
-                            error.response.data.message;
-                    }
-                } else {
-                    this.updatePasswordMessage =
-                        "An error occurred during signup.";
-                }
             }
         },
         async getAllquizzes() {
@@ -376,12 +359,6 @@ export default {
                 path: "/quiz/edit",
                 query: { quizId: quizId },
             });
-        },
-        toggleUsernameEdit() {
-            this.isEditingUsername = !this.isEditingUsername;
-            if (this.isEditingUsername) {
-                this.newUsername = this.username;
-            }
         },
         async handleSearchSubmit() {
             await axios
@@ -526,6 +503,9 @@ export default {
                 }
             }
         },
+        toggleSection(section) {
+            this.visibleSections[section] = !this.visibleSections[section];
+        },
     },
 };
 </script>
@@ -576,10 +556,8 @@ export default {
     flex-direction: column;
 }
 
-.admin-content h2 {
-    font-size: 40px;
+.admin-content h1 {
     margin: 20px 0;
-    color: v-bind("globalColors.darkColor");
 }
 
 .dialog-body button {
@@ -597,43 +575,32 @@ export default {
     align-self: center;
 }
 
-.quizzes-admin-page,
-.users {
+.users,
+.quizzes-admin-page {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     flex-wrap: wrap;
+}
+
+.arrow-down {
+    display: none;
+    align-self: center;
+    width: 50px;
+    height: 50px;
+}
+
+.arrow-down img {
+    width: 50px;
+    height: 50px;
 }
 
 .users h3 {
     margin-top: 0px;
 }
 
-#confidentialty-settings,
-#quizzes-history {
-    display: flex;
-    flex-direction: column;
-}
-
-.search > * {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    max-width: 500px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
 .filter {
-    padding: 10px 20px;
-    font-size: 14px;
-    color: #fff;
     background-color: v-bind("globalColors.brownColor");
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
 }
 
 .filter:hover {
@@ -654,5 +621,64 @@ export default {
     flex-direction: row-reverse;
     margin-bottom: 0px;
     padding-bottom: 0px;
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        display: none;
+    }
+
+    .admin {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .admin-content {
+        gap: 50px;
+    }
+
+    .arrow-admin-title {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+
+    .admin-title h1 {
+        font-size: 2em;
+    }
+
+    .users,
+    .quizzes-admin-page {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .users.visible,
+    .quizzes-admin-page.visible {
+        display: flex;
+    }
+
+    .arrow-down {
+        display: flex;
+    }
+
+    .arrow-down.visible {
+        transform: scaleY(-1);
+    }
+
+    .search {
+        display: none;
+    }
+
+    .search.visible {
+        display: flex;
+    }
+
+
 }
 </style>

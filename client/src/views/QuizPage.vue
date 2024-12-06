@@ -468,4 +468,11 @@ export default {
     gap: 10px;
     justify-content: center;
 }
+
+@media (max-width: 768px) {
+    .quizzes {
+        flex-direction: column;
+        align-items: normal;
+    }
+}
 </style>
