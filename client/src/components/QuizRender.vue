@@ -234,7 +234,10 @@ export default {
             } catch (err) {
                 console.log(err)
                 if (err.response.status === 401) {
-                    this.quizzesMessage = "Oops... Unauthorized to fetch quiz"
+                    this.quizzesMessage = "Oops... Unauthorized to fetch quiz. You probably need to log in again"
+                    setTimeout(() => {
+                        this.$router.push({path: '/auth', query: {form: 'login/signup', redirect: '/quiz'}});
+                    }, 5000)
                 } else if (err.response.status === 404) {
                     this.quizzesMessage = "Oops... The quiz could not be found... ";
                 } else if (err.response.status === 500) {
