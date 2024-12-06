@@ -264,4 +264,52 @@ export default {
 .footer-section a:hover {
     text-decoration: underline;
 }
+
+/* RESPONSIVE STYLES */
+@media (max-width: 768px) {
+    .header-section {
+        height: 70vh;
+    }
+
+    .main-title {
+        font-size: 2.5em;
+    }
+
+    .subtitle {
+        font-size: 1em;
+    }
+
+    .cta-button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .introduction-section {
+        padding: 20px 15px;
+    }
+
+    .introduction-section img {
+        max-width: 90%;
+        margin: auto;
+        display: block;
+    }
+
+    .features-grid {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .testimonials-section {
+        padding: 20px 15px;
+    }
+
+    .testimonials blockquote {
+        font-size: 1em;
+    }
+
+    .footer-section {
+        padding: 15px;
+        font-size: 0.9em;
+    }
+}
 </style>
