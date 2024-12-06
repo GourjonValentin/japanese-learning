@@ -78,7 +78,6 @@
                         />
                     </div>
                 </div>
-
                 <div :class="['users', { visible: visibleSections.users }]">
                     <div
                         class="styledDiv-pretty"
@@ -678,7 +677,5 @@ export default {
     .search.visible {
         display: flex;
     }
-
-
 }
 </style>

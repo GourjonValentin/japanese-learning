@@ -94,10 +94,18 @@
                 </form>
             </div>
             <div id="quizzes-history">
-                <div class="title-settings">
-                    <h2>Quizzes history</h2>
+                <div class="arrow-title-settings" @click="toggleSection('history')">
+                    <div class="title-settings">
+                        <h2>Quizzes history</h2>
+                    </div>
+                    <div :class="['arrow-down', { visible: visibleSections.history }]">
+                        <img
+                            src="@/assets/icons/down-arrow.png"
+                            alt="Arrow"
+                        />
+                    </div>
                 </div>
-                <div class="quizzes-profile-page">
+                <div :class="['quizzes-profile-page', { visible: visibleSections.history }]">
                     <div
                         class="quiz"
                         v-for="quiz in userQuizzes"
@@ -148,14 +156,26 @@
                         </div>
                         <p>Best score : {{ quiz.score }} / {{ quiz.length }}</p>
                     </div>
-                    <p id="userQuizzesMessage">{{ userQuizzesMessage }}</p>
+                    <p
+                    v-if="userQuizzesMessage"
+                    id="userQuizzesMessage">
+                        {{ userQuizzesMessage }}
+                    </p>
                 </div>
             </div>
             <div id="favorite-quizzes">
-                <div class="title-settings">
-                    <h2>Favorite quizzes</h2>
+                <div class="arrow-title-settings" @click="toggleSection('favorites')">
+                    <div class="title-settings">
+                        <h2>Favorite quizzes</h2>
+                    </div>
+                    <div :class="['arrow-down', { visible: visibleSections.history }]">
+                        <img
+                            src="@/assets/icons/down-arrow.png"
+                            alt="Arrow"
+                        />
+                    </div>
                 </div>
-                <div class="quizzes-profile-page">
+                <div :class="['quizzes-profile-page', { visible: visibleSections.favorites }]">
                     <div
                         class="quiz"
                         v-for="quiz in userFavQuizzes"
@@ -205,7 +225,9 @@
                             </div>
                         </div>
                     </div>
-                    <p id="userFavQuizzesMessage">
+                    <p
+                    v-if="userFavQuizzesMessage"
+                    id="userFavQuizzesMessage">
                         {{ userFavQuizzesMessage }}
                     </p>
                 </div>
@@ -252,6 +274,10 @@ export default {
             newUsername: "",
             updateUsernameMessage: "",
             isEditingUsername: false,
+            visibleSections: {
+                history: false,
+                favorites: false,
+            },
         };
     },
     mounted() {
@@ -457,6 +483,9 @@ export default {
                 }
             }
         },
+        toggleSection(section) {
+            this.visibleSections[section] = !this.visibleSections[section];
+        },
     },
 };
 </script>
@@ -611,7 +640,72 @@ export default {
 
 .quizzes-profile-page {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+}
+
+.arrow-down {
+    display: none;
+    align-self: center;
+    width: 50px;
+    height: 50px;
+}
+
+.arrow-down img {
+    width: 50px;
+    height: 50px;
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        display: none;
+    }
+
+    .profile {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    #quizzes-history,
+    #favorite-quizzes {
+        margin-top: 25px;
+    }
+
+    .arrow-title-settings {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+
+    .title-settings h2 {
+        font-size: 2em;
+    }
+
+    .avatar-username {
+        justify-content: center;
+    }
+
+    .quizzes-profile-page {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: normal;
+    }
+
+    .quizzes-profile-page.visible {
+        display: flex;
+    }
+
+    .arrow-down {
+        display: flex;
+    }
+
+    .arrow-down.visible {
+        transform: scaleY(-1);
+    }
 }
 </style>
