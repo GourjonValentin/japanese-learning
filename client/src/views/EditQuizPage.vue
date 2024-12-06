@@ -816,7 +816,10 @@ export default {
             });
         checkAuth(this.sessionToken)
             .then((res) => {
-                if (!res.data.data.ownerId == this.quiz.id) {
+                if (!res.data.data.id == this.quiz.ownerid) {
+                    console.log("push here");
+                    console.log("owner ", res.data.data.id)
+                    console.log(this.quiz.ownerid)
                     this.$router.push({
                         path: "/auth",
                         query: { form: "login/signup", redirect: "/quiz" },
@@ -824,6 +827,7 @@ export default {
                 }
             })
             .catch(() => {
+                console.log("push la");
                 this.$router.push({
                     path: "/auth",
                     query: { form: "login/signup", redirect: "/quiz" },
