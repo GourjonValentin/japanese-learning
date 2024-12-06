@@ -8,27 +8,26 @@
 </template>
 
 <script>
-    import { inject } from 'vue';
+import { inject } from "vue";
 
-    export default {
-        setup(){
-            const resetUser = inject('resetUser');
+export default {
+    setup() {
+        const resetUser = inject("resetUser");
 
-            return {
-                resetUser
-            };
+        return {
+            resetUser,
+        };
+    },
+    data() {
+        return {
+            formMessage: "",
+        };
+    },
+    methods: {
+        async signout() {
+            this.resetUser();
+            this.$router.push({ path: "/" });
         },
-        data(){
-            return {
-                formMessage:""
-            };
-        },
-        methods : {
-            async signout(){
-                this.resetUser();
-                this.$router.push({path :'/'});
-            }
-        }
-    }
-
+    },
+};
 </script>
