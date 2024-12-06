@@ -172,7 +172,12 @@
                             required
                         />
                         <label for="picture" v-if="quizType === 'anime'"
-                            >Picture link :
+                            ><img
+                                class="info-icon"
+                                @click="openPictureInfo"
+                                src="@/assets/icons/info-icon.png"
+                                alt="info-icon"
+                            />Picture link :
                         </label>
                         <input
                             class="styledInput"
@@ -298,6 +303,12 @@ export default {
             this.alert.title = "Quiz Type";
             this.alert.body =
                 "There are 2 types of quizzes:<br>&nbsp;&nbsp;&nbsp;&nbsp;Simple: simple CMQ<br>&nbsp;&nbsp;&nbsp;&nbsp;Anime: each question is related to a picture";
+            this.isAlert = true;
+        },
+        openPictureInfo() {
+            this.alert.title = "Picture";
+            this.alert.body =
+                "Insert a https link here. You can use the following website to upload your pictures<br>&nbsp;&nbsp;&nbsp;&nbsp;https://imgbb.com/";
             this.isAlert = true;
         },
         goBack() {

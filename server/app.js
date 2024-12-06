@@ -1,4 +1,5 @@
 const express = require('express');
+const { query } = require('express-validator');
 const logger = require('morgan');
 const mysql = require('mysql2');
 const cors = require('cors')
