@@ -36,7 +36,7 @@
         </div>
 
         <!-- Display the word and its translation -->
-        <div class="styledDiv-pretty" v-bind:hidden="translation === []">
+        <div class="styledDiv-pretty" v-bind:hidden="translation == []">
             <div v-if="this.submitedSearchWord != ''">
                 <p>Searching for Word: {{ submitedSearchWord }}</p>
                 <div class="loading">
