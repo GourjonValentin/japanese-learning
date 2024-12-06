@@ -144,7 +144,7 @@
 }
 
 styledSelectInput.active {
-        background-color: var(--light-color);
+    background-color: var(--light-color);
 }
 
 /* STYLED DIV*/
@@ -152,7 +152,7 @@ styledSelectInput.active {
 .styledDiv {
     border: 2px solid var(--dark-color);
     border-radius: 20px;
-    padding : 10px;
+    padding: 10px;
     margin: 20px;
 }
 
@@ -160,7 +160,7 @@ styledSelectInput.active {
     min-width: 200px;
     display: flex;
     flex-direction: column;
-    margin:  20px;
+    margin: 20px;
     padding: 40px 20px;
     background-color: #f8e3cd;
     text-align: center;
@@ -170,7 +170,7 @@ styledSelectInput.active {
 
 /* DIALOG */
 
-.dialog-overlay{
+.dialog-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -182,7 +182,7 @@ styledSelectInput.active {
     align-items: center;
 }
 
-.dialog{
+.dialog {
     background: var(--light-color);
     padding: 20px;
     border-radius: 10px;
@@ -192,19 +192,19 @@ styledSelectInput.active {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.dialog-header{
+.dialog-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.dialog-body{
+.dialog-body {
     background-color: var(--light-color);
     display: flex;
     flex-direction: column;
 }
 
-.dialog-body form{
+.dialog-body form {
     display: flex;
     flex-direction: column;
 }
@@ -235,18 +235,18 @@ styledSelectInput.active {
     transform: rotate(180deg);
 }
 
-.close-icon{
+.close-icon {
     display: flex;
     cursor: pointer;
     transition: transform 0.15s ease-in;
 }
 
-.close-icon img{
+.close-icon img {
     width: 20px;
     height: 20px;
 }
 
-.close-icon:hover{
+.close-icon:hover {
     transform: scale(1.2);
 }
 
@@ -254,7 +254,7 @@ styledSelectInput.active {
 .quiz {
     min-width: 200px;
     flex-direction: column;
-    margin:  20px;
+    margin: 20px;
     padding: 40px 20px;
     background-color: #f8e3cd;
     text-align: center;
@@ -287,7 +287,6 @@ styledSelectInput.active {
     justify-content: center;
     margin-left: 20px;
     margin-right: 20px;
-
 }
 
 .quiz-caption img {

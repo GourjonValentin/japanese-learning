@@ -2,70 +2,88 @@
     <form @submit.prevent="signup">
         <h1>Create Account</h1>
         <input type="text" v-model="username" placeholder="Username" required />
-        <input type="password" v-model="password" placeholder="Password" required />
-        <input type="password" v-model="confirmPassword" placeholder="Confirm password" required />
-        <p v-if="signUpMessage" style="white-space: pre-wrap;">{{ signUpMessage }}</p>
+        <input
+            type="password"
+            v-model="password"
+            placeholder="Password"
+            required
+        />
+        <input
+            type="password"
+            v-model="confirmPassword"
+            placeholder="Confirm password"
+            required
+        />
+        <p v-if="signUpMessage" style="white-space: pre-wrap">
+            {{ signUpMessage }}
+        </p>
         <button type="submit">Sign Up</button>
     </form>
 </template>
 
 <script>
-    import { inject } from 'vue';
-    import axios from 'axios';
+import { inject } from "vue";
+import axios from "axios";
 
-    export default {
-        setup() {
-            const loginUser = inject('loginUser');
-            return {
-                loginUser
+export default {
+    setup() {
+        const loginUser = inject("loginUser");
+        return {
+            loginUser,
+        };
+    },
+    data() {
+        return {
+            username: "",
+            password: "",
+            confirmPassword: "",
+            signUpMessage: "",
+        };
+    },
+    methods: {
+        async signup() {
+            if (this.password !== this.confirmPassword) {
+                this.signUpMessage = "Passwords do not match.";
+                return;
             }
-        },
-        data() {
-            return {
-                username: '',
-                password: '',
-                confirmPassword: '',
-                signUpMessage: '',
-            }
-        },
-        methods: {
-            async signup() {
-                if (this.password !== this.confirmPassword) {
-                    this.signUpMessage = "Passwords do not match.";
-                    return;
-                }
 
-                try {
-                    const response = await axios.post('http://localhost:3000/auth/signup', {
+            try {
+                const response = await axios.post(
+                    "http://localhost:3000/auth/signup",
+                    {
                         username: this.username,
-                        password: this.password
-                    });
-                    this.signUpMessage = response.data.message;
+                        password: this.password,
+                    }
+                );
+                this.signUpMessage = response.data.message;
 
-                    // Login after succesful signup
-                    const result = await this.loginUser(this.username, this.password);
-                    if (result.success) {
-                        if (this.$route.query.redirect) {
-                            this.$router.push({path : this.$route.query.redirect});
-                        } else {
-                            this.$router.push({path :'/'});
-                        }
+                // Login after succesful signup
+                const result = await this.loginUser(
+                    this.username,
+                    this.password
+                );
+                if (result.success) {
+                    if (this.$route.query.redirect) {
+                        this.$router.push({ path: this.$route.query.redirect });
                     } else {
-                        this.signUpMessage = result.message;
+                        this.$router.push({ path: "/" });
                     }
-                } catch (error) {
-                    if (error.response) {
-                        if (Array.isArray(error.response.data.message)) {
-                            this.signUpMessage = error.response.data.message.join('\n');
-                        } else {
-                            this.signUpMessage = error.response.data.message;
-                        }
-                    }
-                    else {
-                        this.signUpMessage = 'An error occurred during signup.';
-                    }
+                } else {
+                    this.signUpMessage = result.message;
                 }
-            },
+            } catch (error) {
+                if (error.response) {
+                    if (Array.isArray(error.response.data.message)) {
+                        this.signUpMessage =
+                            error.response.data.message.join("\n");
+                    } else {
+                        this.signUpMessage = error.response.data.message;
+                    }
+                } else {
+                    this.signUpMessage = "An error occurred during signup.";
+                }
+            }
         },
-    };
+    },
+};
 </script>

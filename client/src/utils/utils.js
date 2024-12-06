@@ -20,7 +20,7 @@ export function parseTranslation(jishoResponse) {
 
 export async function checkAuth(sessionToken) {
     return await axios.get('http://localhost:3000/auth/check', {
-        headers: {'Authorization': `Bearer ${sessionToken}`}
+        headers: { 'Authorization': `Bearer ${sessionToken}` }
     })
 }
 
