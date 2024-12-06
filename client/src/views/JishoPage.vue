@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h1>Japanese Dictionary</h1>
+    <div class="jisho-page">
+        <h1 class="page-title">Japanese Dictionary</h1>
         <div class="searching-menu">
             <div class="language-select">
                 <!-- Switch between English and Japanese -->
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Display the word and its translation -->
-        <div class="styledDiv-pretty" v-bind:hidden="translation === []">
+        <div class="styledDiv-pretty" v-bind:hidden="translation == []">
             <div v-if="this.submitedSearchWord != ''">
                 <p>Searching for Word: {{ submitedSearchWord }}</p>
                 <div class="loading">
@@ -172,6 +172,8 @@ export default {
 <style scoped>
 .searching-menu {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
     gap: 20px;
     margin: 30px 0;
@@ -187,7 +189,9 @@ export default {
 
 .search-form {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     width: 100%;
     max-width: 500px;
@@ -224,5 +228,63 @@ export default {
     margin-top: 20px;
     border: 1px solid black;
     padding: 10px;
+}
+
+/* RESPONSIVE STYLES */
+@media (max-width: 768px) {
+    .jisho-page {
+        padding: 15px;
+    }
+
+    .page-title {
+        font-size: 2.5em;
+        text-align: center;
+    }
+
+    .searching-menu {
+        margin: 15px 0;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .language-select {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .search-form {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .styledButton-red {
+        padding: 10px 25px;
+        font-size: 14px;
+    }
+
+    .styledDiv {
+        font-size: 0.9em;
+    }
+
+    .jp-title, .en-title {
+        font-size: 1.2em;
+    }
+
+    .jp, .en {
+        margin-top: 10px;
+    }
+
+    .error {
+        font-size: 0.9em;
+        color: red;
+        text-align: center;
+    }
 }
 </style>
