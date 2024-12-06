@@ -62,7 +62,7 @@
                 <div class="search">
                     <form class="search-form" @submit.prevent="handleSearchSubmit()">
                         <img src="../assets/icons/search-logo.png" alt="search_logo.png"/>
-                        <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="search"/>
+                        <input class="search-input" type="text" name="searchName" v-model="searchName" placeholder="Search by name..."/>
                         <button  class="search-button" style="
                          padding: 8px 20px; font-size: 13px;"
                                  type="submit">Search</button>
