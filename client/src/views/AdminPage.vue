@@ -120,7 +120,7 @@
                             type="text"
                             name="searchName"
                             v-model="searchName"
-                            placeholder="search"
+                            placeholder="Search by name..."
                         />
                         <button
                             class="search-button"
