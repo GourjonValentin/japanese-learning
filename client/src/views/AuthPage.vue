@@ -1,280 +1,293 @@
 <template>
     <div class="content">
-        <div v-if="this.$route.query.form === 'login/signup'" class="container" :class="{ active: isSignUpActive }" id="container">
+        <div
+            v-if="this.$route.query.form === 'login/signup'"
+            class="container"
+            :class="{ active: isSignUpActive }"
+            id="container"
+        >
             <div class="form-container sign-up">
-                <SignUpFormComp/>
+                <SignUpFormComp />
             </div>
-    
+
             <div class="form-container log-in">
-                <LogInFormComp/>
+                <LogInFormComp />
             </div>
-    
+
             <!-- Toggle Container -->
             <div class="toggle-container">
                 <div class="toggle">
                     <div class="toggle-panel toggle-left">
                         <h1>Already have an account?</h1>
-                        <p>Enter your personal details to use all site features</p>
-                        <button class="hidden" @click="toggleSignUp">Log In</button>
+                        <p>
+                            Enter your personal details to use all site features
+                        </p>
+                        <button class="hidden" @click="toggleSignUp">
+                            Log In
+                        </button>
                     </div>
                     <div class="toggle-panel toggle-right">
                         <h1>Wanna learn japanese?</h1>
-                        <p>Register with your personal details to use all site features</p>
-                        <button class="hidden" @click="toggleSignUp">Sign Up</button>
+                        <p>
+                            Register with your personal details to use all site
+                            features
+                        </p>
+                        <button class="hidden" @click="toggleSignUp">
+                            Sign Up
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    
-        <SignOutComp v-else-if="this.$route.query.form === 'signout'"/>
-        <RoutingError v-else/>
-    </div>
-  </template>
-  
-  <script>
-    import SignUpFormComp from '../components/SignUpFormComp';
-    import LogInFormComp from '../components/LogInFormComp';
-    import SignOutComp from '../components/SignOutComp';
-    import RoutingError from './RoutingError.vue';
-    import { globalColors } from '../utils/GlobalVariable';
 
-  
-  export default {
+        <SignOutComp v-else-if="this.$route.query.form === 'signout'" />
+        <RoutingError v-else />
+    </div>
+</template>
+
+<script>
+import SignUpFormComp from "../components/SignUpFormComp";
+import LogInFormComp from "../components/LogInFormComp";
+import SignOutComp from "../components/SignOutComp";
+import RoutingError from "./RoutingError.vue";
+import { globalColors } from "../utils/GlobalVariable";
+
+export default {
     components: {
         SignUpFormComp,
         LogInFormComp,
         SignOutComp,
-        RoutingError
+        RoutingError,
     },
-    
+
     data() {
-      return {
-        isSignUpActive: false,
-        formMessage: "",
-        globalColors : globalColors
-      };
+        return {
+            isSignUpActive: false,
+            formMessage: "",
+            globalColors: globalColors,
+        };
     },
     methods: {
-      toggleSignUp() {
-        this.isSignUpActive = !this.isSignUpActive;
-      },
-    }
-  };
-  </script>
-  
+        toggleSignUp() {
+            this.isSignUpActive = !this.isSignUpActive;
+        },
+    },
+};
+</script>
+
 <style>
+#formMessage {
+    color: red;
+    font-size: small;
+}
 
-    #formMessage {
-        color: red;
-        font-size: small;
-    }
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+.content {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
 
-    .content{
-        display: flex;
-        justify-content: center;
-        margin-top: 40px;
-    }
+.content * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
 
-    .content *{
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Montserrat', sans-serif;
-    }
+.content h1 {
+    font-family: "JapaneseStyleFont", sans-serif;
+    font-weight: 400;
+}
 
-    .content h1{
-        font-family: 'JapaneseStyleFont', sans-serif;
-        font-weight: 400;
-    }
+.container {
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+    color: v-bind("globalColors.darkColor");
+}
 
-    .container{
-        background-color: #fff;
-        border-radius: 30px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-        position: relative;
-        overflow: hidden;
-        width: 768px;
-        max-width: 100%;
-        min-height: 480px;
-        color: v-bind('globalColors.darkColor');
-    }
+.container p {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.3px;
+    margin: 20px 0;
+}
 
-    .container p{
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.3px;
-        margin: 20px 0;
-    }
+.container a {
+    color: #333;
+    font-size: 13px;
+    text-decoration: none;
+    margin: 15px 0 10px;
+}
 
-    .container a{
-        color: #333;
-        font-size: 13px;
-        text-decoration: none;
-        margin: 15px 0 10px;
-    }
+.container button {
+    background-color: v-bind("globalColors.redColor");
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
 
-    .container button{
-        background-color: v-bind('globalColors.redColor');
-        color: #fff;
-        font-size: 12px;
-        padding: 10px 45px;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        margin-top: 10px;
-        cursor: pointer;
-    }
+.container button.hidden {
+    background-color: transparent;
+    border-color: #fff;
+    margin-top: 10px;
+}
 
-    .container button.hidden{
-        background-color: transparent;
-        border-color: #fff;
-        margin-top: 10px;
-    }
+.container form {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+}
 
-    .container form{
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        padding: 0 40px;
-        height: 100%;
-    }
+.container input {
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
 
-    .container input{
-        background-color: #eee;
-        border: none;
-        margin: 8px 0;
-        padding: 10px 15px;
-        font-size: 13px;
-        border-radius: 8px;
-        width: 100%;
-        outline: none;
-    }
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
 
-    .form-container{
-        position: absolute;
-        top: 0;
-        height: 100%;
-        transition: all 0.6s ease-in-out;
-    }
+.form-container p {
+    margin: 0;
+    color: v-bind("globalColors.redColor");
+}
 
-    .form-container p{
-        margin: 0;
-        color: v-bind('globalColors.redColor');
-    }
+.log-in {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
 
-    .log-in{
-        left: 0;
-        width: 50%;
-        z-index: 2;
-    }
+.container.active .log-in {
+    transform: translateX(100%);
+}
 
-    .container.active .log-in{
-        transform: translateX(100%);
-    }
+.sign-up {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
 
-    .sign-up{
-        left: 0;
-        width: 50%;
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: move 0.6s;
+}
+
+@keyframes move {
+    0%,
+    49.99% {
         opacity: 0;
         z-index: 1;
     }
-
-    .container.active .sign-up{
-        transform: translateX(100%);
+    50%,
+    100% {
         opacity: 1;
         z-index: 5;
-        animation: move 0.6s;
     }
+}
 
-    @keyframes move{
-        0%, 49.99%{
-            opacity: 0;
-            z-index: 1;
-        }
-        50%, 100%{
-            opacity: 1;
-            z-index: 5;
-        }
-    }
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    z-index: 1000;
+}
 
-    .toggle-container{
-        position: absolute;
-        top: 0;
-        left: 50%;
-        width: 50%;
-        height: 100%;
-        overflow: hidden;
-        transition: all 0.6s ease-in-out;
-        z-index: 1000;
-    }
+.container.active .toggle-container {
+    transform: translateX(-100%);
+}
 
-    .container.active .toggle-container{
-        transform: translateX(-100%);
-    }
+.toggle {
+    background-image: url("@/assets/sliding_door.png");
+    background-size: 100% 100%;
+    background-position: center;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
 
-    .toggle{
-        background-image: url("@/assets/sliding_door.png");
-        background-size: 100% 100%;
-        background-position: center;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        transform: translateX(0);
-        transition: all 0.6s ease-in-out;
-    }
+.toggle-panel {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 30px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
 
-    .toggle-panel{
-        position: absolute;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        padding: 0 30px;
-        text-align: center;
-        top: 0;
-        transform: translateX(0);
-        transition: all 0.6s ease-in-out;
-    }
+.toggle-panel h1 {
+    background-color: rgba(228, 180, 132, 0.95);
+    border-radius: 15px;
+}
 
-    .toggle-panel h1{
-        background-color: rgba(228, 180, 132, 0.95);
-        border-radius: 15px;
-    }
+.container.active .toggle {
+    background-image: url("@/assets/sliding_door_inverted.png");
+    background-color: v-bind("globalColors.redColor");
+    background-size: 100% 100%;
+    background-position: center;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
 
-    .container.active .toggle{
-        background-image: url("@/assets/sliding_door_inverted.png");
-        background-color: v-bind('globalColors.redColor');
-        background-size: 100% 100%;
-        background-position: center;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        transform: translateX(0);
-        transition: all 0.6s ease-in-out;
-    }
+.toggle-left {
+    transform: translateX(-200%);
+}
 
-    .toggle-left{
-        transform: translateX(-200%);
-    }
+.container.active .toggle-left {
+    transform: translateX(0);
+}
 
-    .container.active .toggle-left{
-        transform: translateX(0);
-    }
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
 
-    .toggle-right{
-        right: 0;
-        transform: translateX(0);
-    }
-
-    .container.active .toggle-right{
-        transform: translateX(200%);
-    }
-
-  </style>
+.container.active .toggle-right {
+    transform: translateX(200%);
+}
+</style>
