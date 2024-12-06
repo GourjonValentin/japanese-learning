@@ -93,11 +93,6 @@
                     <button class="styledButton-red" type="submit">Save</button>
                 </form>
             </div>
-            <!-- <div id="confidentialty-settings">
-                <div class="title-settings">
-                    <h2>Confidentialty settings</h2>
-                </div>
-            </div> -->
             <div id="quizzes-history">
                 <div class="title-settings">
                     <h2>Quizzes history</h2>

@@ -363,20 +363,14 @@
         </div>
 
         <div class="field">
-            <h1>{{ quiz.name }}</h1>
-            <div
-                class="edit"
-                @click="
-                    () => {
-                        editedTitle = quiz.name;
-                        isTitleForm = true;
-                    }
-                "
-            >
+            <div class="quiz-name">
+                <h1>{{ quiz.name }}</h1>
+            </div>
+            <div @click="() => {editedTitle = quiz.name; isTitleForm = true;}" class="edit-icon">
                 <img
+                    v-if="!isTitleForm"
                     src="@/assets/icons/pencil-icon.png"
-                    alt="edit_btn"
-                    class="editing-logo"
+                    alt="Edit"
                 />
             </div>
         </div>
@@ -856,8 +850,11 @@ export default {
 }
 .field {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
+    margin: 25px 0;
+    gap: 15px;
     color: v-bind("globalColors.darkColor");
 }
 
@@ -887,7 +884,22 @@ export default {
 .main-attributes-header > * {
     margin: 7px;
 }
-.editing-logo {
+
+.quiz-name h1 {
+    margin: 0;
+    font-size: 75px;
+    font-weight: 900;
+    color: var(--45ebcf8e-globalColors\.darkColor);
+    line-height: 60px;
+}
+
+.edit-icon {
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.edit-icon img {
     width: 50px;
     height: 50px;
 }

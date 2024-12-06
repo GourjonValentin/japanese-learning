@@ -463,4 +463,10 @@ export default {
     display: flex;
     flex-direction: column;
 }
+
+.confirmation-div-button {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
 </style>
