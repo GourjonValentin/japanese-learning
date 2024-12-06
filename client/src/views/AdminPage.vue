@@ -134,7 +134,7 @@ export default {
         const userId = inject('userId');
         const favorites = inject('favorites');
         const sessionToken = inject('sessionToken');
-        const setFavourites = inject('setFavourites');
+        const setFavorites = inject('setFavorites');
         const isAdmin = inject('isAdmin');
         const setIsAdmin = inject('setIsAdmin');
         return {
@@ -143,7 +143,7 @@ export default {
             userId,
             favorites,
             sessionToken,
-            setFavourites,
+            setFavorites,
             isAdmin,
             setIsAdmin
         };
@@ -231,7 +231,7 @@ export default {
                     this.quizzes = res.data;
                 }
             } catch (err) {
-                console.log("erre", err)
+                console.error(err);
                 if (err.response === undefined){
                     if(err.code === "ERR_NETWORK"){
                         this.quizzesMessage = "Oops... The server is currently unavailable...";
@@ -266,7 +266,7 @@ export default {
                 { params : {
                         difficulty : this.searchFilterDifficulty,
                         type: (this.searchFilterType === '' ? null : this.searchFilterType),
-                        favorites : JSON.stringify(this.searchFilterFavourites) ? this.favorites : [],
+                        favorites : JSON.stringify(this.searchFilterFavorites) ? this.favorites : [],
                         name: this.searchName
                     }}
             )
@@ -281,7 +281,7 @@ export default {
                         this.quizzesMessage = "No quizzes found...";
                         this.quizzes = [];
                     }
-                    console.log("err",err);
+                    console.error(err);
                 })
         },
         toggleQuizFilterType(type){
@@ -317,9 +317,7 @@ export default {
         async toggleAdmin(user) {
             try {
                 if (user.id === this.userId) {
-                    console.log(this.users)
                     let adminCount = this.users.filter(elt => elt.isAdmin).length;
-                    console.log(adminCount);
                     if (adminCount === 1) {
                         this.confirmation.title = "Last Admin";
                         this.confirmation.body = "You are the last admin, there will be no admin left after this. Do you still want to proceed ?";
@@ -350,7 +348,7 @@ export default {
                     console.error('Access Forbidden, must be admin to access');
                     this.$router.push({path: '/auth', query: {form: 'login/signup'}});
                 } else if (err.response.status === 404) {
-                    console.log('No result found for given user');
+                    console.error('No result found for given user');
                 }
             }
         },
