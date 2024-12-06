@@ -1,4 +1,5 @@
 const express = require('express');
+const { query } = require('express-validator');
 const logger = require('morgan');
 const mysql = require('mysql2');
 const cors = require('cors')
@@ -271,12 +272,13 @@ app.get('/quizzes/attempts', async (req, res) => {
     try {
         const { userId } = req.query;
         const results = await query('SELECT quiz.*, scores.score FROM scores JOIN quiz ON scores.quizid = quiz.id WHERE scores.userid = ?', [userId]);
-
         if (results.length === 0) {
             return res.status(404).json({ message: "No quizzes found" });
         }
-
         return res.status(200).json(results.map(quiz => {
+            if (!(quiz.content instanceof Array)) {
+                quiz.content = JSON.parse(quiz.content);
+            }
             return {
                 id: quiz.id,
                 name: quiz.name,
@@ -284,14 +286,13 @@ app.get('/quizzes/attempts', async (req, res) => {
                 ownerid: quiz.ownerid,
                 difficultylevel: quiz.difficultylevel,
                 score: quiz.score,
-                length: JSON.parse(quiz.content).length
+                length: (quiz.content).length
             }
         }));
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         res.status(500).json({ error: 'Error fetching quizzes' });
     }
-
 })
 
 app.post('/quizzes/create', async (req, res) => {
@@ -406,7 +407,6 @@ app.get('/quizzes/is-owner', async (req, res) => {
             return res.status(404).json({ message: "Quiz not found" });
         } else if (result[0].ownerid === parseInt(resVerifyToken.payload.id)) {
             return res.status(200).send();
-
         } else {
             return res.status(403).json({ message: "You are not the owner of this quiz" });
         }
@@ -639,9 +639,10 @@ app.post('/users/edit-favorite', async (req, res) => {
             return res.sendStatus(401);
         }
         let resVerifyToken = verifyToken(token, secretKey);
-        if (resVerifyToken.status === 200 && req.body.userId == resVerifyToken.payload.id) {
+        if (resVerifyToken.status === 200) {
             try {
-                const { mode, quizId, userId, sessionToken } = req.body;
+                const { mode, quizId, sessionToken } = req.body;
+                const userId = resVerifyToken.payload.id;
 
                 const { payload } = verifyToken(sessionToken, secretKey);
                 if (payload.id !== userId) {

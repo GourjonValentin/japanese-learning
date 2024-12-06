@@ -300,9 +300,13 @@ export default {
         },
         async getUserFavQuizzes() {
             try {
+                console.log("fev", this.favorites);
                 const res = await axios.get("http://localhost:3000/quizzes", {
                     params: {
-                        favorites: this.favorites ? this.favorites : [],
+                        favorites:
+                            this.favorites.length !== 0
+                                ? this.favorites
+                                : JSON.stringify([]),
                     },
                 });
                 if (res.status === 200 || res.status === 206) {
@@ -384,7 +388,6 @@ export default {
                         {
                             mode: mode,
                             quizId: quizId,
-                            userId: this.userId,
                             sessionToken: this.sessionToken,
                         },
                         {

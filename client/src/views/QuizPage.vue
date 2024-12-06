@@ -278,7 +278,6 @@ export default {
                         {
                             mode: mode,
                             quizId: quizId,
-                            userId: this.userId,
                             sessionToken: this.sessionToken,
                         },
                         {
