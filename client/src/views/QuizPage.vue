@@ -26,7 +26,7 @@
                 <div class="filter" @click="toggleQuizFilterType('simple')"
                     :class="{active: this.searchFilterType === 'simple'}"
                 >
-                        Simple Quiz
+                        Normal Quiz
                 </div>
                 <div class="filter" @click="toggleQuizFilterType('anime')"
                     :class="{active: this.searchFilterType === 'anime'}"
@@ -75,7 +75,7 @@
                         <img src="@/assets/icons/torii.png"/>
                     </div>
                 </div>
-                <p>Owner : {{ quiz.ownername }}</p>
+                <p>Creator : {{ quiz.ownername }}</p>
             </div>
             <p id="quizzesMessage">{{ quizzesMessage }}</p>
         </div>
