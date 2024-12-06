@@ -1,6 +1,6 @@
 <template>
     <div id="sign-out">
-        <h2>Want to leave us ?</h2>
+        <h1>Want to leave us ?</h1>
         <form @submit.prevent="signout">
             <button class="styledButton-red" type="submit">Sign Out</button>
         </form>
@@ -31,3 +31,18 @@ export default {
     },
 };
 </script>
+
+<style>
+#sign-out {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+    #sign-out h1 {
+        font-size: 1.4rem;
+    }
+}
+</style>
