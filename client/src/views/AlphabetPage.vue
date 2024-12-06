@@ -30,7 +30,6 @@
                             require(`@/assets/alphabet/${selectedTab}/${letter}.png`)
                         "
                     />
-                    <div class="light"></div>
                 </div>
             </div>
         </div>
@@ -44,62 +43,18 @@ export default {
     data() {
         return {
             alphabet: [
-                "a",
-                "i",
-                "u",
-                "e",
-                "o", // あ, い, う, え, お
-                "ka",
-                "ki",
-                "ku",
-                "ke",
-                "ko", // か, き, く, け, こ
-                "sa",
-                "shi",
-                "su",
-                "se",
-                "so", // さ, し, す, せ, そ
-                "ta",
-                "chi",
-                "tsu",
-                "te",
-                "to", // た, ち, つ, て, と
-                "na",
-                "ni",
-                "nu",
-                "ne",
-                "no", // な, に, ぬ, ね, の
-                "ha",
-                "hi",
-                "fu",
-                "he",
-                "ho", // は, ひ, ふ, へ, ほ
-                "ma",
-                "mi",
-                "mu",
-                "me",
-                "mo", // ま, み, む, め, も
-                "ya",
-                "emp",
-                "yu",
-                "emp",
-                "yo", // や, ゆ, よ
-                "ra",
-                "ri",
-                "ru",
-                "re",
-                "ro", // ら, り, る, れ, ろ
-                "wa",
-                "emp",
-                "emp",
-                "emp",
-                "wo", // わ, を
-                "emp",
-                "emp",
-                "n",
-                "emp",
-                "emp", // ん
-            ],
+                    "a", "i", "u", "e", "o",         // あ, い, う, え, お
+                    "ka", "ki", "ku", "ke", "ko",    // か, き, く, け, こ
+                    "sa", "shi", "su", "se", "so",   // さ, し, す, せ, そ
+                    "ta", "chi", "tsu", "te", "to",  // た, ち, つ, て, と
+                    "na", "ni", "nu", "ne", "no",    // な, に, ぬ, ね, の
+                    "ha", "hi", "fu", "he", "ho",    // は, ひ, ふ, へ, ほ
+                    "ma", "mi", "mu", "me", "mo",    // ま, み, む, め, も
+                    "ya", "emp", "yu", "emp", "yo",  // や, ゆ, よ
+                    "ra", "ri", "ru", "re", "ro",    // ら, り, る, れ, ろ
+                    "wa", "emp", "emp", "emp", "wo", // わ, を
+                    "emp", "emp", "n", "emp", "emp"  // ん
+                ],
             selectedTab: "hiragana",
             globalColors: globalColors,
         };
@@ -128,7 +83,6 @@ export default {
                 cardLetter.style.transform = `rotate3d(${-centerY / 80}, ${
                     centerX / 80
                 }, 0, ${distance / 5}deg) scale(1.05)`;
-                // light.style.backgroundImage = `radial-gradient(circle at ${left}px ${top}px, #00000040 5%, #ffffff00 20%, #ffffff99 30%)`;
             };
 
             gridLetter.addEventListener("mousemove", mouseMove);
@@ -139,11 +93,9 @@ export default {
         },
         removeMouseEffect(event) {
             const cardLetter = event.currentTarget.querySelector(".letter");
-            const light = event.currentTarget.querySelector(".light");
 
             cardLetter.style.boxShadow = "";
             cardLetter.style.transform = "";
-            light.style.backgroundImage = "";
         },
     },
 };
@@ -225,10 +177,20 @@ button {
     transition-timing-function: ease-out;
 }
 
-.light {
-    position: absolute;
+.letter img {
     width: 100%;
     height: 100%;
-    border-radius: 9px;
+}
+
+@media (max-width: 768px) {
+    button {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .grid-letters {
+        gap: 5px;
+        padding: 0 15px;
+    }
 }
 </style>
