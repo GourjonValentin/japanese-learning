@@ -1,5 +1,20 @@
 <template>
     <div v-if="this.$route.query.quizId === undefined" class="main">
+        <div class="dialog-overlay" id="confirmationDialog" v-if="isConfirmation">
+            <div class="dialog">
+                <div class="dialog-header">
+                    <h2>{{ confirmation.title }}</h2>
+                </div>
+                <div class="dialog-body">
+                    <p>{{ confirmation.body }}</p>
+                    <div class="confirmation-div-button">
+                        <button class="styledButton-brown-minor" @click="() => {confirmation.result = false; isConfirmation = false;}">Cancel</button>
+                        <button class="styledButton-red" @click="() => {confirmation.result = true; isConfirmation = false;}">Ok</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
         <div class="search">
             <form class="search-form" @submit.prevent="handleSearchSubmit()">
                 <img src="@/assets/icons/search-logo.png" alt="search-logo.png"/>
@@ -110,6 +125,11 @@
                 searchFilterFavorites: false,
                 searchFilterDifficulty: "Difficulty",
                 isAttemptingQuiz: false,
+                isConfirmation: false,
+                confirmation : {
+                    body: "",
+                    title: ""
+                }
             };
         },
         components: {
@@ -199,26 +219,33 @@
                 this.$router.push({path:'/quiz/edit', query : {'quizId': quiz.id}});
             },
             async deleteQuiz(quiz){
-                if (confirm(`You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`)){
-                    try {
-                        let res = await axios.delete('http://localhost:3000/quizzes/delete',{
-                            params : {'quizId' : quiz.id},
-                            headers: {'Authorization': `Bearer ${this.sessionToken}`}
-                        });
-                        if (res.status === 200){
-                            this.quizzes = res.data;
-                        } else {
-                            this.alert.header = "Oops...";
-                            this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
-                            this.isAlert = true;
-                        }
-                    } catch (err) {
-                        console.error(err);
+                this.confirmation.title = "Caution";
+                this.confirmation.body = `You are about to delete the quiz *${quiz.name}*...\nAre you sure you want to continue ?`;
+                this.isConfirmation = true;
+                const unwatchConfirmation = this.$watch(
+                        () => this.confirmation.result,
+                        async (newVal) => {
+                            if (newVal === true){
+                                try {
+                                    let res = await axios.delete('http://localhost:3000/quizzes/delete',{
+                                        params : {'quizId' : quiz.id},
+                                        headers: {'Authorization': `Bearer ${this.sessionToken}`}
+                                    });
+                                    if (res.status === 200){
+                                        this.quizzes = res.data;
+                                    } else {
+                                        this.alert.header = "Oops...";
+                                        this.alert.body = `the quiz ${quiz.name} couldn't be removed`;
+                                        this.isAlert = true;
+                                    }
+                                } catch (err) {
+                                    console.error(err);
+                                }
+                            }
+                        unwatchConfirmation();
                     }
-                } else {
-                    return;
-                }
-            }
+                );
+            },
         },
         mounted() {
             const getAllquizzes = async () => {

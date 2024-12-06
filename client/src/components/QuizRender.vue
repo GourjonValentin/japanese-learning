@@ -26,6 +26,21 @@
                     </div>
                 </div>
             </div>
+            <div class="dialog-overlay" id="confirmationDialog" v-if="isConfirmation">
+                    <div class="dialog">
+                        <div class="dialog-header">
+                            <h2>{{ confirmation.title }}</h2>
+                        </div>
+                        <div class="dialog-body">
+                            <p>{{ confirmation.body }}</p>
+                            <div class="confirmation-div-button">
+                                <button class="styledButton-brown-minor" @click="() => {confirmation.result = false; isConfirmation = false;}">Cancel</button>
+                                <button class="styledButton-red" @click="() => {confirmation.result = true; isConfirmation = false;}">Ok</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             <h2>{{ quiz.name }}</h2>
             <div id="results" v-if="this.questionNumber === quiz.content.length">
                 <p>Here is your score :</p>
@@ -132,6 +147,11 @@ export default {
                 body: '',
                 title: ''
             },
+            isConfirmation: false,
+            confirmation : {
+                body: "",
+                title: ""
+            },
             loading: false
         }
     },
@@ -198,14 +218,25 @@ export default {
                 })
         },
         finishQuiz() {
-            if (this.userAnswers.length < this.quiz.content.length) {
-                if (confirm(`You left ${this.quiz.content.length - this.userAnswers.filter(elt => elt.length > 0).length} questions unanswers...\nAre you sure you want to end this quiz ?`)) {
-                    this.calculateScore();
-                    if (this.userId) {
-                        this.saveScore();
+            const sumUserAnswer = this.userAnswers.reduce((acc, el) => acc + el.length, 0);
+            if (sumUserAnswer < this.quiz.content.length) {
+                this.confirmation.title = "Caution";
+                this.confirmation.body = `You left ${this.quiz.content.length - this.userAnswers.filter(elt => elt.length > 0).length} questions unanswers...Are you sure you want to end this quiz ?`;
+                this.isConfirmation = true;
+                console.log(this.isConfirmation);
+                const unwatchConfirmation = this.$watch(
+                    () => this.confirmation.result,
+                    (newVal) => {
+                        if (newVal === true){
+                            this.calculateScore();
+                            if (this.userId) {
+                                this.saveScore();
+                            }
+                            this.questionNumber += 1;
+                        }
+                        unwatchConfirmation();
                     }
-                    this.questionNumber += 1;
-                }
+                );
             } else {
                 this.calculateScore();
                 if (this.userId) {
