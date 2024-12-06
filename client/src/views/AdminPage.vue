@@ -292,11 +292,15 @@ export default {
     },
     methods: {
         async getAllUsers() {
-            const res = await axios.get("http://localhost:3000/users", {
-                headers: { Authorization: `Bearer ${this.sessionToken}` },
-            });
-            if (res.status === 200) {
-                this.users = res.data;
+            try {
+                const res = await axios.get("http://localhost:3000/users", {
+                    headers: { Authorization: `Bearer ${this.sessionToken}` },
+                });
+                if (res.status === 200) {
+                    this.users = res.data;
+                }
+            } catch (err) {
+                console.error(err);
             }
         },
         async updatePassword() {

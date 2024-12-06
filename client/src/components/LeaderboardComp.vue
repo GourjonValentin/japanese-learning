@@ -27,22 +27,21 @@ export default {
     },
     methods: {
         async getScores(quizId) {
-            await axios
-                .get(`http://localhost:3000/scores/${quizId}`)
-                .then((res, err) => {
-                    if (res.status === 200) {
-                        this.scoresList = res.data;
-                    } else if (res.status === 204) {
-                        this.scoresList = [];
-                    } else if (res.status === 500) {
-                        this.scoresList = [];
-                        console.error(err);
-                    } else {
-                        console.error(
-                            "Error in response status : " + res.status
-                        );
-                    }
-                });
+            try {
+                const res = await axios.get(
+                    `http://localhost:3000/scores/${quizId}`
+                );
+                if (res.status === 200) {
+                    this.scoresList = res.data;
+                } else if (res.status === 204) {
+                    this.scoresList = [];
+                } else {
+                    console.error("Unexpected response status: " + res.status);
+                }
+            } catch (err) {
+                console.error("Error fetching scores:", err);
+                this.scoresList = []; // Optionnel, selon votre logique métier
+            }
         },
     },
     mounted() {

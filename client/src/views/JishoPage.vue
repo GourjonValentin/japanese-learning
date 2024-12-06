@@ -149,11 +149,17 @@ export default {
             }
 
             // Get the translation
-            const response = await axios.get(
-                `http://localhost:3000/jisho?keyword=${searchWord}`
-            );
-            this.translation = parseTranslation(response.data);
-            this.toggleLoading();
+            try {
+                const response = await axios.get(
+                    `http://localhost:3000/jisho?keyword=${searchWord}`
+                );
+                this.translation = parseTranslation(response.data);
+            } catch (err) {
+                console.error(err);
+                this.translation = "";
+            } finally {
+                this.toggleLoading();
+            }
         },
     },
     mounted() {
