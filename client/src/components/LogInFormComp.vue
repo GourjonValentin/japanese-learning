@@ -15,7 +15,7 @@
             placeholder="Password"
             required
         />
-        <p id="formMessage">{{ formMessage }}</p>
+        <p v-if="formMessage" id="formMessage">{{ formMessage }}</p>
         <button type="submit">Log In</button>
     </form>
 </template>

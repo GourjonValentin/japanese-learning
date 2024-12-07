@@ -44,16 +44,15 @@
         <RoutingError v-else />
     </div>
     <div class="mobile-login-signup">
-        <!-- Code here -->
         <div class="mobile-form-container">
-            <div v-if="isSignUpActive">
+            <div v-if="isSignUpActive" class="mobile-signup">
                 <SignUpFormComp />
                 <p>Already have an account?</p>
                 <button @click="toggleSignUp">Log In</button>
             </div>
-            <div v-else>
+            <div v-else class="mobile-login">
                 <LogInFormComp />
-                <p>Wanna learn japanese?</p>
+                <p>First time here?</p>
                 <button @click="toggleSignUp">Sign Up</button>
             </div>
         </div>
@@ -306,7 +305,6 @@ export default {
     transform: translateX(200%);
 }
 
-
 .mobile-login-signup {
     display: none;
     flex-direction: column;
@@ -320,12 +318,14 @@ export default {
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 90%;
+    width: 75%;
     max-width: 400px;
+    color: v-bind("globalColors.darkColor");
 }
 
 .mobile-form-container p {
-    margin: 10px 0;
+    margin: 0;
+    margin-top: 10px;
     font-size: 14px;
     color: #333;
 }
@@ -333,16 +333,36 @@ export default {
 .mobile-form-container button {
     background-color: v-bind("globalColors.redColor");
     color: #fff;
-    font-size: 14px;
-    padding: 10px 20px;
-    border: none;
+    font-size: 10px;
+    padding: 10px 15px;
+    border: 1px solid transparent;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-.mobile-form-container button:hover {
-    background-color: darken(v-bind("globalColors.redColor"), 10%);
+.mobile-form-container form {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+}
+
+.mobile-form-container input {
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
 }
 
 @media (max-width: 768px) {
