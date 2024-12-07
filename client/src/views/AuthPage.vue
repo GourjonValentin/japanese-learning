@@ -320,7 +320,7 @@ export default {
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 75%;
+    /* width: 75%; */
     max-width: 400px;
     color: v-bind("globalColors.darkColor");
 }
@@ -374,6 +374,10 @@ export default {
 
     .mobile-login-signup {
         display: flex;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }
 </style>
