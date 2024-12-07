@@ -44,7 +44,7 @@
         <RoutingError v-else />
     </div>
     <div class="mobile-login-signup">
-        <div class="mobile-form-container">
+        <div v-if="this.$route.query.form === 'login/signup'" class="mobile-form-container">
             <div v-if="isSignUpActive" class="mobile-signup">
                 <SignUpFormComp />
                 <p>Already have an account?</p>
@@ -56,6 +56,8 @@
                 <button @click="toggleSignUp">Sign Up</button>
             </div>
         </div>
+        <SignOutComp v-else-if="this.$route.query.form === 'signout'" />
+        <RoutingError v-else />
     </div>
 </template>
 
