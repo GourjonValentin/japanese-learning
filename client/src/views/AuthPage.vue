@@ -43,6 +43,21 @@
         <SignOutComp v-else-if="this.$route.query.form === 'signout'" />
         <RoutingError v-else />
     </div>
+    <div class="mobile-login-signup">
+        <!-- Code here -->
+        <div class="mobile-form-container">
+            <div v-if="isSignUpActive">
+                <SignUpFormComp />
+                <p>Already have an account?</p>
+                <button @click="toggleSignUp">Log In</button>
+            </div>
+            <div v-else>
+                <LogInFormComp />
+                <p>Wanna learn japanese?</p>
+                <button @click="toggleSignUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -289,5 +304,54 @@ export default {
 
 .container.active .toggle-right {
     transform: translateX(200%);
+}
+
+
+.mobile-login-signup {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.mobile-form-container {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.mobile-form-container p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.mobile-form-container button {
+    background-color: v-bind("globalColors.redColor");
+    color: #fff;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.mobile-form-container button:hover {
+    background-color: darken(v-bind("globalColors.redColor"), 10%);
+}
+
+@media (max-width: 768px) {
+    .content {
+        display: none;
+    }
+
+    .mobile-login-signup {
+        display: flex;
+    }
 }
 </style>
