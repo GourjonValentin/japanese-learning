@@ -174,7 +174,7 @@
                                 required
                             />
                             <button
-                                class="delete"
+                                class="delete-answer"
                                 @click.prevent="deleteAnswer(answer.id)"
                                 type="button"
                                 v-if="editedQuestion.answers.length > 2"
@@ -1004,6 +1004,7 @@ export default {
 .delete-answer:hover {
     cursor: pointer;
     transform: scale(1.3);
+    background: none;
 }
 .delete-answer:active {
     transform: scale(0.95);
