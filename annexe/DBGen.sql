@@ -35,10 +35,10 @@ CREATE TABLE scores (
 
 
 INSERT INTO users (username, isAdmin, favorites, password, avatarPath)
-VALUES ('admin', 1, '[]', '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV681uJt2', 'https://api.multiavatar.com/t4nlelhk3br.svg');
+VALUES ('admin', 1, '[]', '$2b$10$mcG8EkpF56cjsQYBjxYFk.fLmnAZtRIkHQVPvLJs83TM5Eh7rzV3i$2b$10$mcG8EkpF56cjsQYBjxYFk.fLmnAZtRIkHQVPvLJs83TM5Eh7rzV3i', 'https://api.multiavatar.com/t4nlelhk3br.svg');
 
 INSERT INTO users (username, isAdmin, favorites, password, avatarPath)
-VALUES ('user1', 0, '[]', '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em', 'https://api.multiavatar.com/c6195hhi8y8.svg');
+VALUES ('user1', 0, '[]', '$2b$10$IC7Nxb.hZUw9WAw./euVKuJBmNLdUeDrdCd9qzzb1F2Ndcjyk1lzC', 'https://api.multiavatar.com/c6195hhi8y8.svg');
 
 INSERT INTO quiz (name, type, ownerid, content, difficultylevel) VALUES 
 (
