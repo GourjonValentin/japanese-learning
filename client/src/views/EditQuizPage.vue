@@ -174,7 +174,7 @@
                                 required
                             />
                             <button
-                                class="delete"
+                                class="delete-answer"
                                 @click.prevent="deleteAnswer(answer.id)"
                                 type="button"
                                 v-if="editedQuestion.answers.length > 2"
@@ -366,7 +366,15 @@
             <div class="quiz-name">
                 <h1>{{ quiz.name }}</h1>
             </div>
-            <div @click="() => {editedTitle = quiz.name; isTitleForm = true;}" class="edit-icon">
+            <div
+                @click="
+                    () => {
+                        editedTitle = quiz.name;
+                        isTitleForm = true;
+                    }
+                "
+                class="edit-icon"
+            >
                 <img
                     v-if="!isTitleForm"
                     src="@/assets/icons/pencil-icon.png"
@@ -818,8 +826,8 @@ export default {
             .then((res) => {
                 if (!res.data.data.id == this.quiz.ownerid) {
                     console.log("push here");
-                    console.log("owner ", res.data.data.id)
-                    console.log(this.quiz.ownerid)
+                    console.log("owner ", res.data.data.id);
+                    console.log(this.quiz.ownerid);
                     this.$router.push({
                         path: "/auth",
                         query: { form: "login/signup", redirect: "/quiz" },
@@ -996,6 +1004,7 @@ export default {
 .delete-answer:hover {
     cursor: pointer;
     transform: scale(1.3);
+    background: none;
 }
 .delete-answer:active {
     transform: scale(0.95);

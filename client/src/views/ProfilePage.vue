@@ -94,18 +94,28 @@
                 </form>
             </div>
             <div id="quizzes-history">
-                <div class="arrow-title-settings" @click="toggleSection('history')">
+                <div
+                    class="arrow-title-settings"
+                    @click="toggleSection('history')"
+                >
                     <div class="title-settings">
                         <h2>Quizzes history</h2>
                     </div>
-                    <div :class="['arrow-down', { visible: visibleSections.history }]">
-                        <img
-                            src="@/assets/icons/down-arrow.png"
-                            alt="Arrow"
-                        />
+                    <div
+                        :class="[
+                            'arrow-down',
+                            { visible: visibleSections.history },
+                        ]"
+                    >
+                        <img src="@/assets/icons/down-arrow.png" alt="Arrow" />
                     </div>
                 </div>
-                <div :class="['quizzes-profile-page', { visible: visibleSections.history }]">
+                <div
+                    :class="[
+                        'quizzes-profile-page',
+                        { visible: visibleSections.history },
+                    ]"
+                >
                     <div
                         class="quiz"
                         v-for="quiz in userQuizzes"
@@ -156,26 +166,34 @@
                         </div>
                         <p>Best score : {{ quiz.score }} / {{ quiz.length }}</p>
                     </div>
-                    <p
-                    v-if="userQuizzesMessage"
-                    id="userQuizzesMessage">
+                    <p v-if="userQuizzesMessage" id="userQuizzesMessage">
                         {{ userQuizzesMessage }}
                     </p>
                 </div>
             </div>
             <div id="favorite-quizzes">
-                <div class="arrow-title-settings" @click="toggleSection('favorites')">
+                <div
+                    class="arrow-title-settings"
+                    @click="toggleSection('favorites')"
+                >
                     <div class="title-settings">
                         <h2>Favorite quizzes</h2>
                     </div>
-                    <div :class="['arrow-down', { visible: visibleSections.favorites }]">
-                        <img
-                            src="@/assets/icons/down-arrow.png"
-                            alt="Arrow"
-                        />
+                    <div
+                        :class="[
+                            'arrow-down',
+                            { visible: visibleSections.favorites },
+                        ]"
+                    >
+                        <img src="@/assets/icons/down-arrow.png" alt="Arrow" />
                     </div>
                 </div>
-                <div :class="['quizzes-profile-page', { visible: visibleSections.favorites }]">
+                <div
+                    :class="[
+                        'quizzes-profile-page',
+                        { visible: visibleSections.favorites },
+                    ]"
+                >
                     <div
                         class="quiz"
                         v-for="quiz in userFavQuizzes"
@@ -225,9 +243,7 @@
                             </div>
                         </div>
                     </div>
-                    <p
-                    v-if="userFavQuizzesMessage"
-                    id="userFavQuizzesMessage">
+                    <p v-if="userFavQuizzesMessage" id="userFavQuizzesMessage">
                         {{ userFavQuizzesMessage }}
                     </p>
                 </div>

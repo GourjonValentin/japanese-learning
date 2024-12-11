@@ -273,11 +273,13 @@ export default {
         font-size: 0.9em;
     }
 
-    .jp-title, .en-title {
+    .jp-title,
+    .en-title {
         font-size: 1.2em;
     }
 
-    .jp, .en {
+    .jp,
+    .en {
         margin-top: 10px;
     }
 

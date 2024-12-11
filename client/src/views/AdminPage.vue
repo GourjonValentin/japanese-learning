@@ -71,11 +71,13 @@
                     <div class="admin-title">
                         <h1>Users Management</h1>
                     </div>
-                    <div :class="['arrow-down', { visible: visibleSections.users }]">
-                        <img
-                            src="@/assets/icons/down-arrow.png"
-                            alt="Arrow"
-                        />
+                    <div
+                        :class="[
+                            'arrow-down',
+                            { visible: visibleSections.users },
+                        ]"
+                    >
+                        <img src="@/assets/icons/down-arrow.png" alt="Arrow" />
                     </div>
                 </div>
                 <div :class="['users', { visible: visibleSections.users }]">
@@ -111,15 +113,20 @@
                 </div>
             </div>
             <div id="quiz-admin">
-                <div class="arrow-admin-title" @click="toggleSection('quizzes')">
+                <div
+                    class="arrow-admin-title"
+                    @click="toggleSection('quizzes')"
+                >
                     <div class="admin-title">
                         <h1>Quizzes Management</h1>
                     </div>
-                    <div :class="['arrow-down', { visible: visibleSections.quizzes }]">
-                        <img
-                            src="@/assets/icons/down-arrow.png"
-                            alt="Arrow"
-                        />
+                    <div
+                        :class="[
+                            'arrow-down',
+                            { visible: visibleSections.quizzes },
+                        ]"
+                    >
+                        <img src="@/assets/icons/down-arrow.png" alt="Arrow" />
                     </div>
                 </div>
                 <div :class="['search', { visible: visibleSections.quizzes }]">
@@ -178,7 +185,12 @@
                         </div>
                     </div>
                 </div>
-                <div :class="['quizzes-admin-page', { visible: visibleSections.quizzes }]">
+                <div
+                    :class="[
+                        'quizzes-admin-page',
+                        { visible: visibleSections.quizzes },
+                    ]"
+                >
                     <div class="quiz" v-for="quiz in quizzes" :key="quiz.id">
                         <div
                             class="quiz-header"

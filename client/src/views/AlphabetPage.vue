@@ -43,18 +43,62 @@ export default {
     data() {
         return {
             alphabet: [
-                    "a", "i", "u", "e", "o",         // あ, い, う, え, お
-                    "ka", "ki", "ku", "ke", "ko",    // か, き, く, け, こ
-                    "sa", "shi", "su", "se", "so",   // さ, し, す, せ, そ
-                    "ta", "chi", "tsu", "te", "to",  // た, ち, つ, て, と
-                    "na", "ni", "nu", "ne", "no",    // な, に, ぬ, ね, の
-                    "ha", "hi", "fu", "he", "ho",    // は, ひ, ふ, へ, ほ
-                    "ma", "mi", "mu", "me", "mo",    // ま, み, む, め, も
-                    "ya", "emp", "yu", "emp", "yo",  // や, ゆ, よ
-                    "ra", "ri", "ru", "re", "ro",    // ら, り, る, れ, ろ
-                    "wa", "emp", "emp", "emp", "wo", // わ, を
-                    "emp", "emp", "n", "emp", "emp"  // ん
-                ],
+                "a",
+                "i",
+                "u",
+                "e",
+                "o", // あ, い, う, え, お
+                "ka",
+                "ki",
+                "ku",
+                "ke",
+                "ko", // か, き, く, け, こ
+                "sa",
+                "shi",
+                "su",
+                "se",
+                "so", // さ, し, す, せ, そ
+                "ta",
+                "chi",
+                "tsu",
+                "te",
+                "to", // た, ち, つ, て, と
+                "na",
+                "ni",
+                "nu",
+                "ne",
+                "no", // な, に, ぬ, ね, の
+                "ha",
+                "hi",
+                "fu",
+                "he",
+                "ho", // は, ひ, ふ, へ, ほ
+                "ma",
+                "mi",
+                "mu",
+                "me",
+                "mo", // ま, み, む, め, も
+                "ya",
+                "emp",
+                "yu",
+                "emp",
+                "yo", // や, ゆ, よ
+                "ra",
+                "ri",
+                "ru",
+                "re",
+                "ro", // ら, り, る, れ, ろ
+                "wa",
+                "emp",
+                "emp",
+                "emp",
+                "wo", // わ, を
+                "emp",
+                "emp",
+                "n",
+                "emp",
+                "emp", // ん
+            ],
             selectedTab: "hiragana",
             globalColors: globalColors,
         };
