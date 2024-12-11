@@ -35,10 +35,10 @@ CREATE TABLE scores (
 
 
 INSERT INTO users (username, isAdmin, favorites, password, avatarPath)
-VALUES ('admin', 1, '[]', '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV681uJt2', 'https://api.multiavatar.com/t4nlelhk3br.svg');
+VALUES ('admin', 1, '[4]', '$2b$10$/Q/BntW8/cAwW2akU06SwunH6IW4R66634nNP/2pZk4PpV681uJt2', 'https://api.multiavatar.com/t4nlelhk3br.svg');
 
 INSERT INTO users (username, isAdmin, favorites, password, avatarPath)
-VALUES ('user1', 0, '[]', '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em', 'https://api.multiavatar.com/c6195hhi8y8.svg');
+VALUES ('user1', 0, '[5]', '$2b$10$NyhqY2PgidBiubTSGUfuneYz/4cUoSsgihmgcbTR9bV33Pt.UC7em', 'https://api.multiavatar.com/c6195hhi8y8.svg');
 
 INSERT INTO quiz (name, type, ownerid, content, difficultylevel) VALUES 
 (
@@ -213,6 +213,38 @@ INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
                 {"id": 1, "content": "Gyayayayayayha"},
                 {"id": 2, "content": "Hahahahhahaha"},
                 {"id": 3, "content": "Pouahahaha"}
+            ],
+            "correct_answers": [0]
+        }
+    ]'
+),
+(
+    'Attack On Titan - 進撃の巨人',
+    'anime',
+    1,
+    2,
+    '[
+        {
+            "id": 0,
+            "title": "What is the translation of 自由だ (じゆだ) ?",
+            "picture": "https://stat.ameba.jp/user_images/20220202/15/masaecox-x/d5/97/p/o0500028215069601519.png",
+            "answers": [
+                {"id": 0, "content": "The sea"},
+                {"id": 1, "content": "Freedom"},
+                {"id": 2, "content": "Power"},
+                {"id": 3, "content": "Death"}
+            ],
+            "correct_answers": [1]
+        },
+        {
+            "id": 1,
+            "title": "What does Eren say (たたかえ) ?",
+            "picture": "https://i.pinimg.com/originals/bc/da/35/bcda35cf0df8da64a4fa83a0f4e2ab43.jpg",
+            "answers": [
+                {"id": 0, "content": "Fight"},
+                {"id": 1, "content": "Run"},
+                {"id": 2, "content": "Who am I"},
+                {"id": 3, "content": "Think"}
             ],
             "correct_answers": [0]
         }
