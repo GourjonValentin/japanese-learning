@@ -35,7 +35,7 @@ CREATE TABLE scores (
 
 
 INSERT INTO users (username, isAdmin, favorites, password, avatarPath)
-VALUES ('admin', 1, '[4]', '$2b$10$mcG8EkpF56cjsQYBjxYFk.fLmnAZtRIkHQVPvLJs83TM5Eh7rzV3i$2b$10$mcG8EkpF56cjsQYBjxYFk.fLmnAZtRIkHQVPvLJs83TM5Eh7rzV3i', 'https://api.multiavatar.com/t4nlelhk3br.svg');
+VALUES ('admin', 1, '[4]', '$2b$10$wOU9lNroLNfZuLYULutBDeA.bZw2EQqVWCMSAncKBGClWBnjm5u/W', 'https://api.multiavatar.com/t4nlelhk3br.svg');
 
 INSERT INTO users (username, isAdmin, favorites, password, avatarPath)
 VALUES ('user1', 0, '[5]', '$2b$10$IC7Nxb.hZUw9WAw./euVKuJBmNLdUeDrdCd9qzzb1F2Ndcjyk1lzC', 'https://api.multiavatar.com/c6195hhi8y8.svg');
