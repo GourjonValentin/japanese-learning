@@ -143,8 +143,12 @@
     transform: scale(1.05);
 }
 
-styledSelectInput.active {
+.styledSelectInput.active {
     background-color: var(--light-color);
+}
+
+.styledSelectInput option {
+    background-color: var(--dark-color);
 }
 
 /* STYLED DIV*/
