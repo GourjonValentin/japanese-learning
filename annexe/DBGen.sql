@@ -74,7 +74,7 @@ INSERT INTO quiz (name, type, ownerid, content, difficultylevel) VALUES
 (
     'Basic', 
     'simple',
-    1,
+    2,
     '[
         {
             "id": 0,
@@ -221,7 +221,7 @@ INSERT INTO quiz(name, type, ownerid, difficultylevel, content) VALUES
 (
     'Attack On Titan - 進撃の巨人',
     'anime',
-    1,
+    2,
     2,
     '[
         {
